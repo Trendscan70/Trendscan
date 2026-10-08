@@ -1,0 +1,53 @@
+{
+  "articles": {
+    "maxAgeDays": 30,
+    "maxPerSource": 30,
+    "maxTotal": 160,
+    "sources": [
+      { "id": "sole-fp", "name": "Il Sole 24 Ore – Finanza Personale", "site": "https://www.ilsole24ore.com/", "feeds": ["https://www.ilsole24ore.com/rss/finanza-personale--investimenti.xml"], "trusted": true },
+      { "id": "sole-tributi", "name": "Il Sole 24 Ore – Norme e Tributi", "site": "https://www.ilsole24ore.com/", "feeds": ["https://www.ilsole24ore.com/rss/norme-e-tributi.xml"], "trusted": false },
+      { "id": "corriere", "name": "Corriere – Economia", "site": "https://www.corriere.it/economia/", "feeds": ["https://xml2.corriereobjects.it/rss/economia.xml"], "trusted": false },
+      { "id": "ansa", "name": "ANSA – Economia", "site": "https://www.ansa.it/sito/notizie/economia/", "feeds": ["https://www.ansa.it/sito/notizie/economia/economia_rss.xml"], "trusted": false },
+      { "id": "repubblica", "name": "la Repubblica – Economia", "site": "https://www.repubblica.it/economia/", "feeds": ["https://www.repubblica.it/rss/economia/rss2.0.xml"], "trusted": false },
+      { "id": "moneyit", "name": "Money.it", "site": "https://www.money.it/", "feeds": [], "trusted": false },
+      { "id": "quifinanza", "name": "QuiFinanza", "site": "https://quifinanza.it/", "feeds": ["https://quifinanza.it/feed/"], "trusted": false },
+      { "id": "wsi", "name": "Wall Street Italia", "site": "https://www.wallstreetitalia.com/", "feeds": ["https://www.wallstreetitalia.com/feed/"], "trusted": false },
+      { "id": "soldionline", "name": "Soldionline", "site": "https://www.soldionline.it/", "feeds": [], "trusted": false },
+      { "id": "milanofinanza", "name": "Milano Finanza", "site": "https://www.milanofinanza.it/", "feeds": [], "trusted": false },
+      { "id": "finanzaonline", "name": "FinanzaOnline", "site": "https://www.finanzaonline.com/", "feeds": [], "trusted": false },
+      { "id": "forbes-it", "name": "Forbes Italia", "site": "https://forbes.it/", "feeds": [], "trusted": false }
+    ],
+    "exclude": "\\b(oroscopo|calcio|serie a|champions league|gossip|meteo|sanremo|grande fratello|calciomercato)\\b",
+    "categories": [
+      { "name": "Pensione e TFR", "icon": "👴", "pattern": "\\b(pension\\w*|previdenz\\w*|tfr|inps|fondo pension\\w*|assegno sociale|contributi)\\b" },
+      { "name": "Casa e Mutui", "icon": "🏠", "pattern": "\\b(mutu\\w*|surroga|affitt\\w*|prima casa|immobil\\w*|bonus casa|bonus ristrutturazion\\w*|superbonus|canone|catasto|imu)\\b" },
+      { "name": "Tasse e Fisco", "icon": "🧾", "pattern": "\\b(tasse|tassa\\w*|fisco|fiscal\\w*|730|isee|irpef|bollo|imposta\\w*|detrazion\\w*|dichiarazione dei redditi|redditi|cedolare|aliquot\\w*|tributi|rottamazione)\\b" },
+      { "name": "ETF e Investimenti", "icon": "📈", "pattern": "\\b(etf|pac|azion\\w*|obbligazion\\w*|btp|bot|cct|portafoglio|invest\\w*|fondi? comun\\w*|dividend\\w*|titoli di stato|rendiment\\w*|cedol\\w*|criptovalut\\w*|bitcoin|oro|borsa|diversificazion\\w*|interesse composto)\\b" },
+      { "name": "Banche e Conti", "icon": "🏦", "pattern": "\\b(conto corrente|conti correnti|conto deposito|conti deposito|carta di credito|carte|banca|banche|bancomat|truffa\\w*|phishing|iban|prestit\\w*|finanziament\\w*|bancari\\w*|polizz\\w*|assicurazion\\w*)\\b" },
+      { "name": "Risparmio e Budget", "icon": "💶", "pattern": "\\b(risparmi\\w*|budget|spese|bollett\\w*|stipendi\\w*|inflazione|fondo (di )?emergenza|bonus|salari\\w*|pagament\\w*|libretto|consigli|guida)\\b" }
+    ]
+  },
+  "videos": {
+    "perChannel": 6,
+    "maxTotal": 120,
+    "channels": [
+      { "id": "pietro-michelangeli", "name": "Pietro Michelangeli", "handles": ["PietroMichelangeli"], "verifiedHandle": true, "match": ["michelangeli"], "blurb": "Finanza personale ed economia con un occhio al lungo termine." },
+      { "id": "paolo-coletti", "name": "Paolo Coletti", "handles": ["PaoloColetti"], "verifiedHandle": true, "match": ["coletti"], "blurb": "Il prof che fa educazione finanziaria: corso gratuito «Educati e Finanziati»." },
+      { "id": "mr-rip", "name": "Mr.Rip", "handles": ["mr_rip", "MrRip"], "verifiedHandle": true, "match": ["rip"], "blurb": "Finanza personale e FIRE, con un punto di vista controcorrente." },
+      { "id": "the-bull", "name": "The Bull", "handles": ["TheBullPodcast", "thebullpodcast", "TheBull"], "verifiedHandle": false, "match": ["bull"], "blurb": "Il podcast di finanza personale di Riccardo Spada." },
+      { "id": "io-investo", "name": "Io Investo", "handles": ["IoInvesto", "ioinvesto"], "verifiedHandle": false, "match": ["investo"], "blurb": "Per iniziare a investire partendo da zero." },
+      { "id": "starting-finance", "name": "Starting Finance", "handles": ["StartingFinance", "startingfinance"], "verifiedHandle": false, "match": ["starting", "finance"], "blurb": "Educazione finanziaria: risparmio, investimenti ed ETF." },
+      { "id": "piano-finanziario-tv", "name": "Piano Finanziario TV", "handles": ["PianoFinanziarioTV", "pianofinanziariotv"], "verifiedHandle": false, "match": ["piano", "finanziario"], "blurb": "Giorgio Pecorari: approccio strutturato agli investimenti." },
+      { "id": "affari-miei", "name": "Affari Miei", "handles": ["AffariMiei", "affarimiei"], "verifiedHandle": false, "match": ["affari", "miei"], "blurb": "Il canale di Davide Marciano su finanza e investimenti." },
+      { "id": "segreti-bancari", "name": "Segreti Bancari", "handles": ["SegretiBancari", "segretibancari"], "verifiedHandle": false, "match": ["segreti", "bancari"], "blurb": "Finanza personale e investimenti." },
+      { "id": "gabriele-bellelli", "name": "Gabriele Bellelli", "handles": ["GabrieleBellelli", "gabrielebellelli"], "verifiedHandle": false, "match": ["bellelli"], "blurb": "Divulgazione su finanza e investimenti." },
+      { "id": "cristina-nolli", "name": "Cristina Nolli", "handles": ["cristinanolli_finanzapersonale"], "verifiedHandle": true, "match": ["nolli"], "blurb": "Finanza personale, gestione del denaro e investimenti." },
+      { "id": "marco-casario", "name": "Marco Casario", "handles": ["MarcoCasario"], "verifiedHandle": true, "match": ["casario"], "blurb": "Finanza personale, investimenti e crescita economica consapevole." },
+      { "id": "giuseppe-castagna", "name": "Giuseppe Castagna", "handles": ["gcastagna"], "verifiedHandle": true, "match": ["castagna"], "blurb": "Finanza, gestione del denaro e produttività personale." },
+      { "id": "gianluca-ranieri-bandini", "name": "Gianluca Ranieri Bandini", "handles": ["GianlucaRanieriBandini"], "verifiedHandle": true, "match": ["bandini"], "blurb": "Finanza e investimenti." },
+      { "id": "ingegneri-in-borsa", "name": "Ingegneri in Borsa", "handles": ["IngegneriInBorsa", "ingegneriinborsa"], "verifiedHandle": false, "match": ["ingegneri", "borsa"], "blurb": "Finanza e investimenti." },
+      { "id": "leonardo-pinna", "name": "Leonardo Pinna", "handles": ["LeonardoPinna", "leonardopinna"], "verifiedHandle": false, "match": ["pinna"], "blurb": "Video educativi su investimenti e gestione del denaro." },
+      { "id": "surry", "name": "Surry", "handles": ["surrealpower"], "verifiedHandle": true, "match": ["surry", "surreal"], "blurb": "Lifestyle e finanza personale." }
+    ]
+  }
+}

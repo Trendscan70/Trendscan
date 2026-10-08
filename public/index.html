@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrendScan – Hub di Finanza Personale: articoli, video e guide</title>
+  <meta name="description" content="Gli articoli di finanza personale più utili dai principali giornali italiani, una playlist di video educativi dei migliori canali YouTube e guide pratiche su risparmio, ETF e PAC.">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tailwind.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#f4f5f7] text-gray-900 antialiased">
+
+  <!-- ===== TOP STRIP ===== -->
+  <div class="bg-[#111] text-gray-300 text-[11px]">
+    <div class="max-w-7xl mx-auto px-4 h-8 flex items-center justify-between">
+      <span id="todayLabel" class="capitalize"></span>
+      <span class="hidden sm:inline">Educazione finanziaria • Notizie • Video • Strumenti — contenuti informativi, non consulenza</span>
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="#home" class="flex items-center gap-2 shrink-0" aria-label="TrendScan home">
+        <span class="w-10 h-10 rounded-xl brand-bg flex items-center justify-center text-white shadow">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </span>
+        <span class="text-2xl font-black tracking-tight leading-none">Trend<span class="brand-text">Scan</span></span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-1 ml-4 text-[13px] font-extrabold uppercase tracking-wide" id="mainNav">
+        <a href="#home" data-nav="home" class="nav-link">Home</a>
+        <a href="#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="#video" data-nav="video" class="nav-link">Video Educativi</a>
+        <a href="#guide" data-nav="guide" class="nav-link">Guide &amp; Calcolatore</a>
+      </nav>
+
+      <div class="ml-auto flex items-center gap-2">
+        <div class="relative">
+          <input id="searchInput" type="search" placeholder="Cerca negli articoli…" class="w-40 sm:w-64 pl-9 pr-3 py-2 rounded-full bg-gray-100 border border-transparent focus:border-[#e8412c] focus:bg-white outline-none text-sm">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+      </div>
+    </div>
+    <!-- nav mobile -->
+    <nav class="lg:hidden border-t border-gray-100 overflow-x-auto no-scrollbar">
+      <div class="flex gap-1 px-3 py-2 text-xs font-extrabold uppercase whitespace-nowrap">
+        <a href="#home" data-nav="home" class="nav-link">Home</a>
+        <a href="#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="#video" data-nav="video" class="nav-link">Video</a>
+        <a href="#guide" data-nav="guide" class="nav-link">Guide</a>
+      </div>
+    </nav>
+    <!-- categorie -->
+    <div class="border-t border-gray-100 bg-white">
+      <div class="max-w-7xl mx-auto px-4 py-2 overflow-x-auto no-scrollbar">
+        <div id="categoryBar" class="flex gap-2 whitespace-nowrap text-xs font-bold"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- =========================== HOME =========================== -->
+    <section id="view-home" class="view space-y-10">
+
+      <!-- Hero -->
+      <div id="heroGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-5"></div>
+
+      <!-- Argomenti con immagini -->
+      <div>
+        <div class="section-title"><h2>Di cosa vuoi parlare?</h2><span class="section-bar"></span></div>
+        <div id="topicTiles" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"></div>
+      </div>
+
+      <!-- Ultimi articoli -->
+      <div>
+        <div class="section-title"><h2>Ultimi articoli di finanza personale</h2><span class="section-bar"></span>
+          <a href="#articoli" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli articoli →</a></div>
+        <div id="homeLatest" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      </div>
+
+      <!-- Video band -->
+      <div class="rounded-3xl bg-[#111] text-white p-5 sm:p-8 relative overflow-hidden">
+        <div class="absolute -right-24 -top-24 w-80 h-80 rounded-full brand-bg opacity-20 blur-3xl"></div>
+        <div class="relative flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-widest brand-text">▶ Video Educativi</span>
+            <h2 class="text-2xl sm:text-3xl font-black mt-1">La playlist dei migliori youtuber italiani di finanza</h2>
+            <p class="text-sm text-gray-400 mt-1 max-w-2xl">Gli ultimi video dei canali che spiegano risparmio, ETF, PAC e gestione del denaro. Si guardano qui, uno dopo l'altro.</p>
+          </div>
+          <a href="#video" class="shrink-0 px-5 py-2.5 rounded-full brand-bg text-white text-sm font-extrabold hover:opacity-90">Apri la playlist →</a>
+        </div>
+        <div id="homeVideos" class="relative grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+      </div>
+
+      <!-- Guide teaser -->
+      <div>
+        <div class="section-title"><h2>Impara le basi</h2><span class="section-bar"></span><a href="#guide" class="text-sm font-bold brand-text whitespace-nowrap">Tutte le guide →</a></div>
+        <div id="guideTeasers" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
+      </div>
+    </section>
+
+    <!-- ========================= ARTICOLI ========================= -->
+    <section id="view-articoli" class="view hidden space-y-6">
+      <div class="section-title"><h1 class="text-2xl sm:text-3xl">Articoli di finanza personale</h1><span class="section-bar"></span></div>
+      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Raccogliamo automaticamente gli articoli dei principali giornali e siti italiani che parlano di risparmio, investimenti, fisco, casa e pensione. Qui trovi titolo, breve anteprima e il link all'articolo originale sul sito della testata.</p>
+      <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+        <select id="sourceFilter" class="px-4 py-2 rounded-full bg-white border border-gray-200 text-sm font-semibold"><option value="ALL">Tutte le testate</option></select>
+        <span id="articleCount" class="text-xs text-gray-500"></span>
+        <button id="clearFilters" class="hidden text-xs font-bold brand-text underline sm:ml-auto">Rimuovi filtri</button>
+      </div>
+      <div id="articleStatus"></div>
+      <div id="articleGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      <div class="text-center"><button id="moreArticles" class="hidden px-6 py-3 rounded-full bg-white border border-gray-300 font-extrabold text-sm hover:border-[#e8412c] hover:text-[#e8412c]">Mostra altri articoli</button></div>
+    </section>
+
+    <!-- =========================== VIDEO =========================== -->
+    <section id="view-video" class="view hidden space-y-6">
+      <div class="section-title"><h1 class="text-2xl sm:text-3xl">Video Educativi</h1><span class="section-bar"></span></div>
+      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Una playlist con i video più recenti dei principali canali YouTube italiani di finanza personale. Scegli un canale o guarda tutto di seguito. I video sono dei rispettivi autori e si riproducono dal loro canale YouTube.</p>
+      <div id="channelChips" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div class="xl:col-span-2 space-y-3">
+          <div class="rounded-2xl overflow-hidden bg-black aspect-video relative shadow-lg" id="playerBox">
+            <div id="ytPlayer" class="absolute inset-0"></div>
+            <button id="posterBtn" class="absolute inset-0 w-full h-full group" aria-label="Riproduci">
+              <img id="posterImg" alt="" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" referrerpolicy="no-referrer">
+              <span class="absolute inset-0 flex items-center justify-center"><span class="w-20 h-20 rounded-full brand-bg flex items-center justify-center shadow-2xl group-hover:scale-110 transition"><svg class="w-9 h-9 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
+            </button>
+          </div>
+          <div>
+            <h2 id="nowTitle" class="text-lg sm:text-xl font-extrabold leading-snug">Seleziona un video</h2>
+            <p id="nowMeta" class="text-xs text-gray-500 mt-1"></p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="prevBtn" class="btn-ghost">⏮ Precedente</button>
+            <button id="nextBtn" class="btn-ghost">Successivo ⏭</button>
+            <a id="ytPlaylistLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-ghost">Apri la playlist su YouTube ↗</a>
+          </div>
+        </div>
+        <aside class="bg-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col max-h-[640px]">
+          <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+            <span class="font-extrabold text-sm">In riproduzione di seguito</span><span id="queueCount" class="text-xs text-gray-500"></span>
+          </div>
+          <div id="queueList" class="overflow-y-auto divide-y divide-gray-100"></div>
+        </aside>
+      </div>
+      <div id="videoStatus"></div>
+
+      <div>
+        <div class="section-title"><h2>I canali</h2><span class="section-bar"></span></div>
+        <div id="channelGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <p class="text-[11px] text-gray-500 mt-4 leading-relaxed max-w-3xl">Gli youtuber di finanza fanno divulgazione e intrattenimento: non conoscono la tua situazione e non offrono consulenza personalizzata. Verifica sempre le informazioni e ricorda che i canali citati non sono affiliati a TrendScan.</p>
+      </div>
+    </section>
+
+    <!-- =========================== GUIDE =========================== -->
+    <section id="view-guide" class="view hidden space-y-6">
+      <div class="section-title"><h1 class="text-2xl sm:text-3xl">Guide &amp; Calcolatore PAC</h1><span class="section-bar"></span></div>
+      <div class="rounded-3xl bg-[#0b0f19] text-gray-100 p-3 sm:p-6 space-y-8" id="academyRoot">
+<!-- Hero Banner Academy -->
+      <div class="academy-banner rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+        <div class="max-w-3xl">
+          <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold border border-purple-500/40 uppercase tracking-widest">🎓 TrendScan Financial Academy</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">Guida al Risparmio, Azioni e PAC</h2>
+          <p class="text-sm text-gray-200 mt-2 leading-relaxed">
+            Scopri come gestire il tuo denaro in modo intelligente, comprendere il funzionamento delle azioni societarie ed utilizzare l'interesse composto tramite un PAC (Piano di Accumulo del Capitale) per costruire la tua indipendenza finanziaria nel tempo.
+          </p>
+        </div>
+      </div>
+
+      <!-- Module 1: What are Stocks? -->
+      <section id="guide-1" class="glass-panel p-6 sm:p-8 rounded-3xl border border-gray-800">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-extrabold text-white">1. Cosa sono le Azioni?</h3>
+            <p class="text-xs text-gray-400">Diventa proprietario di una quota reale di un'azienda</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1: Proprietà -->
+          <div class="bg-gray-900/80 p-5 rounded-2xl border border-gray-800 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              </div>
+              <h4 class="font-bold text-white text-base">Quota di Proprietà</h4>
+              <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                Un'azione è un titolo rappresentativo di una piccola frazione del capitale di una società. Quando acquisti azioni di aziende come Apple o Microsoft, diventi ufficialmente un <strong>azionista (co-proprietario)</strong> dell'azienda.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2: Dividendi & Capital Gain -->
+          <div class="bg-gray-900/80 p-5 rounded-2xl border border-gray-800 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <h4 class="font-bold text-white text-base">Come si Guadagna</h4>
+              <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                Guadagni in due modi: con l'<strong>Apprezzamento del Capitale (Capital Gain)</strong> quando il prezzo del titolo sale grazie alla crescita degli utili dell'azienda, e tramite i <strong>Dividendi</strong>, ossia la quota di utili distribuiti periodicamente agli azionisti.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3: Rischio vs Rendimento -->
+          <div class="bg-gray-900/80 p-5 rounded-2xl border border-gray-800 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+              </div>
+              <h4 class="font-bold text-white text-base">Orizzonte di Lungo Termine</h4>
+              <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                Le azioni possono oscillare nel breve periodo (volatilità), ma storicamente il mercato azionario globale ha offerto i <strong>rendimenti reali più elevati sul lungo periodo</strong> (7-10% annuo medio), superando di gran lunga l'inflazione.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 2: Basic Savings Rules -->
+      <section id="guide-2" class="glass-panel p-6 sm:p-8 rounded-3xl border border-gray-800">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-extrabold text-white">2. I Consigli Basilari sul Risparmio</h3>
+            <p class="text-xs text-gray-400">Costruisci solide fondamenta prima di investire</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Rule 50/30/20 -->
+          <div class="bg-gray-900/80 p-6 rounded-2xl border border-gray-800 space-y-4">
+            <h4 class="font-bold text-white text-base flex items-center gap-2">
+              <span>📊 La Regola del Budget 50 / 30 / 20</span>
+            </h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Un metodo semplice ed efficace per gestire il tuo reddito mensile netto ed evitare uscite incontrollate:
+            </p>
+
+            <div class="space-y-3 pt-2">
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-blue-400">50% - Spese Essenziali / Necessità</span>
+                  <span>Affitto, Bollette, Cibo, Salute</span>
+                </div>
+                <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-blue-500 h-full w-[50%]"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-purple-400">30% - Desideri & Tempo Libero</span>
+                  <span>Uscite, Viaggi, Hobby</span>
+                </div>
+                <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-purple-500 h-full w-[30%]"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span class="text-emerald-400">20% - Risparmio & Investimento (PAC)</span>
+                  <span>Fondo Emergenza, PAC Futuro</span>
+                </div>
+                <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-emerald-500 h-full w-[20%]"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fondo di Emergenza -->
+          <div class="bg-gray-900/80 p-6 rounded-2xl border border-gray-800 flex flex-col justify-between">
+            <div>
+              <h4 class="font-bold text-white text-base flex items-center gap-2 mb-3">
+                <span>🛡️ Crea Prima il Tuo Fondo di Emergenza</span>
+              </h4>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Prima di investire anche solo un euro nei mercati azionari, accantona su un conto deposito svincolabile o una riserva liquida pari a <strong>3 - 6 mesi delle tue spese mensili</strong>.
+              </p>
+              <div class="mt-4 p-4 rounded-xl bg-indigo-950/40 border border-indigo-800/50 text-xs space-y-2">
+                <div class="font-bold text-indigo-300">Perché è fondamentale?</div>
+                <p class="text-gray-300">
+                  Il fondo di emergenza ti protegge da imprevisti (riparazioni auto, spese mediche, perdita del lavoro) senza costringerti a vendere i tuoi investimenti in perdita nei momenti di ribasso del mercato.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 3: PAC (Piano di Accumulo del Capitale) -->
+      <section id="guide-3" class="glass-panel p-6 sm:p-8 rounded-3xl border border-gray-800">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-extrabold text-white">3. Il PAC (Piano di Accumulo del Capitale)</h3>
+            <p class="text-xs text-gray-400">La strategia di investimento automatizzata e a prova di stress</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-gray-900/80 p-5 rounded-2xl border border-gray-800">
+            <div class="text-2xl font-black text-purple-400 mb-2">01</div>
+            <h4 class="font-bold text-white text-base">Zero Stress da Market Timing</h4>
+            <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+              Nessuno può prevedere il punto esatto di minimo o di massimo del mercato. Con un PAC investi una quota fissa mensile (es. 100€ o 250€) in modo costante, indipendentemente dalle notizie di giornale.
+            </p>
+          </div>
+
+          <div class="bg-gray-900/80 p-5 rounded-2xl border border-gray-800">
+            <div class="text-2xl font-black text-purple-400 mb-2">02</div>
+            <h4 class="font-bold text-white text-base">Dollar Cost Averaging (DCA)</h4>
+            <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+              Quando i mercati scendono, la tua quota fissa compra <strong>più azioni a prezzo scontato</strong>. Quando i mercati salgono, la tua posizione aumenta di valore. Questo riduce drasticamente il prezzo medio di carico.
+            </p>
+          </div>
+
+          <div class="bg-gray-900/80 p-5 rounded-2xl border border-gray-800">
+            <div class="text-2xl font-black text-purple-400 mb-2">03</div>
+            <h4 class="font-bold text-white text-base">Automazione & Disciplina</h4>
+            <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+              Impostando un bonifico o investimento automatico all'inizio del mese, la disciplina finanziaria diventa automatica: investi prima di spendere il resto.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module 4: Compound Interest Calculator (La Meraviglia dell'Interesse Composto) -->
+      <section id="guide-4" class="glass-panel p-6 sm:p-8 rounded-3xl border border-gray-800">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-extrabold text-white">4. La Meraviglia dell'Interesse Composto</h3>
+            <p class="text-xs text-gray-400">"L'interesse composto è l'ottava meraviglia del mondo. Chi lo capisce lo guadagna, chi non lo capisce lo paga." – Albert Einstein</p>
+          </div>
+        </div>
+
+        <!-- Interactive Calculator Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- Slider Controls -->
+          <div class="bg-gray-900/90 p-6 rounded-2xl border border-gray-800 space-y-5">
+            <h4 class="font-bold text-white text-sm border-b border-gray-800 pb-3 flex items-center justify-between">
+              <span>Simulatore PAC Interattivo</span>
+              <span class="text-xs text-indigo-400">Calcolo in Tempo Reale</span>
+            </h4>
+
+            <!-- Initial Deposit Slider -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-gray-300">Capitale Iniziale</span>
+                <span id="calcInitialVal" class="text-emerald-400 font-bold">1.000 €</span>
+              </div>
+              <input type="range" id="calcInitial" min="0" max="20000" step="500" value="1000" class="w-full">
+            </div>
+
+            <!-- Monthly Deposit Slider -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-gray-300">Quota PAC Mensile</span>
+                <span id="calcMonthlyVal" class="text-emerald-400 font-bold">200 € / mese</span>
+              </div>
+              <input type="range" id="calcMonthly" min="20" max="2000" step="20" value="200" class="w-full">
+            </div>
+
+            <!-- Time Horizon Slider -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-gray-300">Orizzonte Temporale</span>
+                <span id="calcYearsVal" class="text-indigo-400 font-bold">20 Anni</span>
+              </div>
+              <input type="range" id="calcYears" min="5" max="40" step="1" value="20" class="w-full">
+            </div>
+
+            <!-- Estimated Return Slider -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-gray-300">Rendimento Annuo Stimato</span>
+                <span id="calcReturnVal" class="text-purple-400 font-bold">7.0 %</span>
+              </div>
+              <input type="range" id="calcReturn" min="2" max="12" step="0.5" value="7.0" class="w-full">
+            </div>
+          </div>
+
+          <!-- Results Summary & Chart -->
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Results Counter Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="bg-gray-900/80 p-4 rounded-2xl border border-gray-800">
+                <span class="text-xs text-gray-400 block">Capitale Versato</span>
+                <div id="resTotalInvested" class="text-xl font-bold text-gray-200 mt-1">49.000 €</div>
+                <span class="text-[10px] text-gray-500">Tuo risparmio effettivo</span>
+              </div>
+
+              <div class="bg-gray-900/80 p-4 rounded-2xl border border-gray-800">
+                <span class="text-xs text-gray-400 block">Interessi Guadagnati</span>
+                <div id="resInterestEarned" class="text-xl font-bold text-emerald-400 mt-1">+55.200 €</div>
+                <span class="text-[10px] text-emerald-500 font-medium">L'effetto palla di neve</span>
+              </div>
+
+              <div class="bg-gradient-to-br from-indigo-900/60 to-purple-900/60 p-4 rounded-2xl border border-indigo-700/50">
+                <span class="text-xs text-indigo-200 block">Capitale Finale Totale</span>
+                <div id="resFinalBalance" class="text-2xl font-black text-white mt-1">104.200 €</div>
+                <span class="text-[10px] text-indigo-300 font-bold">Patrimonio accumulato</span>
+              </div>
+            </div>
+
+            <!-- Compound Interest Dynamic Chart -->
+            <div class="bg-gray-900/60 p-5 rounded-2xl border border-gray-800">
+              <h4 class="text-xs font-bold text-gray-300 mb-3 flex items-center justify-between">
+                <span>Crescita del Patrimonio nel Tempo (Capitale vs Guadagno)</span>
+                <span class="text-[10px] text-emerald-400">Curva Esponenziale</span>
+              </h4>
+              <div class="h-64 w-full relative">
+                <canvas id="compoundChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Module 5: Biblioteca & Saggio di Prosperità (Phil Laut - "I Soldi Sono Miei Amici") -->
+      <section id="guide-5" class="glass-panel p-6 sm:p-10 rounded-3xl border border-gray-800 space-y-10">
+        
+        <!-- Header -->
+        <div class="flex items-center gap-4 pb-6 border-b border-gray-800">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-600/30 to-blue-600/30 border border-cyan-400/50 flex items-center justify-center text-cyan-300 shrink-0 shadow-lg shadow-cyan-900/30">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+          </div>
+          <div>
+            <span class="px-3 py-1 text-xs font-extrabold tracking-wider uppercase bg-cyan-950 text-cyan-300 border border-cyan-800 rounded-lg">Saggio Fondamentale di Prosperità</span>
+            <h3 class="text-2xl sm:text-3xl font-black text-white mt-1">5. 📚 La Psicologia della Prosperità: Le 4 Leggi della Ricchezza & Il Metodo dei 7 Conti</h3>
+            <p class="text-sm text-gray-400 mt-1">Guida completa ed approfondita al best-seller di <strong>Phil Laut</strong> <em>"I soldi sono miei amici" (Money Is My Friend)</em>. Come riprogrammare la mentalità sul denaro, eliminare l'ansia da prestazione e strutturare il proprio patrimonio.</p>
+          </div>
+        </div>
+
+        <!-- Section 1: Detailed Topic Introduction Box -->
+        <div class="bg-gradient-to-r from-gray-900 via-cyan-950/40 to-gray-900 p-6 sm:p-8 rounded-3xl border border-cyan-800/50 space-y-4 shadow-xl">
+          <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>📖 Cos'è e di Cosa Tratta l'Opera di Phil Laut? (Introduzione all'Argomento)</span>
+          </div>
+          <h4 class="text-xl font-extrabold text-white">Il Denaro come Strumento Amico e la Riprogrammazione delle Convinzioni Subconsce</h4>
+          <p class="text-sm text-gray-200 leading-relaxed">
+            Nel suo celebre trattato, <strong>Phil Laut</strong> dimostra che la scarsità finanziaria ed il senso di soffocamento da debiti non dipendono quasi mai dalla sfortuna o dalla mancanza di intelligenza, ma da <strong>blocchi emotivi e condizionamenti subconsci ricevuti nell'infanzia</strong> (frasi come <em>"i soldi sono la radice di ogni male"</em>, <em>"i soldi non crescono sugli alberi"</em>, oppure il senso di colpa per guadagnare più dei propri genitori).
+          </p>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            L'opera insegna che il denaro non è un nemico da temere né un trofeo per cui provare vergogna, ma un <strong>flusso energetico neutrale di scambio</strong> che misura la qualità del valore fornito agli altri ed il grado di organizzazione personale. La vera prosperità richiede un doppio passaggio: 1. Trasformare il proprio atteggiamento mentale; 2. Applicare le <strong>4 Leggi della Ricchezza</strong> attraverso la disciplina del <strong>Sistema dei 7 Conti Separati</strong>.
+          </p>
+        </div>
+
+        <!-- Section 2: Infografica Spettacolare Le 4 Leggi della Ricchezza -->
+        <div class="space-y-6">
+          <div class="text-center space-y-2">
+            <span class="px-3 py-1 bg-cyan-900/50 text-cyan-300 text-xs font-bold rounded-full border border-cyan-700">INFOGRAFICA SPECIALE #1</span>
+            <h4 class="text-2xl font-extrabold text-white">📜 Le 4 Leggi Fondamentali della Ricchezza (Four Laws of Wealth)</h4>
+            <p class="text-xs sm:text-sm text-gray-400 max-w-2xl mx-auto">Ogni fase rappresenta un pilastro indispensabile. Trascurare una sola di queste leggi interrompe il ciclo della prosperità.</p>
+          </div>
+
+          <!-- Spectacular 4-Step Grid Flowchart -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Law 1: Earnings -->
+            <div class="bg-gray-900/90 rounded-2xl p-6 border border-cyan-900/60 hover:border-cyan-400 transition-all flex flex-col justify-between space-y-4 group">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-cyan-950 text-cyan-300 border border-cyan-700/60 flex items-center justify-center font-black text-xl shadow-inner group-hover:scale-110 transition-transform">
+                  1
+                </div>
+                <h5 class="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">1. Legge del Guadagno</h5>
+                <span class="text-[11px] font-bold text-cyan-400 uppercase tracking-wider block">(Earnings)</span>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Aumentare il proprio valore percepito ed il servizio fornito agli altri. Liberarsi dai sensi di colpa per il guadagno economico e focalizzarsi sul proprio scopo di vita.
+                </p>
+              </div>
+              <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 text-[11px] text-cyan-300 font-medium">
+                💡 <em>"Il guadagno è la misura del valore che trasmetti alla società."</em>
+              </div>
+            </div>
+
+            <!-- Law 2: Spending -->
+            <div class="bg-gray-900/90 rounded-2xl p-6 border border-amber-900/60 hover:border-amber-400 transition-all flex flex-col justify-between space-y-4 group">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-amber-950 text-amber-300 border border-amber-700/60 flex items-center justify-center font-black text-xl shadow-inner group-hover:scale-110 transition-transform">
+                  2
+                </div>
+                <h5 class="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">2. Legge della Spesa</h5>
+                <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">(Spending)</span>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Spendere con piena intenzione e consapevolezza. Eliminare gli sprechi emotivi ed impulsivi dettati dall'ansia o dal desiderio di ostentazione sociale.
+                </p>
+              </div>
+              <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 text-[11px] text-amber-300 font-medium">
+                💡 <em>"Godi di ogni euro speso senza sensi di colpa per cose di reale valore."</em>
+              </div>
+            </div>
+
+            <!-- Law 3: Savings -->
+            <div class="bg-gray-900/90 rounded-2xl p-6 border border-emerald-900/60 hover:border-emerald-400 transition-all flex flex-col justify-between space-y-4 group">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-emerald-950 text-emerald-300 border border-emerald-700/60 flex items-center justify-center font-black text-xl shadow-inner group-hover:scale-110 transition-transform">
+                  3
+                </div>
+                <h5 class="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">3. Legge del Risparmio</h5>
+                <span class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider block">(Savings)</span>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Pagar per primi se stessi (<strong>"Pay Yourself First"</strong>). Trattenere una quota fissa delle entrate (almeno il 10-20%) il giorno stesso in cui si incassa lo stipendio.
+                </p>
+              </div>
+              <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 text-[11px] text-emerald-300 font-medium">
+                💡 <em>"Risparmiare significa pagare il te stesso del futuro."</em>
+              </div>
+            </div>
+
+            <!-- Law 4: Investing -->
+            <div class="bg-gray-900/90 rounded-2xl p-6 border border-indigo-900/60 hover:border-indigo-400 transition-all flex flex-col justify-between space-y-4 group">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-indigo-950 text-indigo-300 border border-indigo-700/60 flex items-center justify-center font-black text-xl shadow-inner group-hover:scale-110 transition-transform">
+                  4
+                </div>
+                <h5 class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">4. Legge dell'Investimento</h5>
+                <span class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">(Investing)</span>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  Far lavorare il denaro accumulato in asset produttivi (azioni, immobili, PAC) affinché generi rendite indipendenti dal proprio tempo lavorativo attivo.
+                </p>
+              </div>
+              <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 text-[11px] text-indigo-300 font-medium">
+                💡 <em>"Trasforma il capitale accumulato in lavoratori al tuo servizio."</em>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section 3: Infografica Spettacolare Il Sistema dei 7 Conti della Prosperità -->
+        <div class="space-y-6 pt-4 border-t border-gray-800">
+          <div class="text-center space-y-2">
+            <span class="px-3 py-1 bg-emerald-900/50 text-emerald-300 text-xs font-bold rounded-full border border-emerald-700">INFOGRAFICA SPECIALE #2</span>
+            <h4 class="text-2xl font-extrabold text-white">📂 Il Sistema dei 7 Conti / Libretti della Prosperità (Phil Laut)</h4>
+            <p class="text-xs sm:text-sm text-gray-400 max-w-2xl mx-auto">Per eliminare la confusione contabile e l'ansia da imprevisto, ogni entrata mensile va suddivisa immediatamente in 7 contenitori distinti con obiettivi ben definiti.</p>
+          </div>
+
+          <!-- 7 Accounts Grid Diagram -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Account 1 -->
+            <div class="bg-gray-900/90 rounded-2xl p-5 border border-gray-800 hover:border-gray-600 transition-all space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">💵</span>
+                <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-300 font-mono text-xs font-bold">50% delle Entrate</span>
+              </div>
+              <h5 class="text-base font-bold text-white">1. Conto Flusso di Cassa (Cash Flow)</h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Destinato alle spese quotidiane necessarie: affitto o mutuo, bollette, spese alimentari, trasporti ed operatività mensile.
+              </p>
+              <div class="text-[10px] text-gray-400 bg-gray-950 p-2 rounded-lg border border-gray-800">
+                🎯 Scopo: Garantire la sopravvivenza immediata e la stabilità operativa senza stress.
+              </div>
+            </div>
+
+            <!-- Account 2 -->
+            <div class="bg-gray-900/90 rounded-2xl p-5 border border-cyan-900/50 hover:border-cyan-500/60 transition-all space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">🚘</span>
+                <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono text-xs font-bold">10% delle Entrate</span>
+              </div>
+              <h5 class="text-base font-bold text-white">2. Conto Grandi Acquisti (Large Purchases)</h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Accantonamento programmato per acquisti importanti futuri: sostituzione auto, ristrutturazione casa, viaggi importanti o elettrodomestici.
+              </p>
+              <div class="text-[10px] text-cyan-300 bg-gray-950 p-2 rounded-lg border border-gray-800">
+                🎯 Scopo: Evitare di ricorrere a finanziamenti a tasso usuraio per spese previste.
+              </div>
+            </div>
+
+            <!-- Account 3 -->
+            <div class="bg-gray-900/90 rounded-2xl p-5 border border-indigo-900/50 hover:border-indigo-500/60 transition-all space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">📈</span>
+                <span class="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 font-mono text-xs font-bold">10% delle Entrate</span>
+              </div>
+              <h5 class="text-base font-bold text-white">3. Conto Indipendenza Finanziaria (Financial Freedom)</h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Capitale intoccabile destinato unicamente all'investimento sistematico in asset produttivi (PAC azionari, ETF, azioni fondamentali).
+              </p>
+              <div class="text-[10px] text-indigo-300 bg-gray-950 p-2 rounded-lg border border-gray-800">
+                🎯 Scopo: Creare la macchina che genera rendite passive per il futuro.
+              </div>
+            </div>
+
+            <!-- Account 4 -->
+            <div class="bg-gray-900/90 rounded-2xl p-5 border border-amber-900/50 hover:border-amber-500/60 transition-all space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">💎</span>
+                <span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-mono text-xs font-bold">10% delle Entrate</span>
+              </div>
+              <h5 class="text-base font-bold text-white">4. Conto del Milionario (Millionaire's Account)</h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Fondo di riserva di accumulo patrimonio a lunghissimo termine. Serve a rafforzare la sicurezza psicologica ed il senso di ricchezza tangibile.
+              </p>
+              <div class="text-[10px] text-amber-300 bg-gray-950 p-2 rounded-lg border border-gray-800">
+                🎯 Scopo: Sviluppare la sicurezza emotiva dell'abbondanza.
+              </div>
+            </div>
+
+            <!-- Account 5 -->
+            <div class="bg-gray-900/90 rounded-2xl p-5 border border-purple-900/50 hover:border-purple-500/60 transition-all space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">📅</span>
+                <span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 font-mono text-xs font-bold">5% delle Entrate</span>
+              </div>
+              <h5 class="text-base font-bold text-white">5. Conto Spese Annuali (Annual Income/Expenses)</h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Riserva accantonata per spese che si presentano su base annuale: assicurazione auto, bollo, manutenzione della caldaia o abbonamenti annuali.
+              </p>
+              <div class="text-[10px] text-purple-300 bg-gray-950 p-2 rounded-lg border border-gray-800">
+                🎯 Scopo: Annullare la sensazione di imprevisto per spese ricorrenti.
+              </div>
+            </div>
+
+            <!-- Account 6 -->
+            <div class="bg-gray-900/90 rounded-2xl p-5 border border-red-900/50 hover:border-red-500/60 transition-all space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">🏛️</span>
+                <span class="px-2 py-0.5 rounded bg-red-950 text-red-300 font-mono text-xs font-bold">10% delle Entrate</span>
+              </div>
+              <h5 class="text-base font-bold text-white">6. Conto Tasse & Scadenze Fiscali (Taxes Account)</h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Fondo separato dedicato alle scadenze fiscali, contributive ed alle tasse di fine anno per professionisti ed investitori.
+              </p>
+              <div class="text-[10px] text-red-300 bg-gray-950 p-2 rounded-lg border border-gray-800">
+                🎯 Scopo: Eliminare l'ansia del momento del pagamento delle imposte.
+              </div>
+            </div>
+
+            <!-- Account 7 -->
+            <div class="bg-gray-900/90 rounded-2xl p-5 border border-rose-900/50 hover:border-rose-500/60 transition-all space-y-3 md:col-span-2 lg:col-span-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-2xl">🤝</span>
+                  <h5 class="text-base font-bold text-white">7. Conto Generosità & Donazione (Generosity Savings Account)</h5>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 font-mono text-xs font-bold">5% delle Entrate</span>
+              </div>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Denaro destinato alla beneficenza, al sostegno di cause sociali o per fare regali disinteressati. Phil Laut insegna che dare attiva il circuito psicologico di abbondanza, eliminando la paura inconscia della scarsità.
+              </p>
+              <div class="text-[10px] text-rose-300 bg-gray-950 p-2.5 rounded-lg border border-gray-800 font-semibold">
+                ✨ <em>"La generosità dimostra al tuo subconscio che possiedi più di quanto ti occorra, attraendo ulteriore prosperità."</em>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section 4: Infografica Riprogrammazione Mentale (15 Affermazioni Potenzianti) -->
+        <div class="bg-gradient-to-br from-gray-900 to-indigo-950/60 p-6 sm:p-8 rounded-3xl border border-indigo-800/60 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-4">
+            <div>
+              <span class="px-3 py-1 bg-indigo-900/50 text-indigo-300 text-xs font-bold rounded-full border border-indigo-700">INFOGRAFICA SPECIALE #3</span>
+              <h4 class="text-xl font-extrabold text-white mt-1">🧠 Riprogrammazione Subconscia: Le 10 Affermazioni della Prosperità</h4>
+            </div>
+            <span class="text-xs text-gray-400">Tecnica Pratica Phil Laut</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">01.</span>
+              <span>"I soldi sono miei amici e la mia ricchezza cresce ogni giorno in modo sano."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">02.</span>
+              <span>"È sicuro e giusto per me guadagnare più di quanto abbiano guadagnato i miei genitori."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">03.</span>
+              <span>"Il mio valore percepito ed il mio reddito si espandono continuamente."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">04.</span>
+              <span>"Spendo con gioia per cose di valore ed accantono con disciplina il mio futuro."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">05.</span>
+              <span>"I miei 7 conti lavorano in armonia garantendomi serenità assoluta."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">06.</span>
+              <span>"La mia ricchezza porta valore, occupazione e sicurezza a me ed alla mia comunità."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">07.</span>
+              <span>"Accetto l'abbondanza ed azzero ogni forma di ansia o senso di colpa finanziario."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">08.</span>
+              <span>"Il mio capitale genera rendimenti costanti che lavorano al posto mio."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">09.</span>
+              <span>"La generosità mantiene attivo ed aperto il flusso di ricchezza nella mia vita."</span>
+            </div>
+            <div class="bg-gray-950/80 p-3.5 rounded-xl border border-indigo-900/40 text-gray-200 flex items-center gap-3">
+              <span class="text-indigo-400 font-bold">10.</span>
+              <span>"Paco per primo me stesso ogni mese prima di qualsiasi altra spesa."</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-[#111] text-gray-400 mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+      <div>
+        <div class="text-2xl font-black text-white">Trend<span class="brand-text">Scan</span></div>
+        <p class="mt-2 text-xs leading-relaxed">Hub di finanza personale: articoli selezionati, video educativi e guide pratiche, in italiano.</p>
+      </div>
+      <div class="text-xs leading-relaxed space-y-2">
+        <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Fonti e diritti</div>
+        <p>Gli articoli appartengono alle rispettive testate: qui sono riportati solo titolo, breve anteprima e link alla fonte. I video sono incorporati dal player ufficiale di YouTube e restano dei rispettivi autori.</p>
+      </div>
+      <div class="text-xs leading-relaxed space-y-2">
+        <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Avvertenza</div>
+        <p>I contenuti hanno scopo informativo ed educativo e non costituiscono consulenza finanziaria, fiscale o legale né sollecitazione all'investimento. Ogni investimento comporta rischi, compresa la perdita del capitale.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // DATA_BASE: dove leggere gli articoli/video aggiornati ogni ora (ramo "data" del repository GitHub, repository PUBBLICO).
+    // Formato: https://raw.githubusercontent.com/UTENTE/REPOSITORY/data/   (con lo slash finale)
+    window.TRENDSCAN_CONFIG = { DATA_BASE: "https://raw.githubusercontent.com/Trendscan70/trendscan/data/" };
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

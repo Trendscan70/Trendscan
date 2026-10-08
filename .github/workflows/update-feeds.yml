@@ -1,0 +1,63 @@
+name: Aggiorna articoli e video
+
+# I dati vengono salvati nel ramo "data" (NON in main): cosi' Netlify non ripubblica il sito a ogni aggiornamento.
+on:
+  schedule:
+    - cron: "15 * * * *"        # ogni ora
+  workflow_dispatch: {}          # pulsante "Run workflow"
+  push:                          # parte anche quando carichi/modifichi questi file
+    branches: [main, master]
+    paths: ["config/**", "scripts/**", ".github/workflows/**"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-feeds
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Recupera i dati precedenti dal ramo "data" (se esiste)
+        run: |
+          mkdir -p public/data
+          if git ls-remote --exit-code --heads origin data >/dev/null 2>&1; then
+            git fetch --depth 1 origin data
+            for f in articles.json videos.json channel-ids.json; do
+              git show "FETCH_HEAD:$f" > "/tmp/prev-$f" 2>/dev/null && cp "/tmp/prev-$f" "public/data/$f" || true
+            done
+          fi
+
+      - name: Raccogli articoli e video
+        id: feeds
+        run: node scripts/build-feeds.mjs
+        continue-on-error: true      # salviamo comunque quello che e' riuscito
+
+      - name: Pubblica i dati sul ramo "data"
+        run: |
+          set -e
+          rm -rf /tmp/databranch && mkdir /tmp/databranch && cd /tmp/databranch
+          git init -q -b data
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git config user.name "trendscan-bot"
+          git config user.email "bot@users.noreply.github.com"
+          for f in articles.json videos.json channel-ids.json; do
+            if [ -s "$GITHUB_WORKSPACE/public/data/$f" ]; then cp "$GITHUB_WORKSPACE/public/data/$f" .; fi
+          done
+          git add .
+          git commit -qm "Aggiorna feed $(date -u +%FT%H:%MZ)"
+          git push --force origin data   # un solo commit sempre sostituito: nessun conflitto, nessuna storia che cresce
+
+      - name: Segnala errori (guarda il log di "Raccogli")
+        if: steps.feeds.outcome == 'failure'
+        run: |
+          echo "::error::Raccolta incompleta: apri il passaggio 'Raccogli articoli e video' per vedere quali fonti non rispondono."
+          exit 1

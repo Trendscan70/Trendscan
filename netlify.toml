@@ -1,0 +1,18 @@
+# Configurazione Netlify per TrendScan (sito statico)
+[build]
+  publish = "public"
+  command = ""
+  # Non pubblicare il ramo "data": contiene solo i file JSON aggiornati ogni ora dal workflow GitHub.
+  # (Una pubblicazione in produzione costa 15 crediti: i dati NON devono far ripubblicare il sito.)
+  ignore = "test \"$BRANCH\" = \"data\""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
