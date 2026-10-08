@@ -1,0 +1,2 @@
+# Trendscan
+Nuovo Hib Finanziario
