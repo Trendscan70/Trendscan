@@ -84,3 +84,35 @@ input[type=range]::-moz-range-track { height: 6px; background: #1f2937; border-r
 
 /* le ancore delle guide non devono finire sotto l'header fisso */
 [id^="guide-"] { scroll-margin-top: 150px; }
+
+
+/* ==== Modalità scura (le Guide sono già scure) ==== */
+html.dark body { background: #0a0d14; color: #e5e7eb; }
+html.dark #themeToggle { background: #1a2030; border-color: #2b3347; }
+html.dark header, html.dark .bg-white:not(#academyRoot *) { background: #121826; }
+html.dark .bg-\[\#f4f5f7\] { background: #0a0d14; }
+html.dark .bg-gray-100:not(#academyRoot *), html.dark .bg-gray-200:not(#academyRoot *), html.dark .chip { background: #1c2335; color: #d1d5db; }
+html.dark .chip.active { background: #e5e7eb; color: #111; }
+html.dark .border-gray-100:not(#academyRoot *), html.dark .border-gray-200:not(#academyRoot *), html.dark .border-gray-300:not(#academyRoot *),
+html.dark .card, html.dark .hero-side, html.dark .btn-ghost { border-color: #2b3347; }
+html.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: #2b3347; }
+html.dark .card, html.dark .hero-side, html.dark .btn-ghost { background: #121826; color: #e5e7eb; }
+html.dark .text-gray-900:not(#academyRoot *) { color: #f3f4f6; }
+html.dark .text-gray-700:not(#academyRoot *), html.dark .nav-link { color: #d1d5db; }
+html.dark .text-gray-600:not(#academyRoot *) { color: #aab2c0; }
+html.dark .text-gray-500:not(#academyRoot *) { color: #8b94a7; }
+html.dark .nav-link:hover { background: #2a1a17; color: #ff7b66; }
+html.dark .nav-link.active { background: var(--brand); color: #fff; }
+html.dark .section-bar { background: #2b3347; }
+html.dark .thumb { background: #1c2335; }
+html.dark .queue-item:hover { background: #1a2030; }
+html.dark .queue-item.playing { background: #2a1a17; }
+html.dark input, html.dark select { color-scheme: dark; color: #e5e7eb; }
+html.dark .focus\:bg-white:focus { background: #1c2335; }
+html.dark #academyRoot { border: 1px solid #1f2937; }
+html.dark code.bg-gray-100 { background: #1c2335 !important; }
+
+/* ==== Pubblicità (attiva solo da ads.js, dopo il consenso) ==== */
+.ad-slot { min-height: 120px; text-align: center; }
+.ad-slot::before { content: 'Pubblicità'; display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
+.ad-slot.hidden { display: none; }
