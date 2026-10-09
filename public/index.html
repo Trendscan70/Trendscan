@@ -74,6 +74,19 @@
       <!-- Hero -->
       <div id="heroGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-5"></div>
 
+      <!-- Regalo: foglio Excel -->
+      <a href="#guide" data-gift="1" class="block rounded-3xl overflow-hidden border border-emerald-400/60 p-5 sm:p-6 text-white relative" style="background:linear-gradient(120deg,#065f46,#10b981)">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="text-5xl" aria-hidden="true">🎁</div>
+          <div class="flex-1">
+            <div class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-100">Regalo gratuito</div>
+            <div class="text-xl sm:text-2xl font-black leading-tight">Il foglio Excel per il tuo bilancio familiare</div>
+            <div class="text-sm text-emerald-50">Tieni sotto controllo entrate, spese e risparmio mese per mese.</div>
+          </div>
+          <span class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-white text-emerald-800 font-extrabold text-sm shrink-0">Scaricalo ora →</span>
+        </div>
+      </a>
+
       <!-- Argomenti con immagini -->
       <div>
         <div class="section-title"><h2>Di cosa vuoi parlare?</h2><span class="section-bar"></span></div>
@@ -182,12 +195,42 @@
       </div>
 
 
+      <!-- ===== REGALO: BILANCIO FAMILIARE (Excel) ===== -->
+      <section id="guide-bilancio" class="relative overflow-hidden rounded-3xl border border-emerald-400/50 p-6 sm:p-8" style="background:linear-gradient(135deg,#064e3b 0%,#047857 55%,#10b981 100%);box-shadow:0 0 0 1px rgba(16,185,129,.3),0 20px 50px -20px rgba(16,185,129,.55)">
+        <div class="absolute -right-6 -top-6 text-[9rem] leading-none opacity-15 select-none pointer-events-none" aria-hidden="true">🎁</div>
+        <div class="relative grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
+          <div class="lg:col-span-3 space-y-3">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-extrabold uppercase tracking-widest border border-white/30">🎁 Il nostro regalo per te · Gratis</span>
+            <h3 class="text-2xl sm:text-3xl font-black text-white leading-tight">Scarica il foglio Excel per il tuo bilancio familiare</h3>
+            <p class="text-sm sm:text-base text-emerald-50 leading-relaxed">Scopri dove vanno i tuoi soldi e quanto riesci a mettere da parte ogni mese. Inserisci entrate e spese: il foglio calcola da solo i totali, il risparmio e mostra un grafico per categoria. È il primo passo prima di iniziare un PAC.</p>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 text-sm text-white">
+              <li>✅ 12 fogli mensili, da gennaio a dicembre</li>
+              <li>✅ Entrate, spese per categoria e risparmio</li>
+              <li>✅ Grafico delle spese di ogni mese</li>
+              <li>✅ Confronto tra saldo stimato e saldo reale</li>
+              <li>✅ Con istruzioni nella pagina «Leggimi»</li>
+              <li>✅ Per Excel, LibreOffice e Google Fogli</li>
+            </ul>
+          </div>
+          <div class="lg:col-span-2 flex flex-col items-center gap-3">
+            <div class="w-full max-w-xs rounded-2xl bg-white/95 p-5 text-center shadow-xl">
+              <div class="text-5xl mb-1">📊</div>
+              <div class="font-extrabold text-gray-900">Bilancio familiare</div>
+              <div id="budgetMeta" class="text-xs text-gray-500 mb-3">File Excel (.xlsx)</div>
+              <div id="budgetDownload"></div>
+            </div>
+            <p class="text-[11px] text-emerald-100 text-center max-w-xs">🔒 Nessuna registrazione. I tuoi dati restano sul tuo dispositivo: il sito non li raccoglie. Strumento di organizzazione personale, non consulenza finanziaria.</p>
+          </div>
+        </div>
+      </section>
+
       <!-- ===== INDICE RAPIDO ===== -->
       <div class="flex flex-wrap gap-2 text-xs font-bold">
         <button data-scroll="guide-etf" class="px-3 py-1.5 rounded-full bg-gray-900 border border-gray-700 hover:border-indigo-400">📦 Cos'è un ETF</button>
         <button data-scroll="guide-pac" class="px-3 py-1.5 rounded-full bg-gray-900 border border-gray-700 hover:border-indigo-400">🔁 Cos'è un PAC</button>
         <button data-scroll="guide-composto" class="px-3 py-1.5 rounded-full bg-gray-900 border border-gray-700 hover:border-indigo-400">❄️ Interesse composto</button>
         <button data-scroll="guide-broker" class="px-3 py-1.5 rounded-full bg-gray-900 border border-gray-700 hover:border-indigo-400">🏦 Broker per PAC</button>
+        <button data-scroll="guide-bilancio" class="px-3 py-1.5 rounded-full bg-emerald-600 text-white border border-emerald-400 hover:bg-emerald-500">🎁 Excel gratis: bilancio familiare</button>
       </div>
 
       <!-- ===== COS'È UN ETF ===== -->

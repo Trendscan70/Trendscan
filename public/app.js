@@ -82,6 +82,7 @@ async function bootstrap() {
   state.videosLoaded = !!v;
 
   initTheme();
+  renderBudgetDownload();
   renderBrokers();
   renderCategoryBar();
   renderSourceFilter();
@@ -635,4 +636,33 @@ function renderBrokers() {
     <thead class="text-gray-400 uppercase text-[10px] border-b border-gray-800"><tr><th class="px-4 py-2">Broker</th><th class="px-4 py-2">Costo PAC</th><th class="px-4 py-2">Ordine manuale</th><th class="px-4 py-2">Regime fiscale</th><th class="px-4 py-2">Note</th><th class="px-4 py-2"></th></tr></thead>
     <tbody>${rows}</tbody></table></div>`;
   const n = $('affiliateNote'); if (n) n.classList.toggle('hidden', !hasAff);
+}
+
+
+// ------------------------------------------------------------------ download foglio Excel (bilancio familiare)
+// Opzione A (consigliata): metti il file in public/downloads/bilancio-familiare.xlsx e lascia driveId vuoto.
+// Opzione B: condividi il file su Google Drive ("Chiunque abbia il link") e incolla l'ID qui sotto
+//            (l'ID è la parte tra /d/ e /view nel link di condivisione).
+const BUDGET_SHEET = { file: 'downloads/bilancio-familiare.xlsx', driveId: '', label: 'Bilancio-familiare-TrendScan.xlsx' };
+// Dimensione indicata sotto il pulsante (letta dal server se disponibile)
+async function renderBudgetDownload() {
+  const el = $('budgetDownload'); if (!el) return;
+  const btn = 'inline-flex items-center gap-2 px-5 py-3 rounded-xl font-extrabold text-sm shadow-lg';
+  if (/^[\w-]{10,}$/.test(BUDGET_SHEET.driveId || '')) {
+    const id = BUDGET_SHEET.driveId;
+    el.innerHTML = `<a href="https://drive.google.com/uc?export=download&id=${id}" target="_blank" rel="noopener noreferrer" class="${btn} bg-emerald-600 hover:bg-emerald-500 text-white">⬇️ Scarica il foglio Excel</a>
+      <div class="mt-1.5 text-[11px] text-gray-400 text-center"><a class="underline" href="https://docs.google.com/spreadsheets/d/${id}/copy" target="_blank" rel="noopener noreferrer">oppure crea la tua copia in Google Fogli</a></div>`;
+    return;
+  }
+  let ok = false;
+  try {
+    const r = await fetch(BUDGET_SHEET.file, { method: 'HEAD', cache: 'no-cache' });
+    ok = r.ok && !/text\/html/i.test(r.headers.get('content-type') || '');
+    const len = parseInt(r.headers.get('content-length') || '0', 10);
+    const meta = $('budgetMeta');
+    if (ok && meta && len > 0) meta.textContent = 'File Excel (.xlsx) · ' + Math.max(1, Math.round(len / 1024)) + ' KB';
+  } catch (e) {}
+  el.innerHTML = ok
+    ? `<a href="${esc(BUDGET_SHEET.file)}" download="${esc(BUDGET_SHEET.label)}" class="${btn} bg-emerald-600 hover:bg-emerald-500 text-white w-full justify-center">⬇️ Scarica gratis</a>`
+    : `<span class="${btn} bg-gray-300 text-gray-600 cursor-not-allowed w-full justify-center">⏳ Disponibile a breve</span>`;
 }
