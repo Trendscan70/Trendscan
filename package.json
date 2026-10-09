@@ -10,6 +10,6 @@
     "build:css": "tailwindcss -i src/tailwind.input.css -o public/tailwind.css --minify"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.19"
+    "tailwindcss": "^4.3.3"
   }
 }
