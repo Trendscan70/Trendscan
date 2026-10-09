@@ -1,1 +1,0 @@
-# ads.txt – sostituisci con la riga fornita da AdSense dopo l'approvazione (formato: google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0)
