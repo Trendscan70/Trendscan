@@ -81,6 +81,8 @@ async function bootstrap() {
   if (v) { state.channels = v.channels || []; state.videos = (v.videos || []).filter(x => validVid(x.id)); state.videoMeta = v.meta || null; }
   state.videosLoaded = !!v;
 
+  initTheme();
+  renderBrokers();
   renderCategoryBar();
   renderSourceFilter();
   renderAll();
@@ -212,10 +214,16 @@ function renderHomeVideos() {
 
 function renderGuideTeasers() {
   const items = [
+    { id: 'guide-etf', t: 'Cos\'è un ETF', d: 'Il paniere di titoli che si compra con un solo ordine: vantaggi, rischi e costi.', cls: 'g-investimenti', icon: '📦', img: CATEGORIES[1].img },
+    { id: 'guide-composto', t: 'PAC e potenza dell\'interesse composto', d: 'Perché cominciare presto conta più di versare tanto.', cls: 'g-risparmio', icon: '❄️', img: CATEGORIES[2].img },
+    { id: 'guide-broker', t: 'Broker con PAC a costi bassi', d: 'Confronto di Trade Republic, Scalable, Directa e Fineco.', cls: 'g-casa', icon: '🏦', img: CATEGORIES[5].img }
+  ];
+  const _old = [
     { id: 'guide-1', t: 'Cosa sono le azioni', d: 'Quote di un\'azienda, dividendi e orizzonte di lungo periodo.', cls: 'g-investimenti', icon: '🏢', img: CATEGORIES[1].img },
     { id: 'guide-2', t: 'Regola 50/30/20 e fondo di emergenza', d: 'Come dividere lo stipendio prima di investire.', cls: 'g-risparmio', icon: '🛡️', img: CATEGORIES[0].img },
     { id: 'guide-4', t: 'Simulatore PAC e interesse composto', d: 'Prova quanto può crescere un risparmio mensile nel tempo.', cls: 'g-casa', icon: '🧮', img: CATEGORIES[4].img }
   ];
+  void _old;
   $('guideTeasers').innerHTML = items.map(i => `
     <button class="card text-left" data-scroll="${i.id}">
       <div class="thumb aspect-[16/9] ${i.cls}"><span class="thumb-emoji">${i.icon}</span>${imgTag(i.img, i.t)}</div>
@@ -241,6 +249,7 @@ function filteredArticles() {
     (!k || `${a.title} ${a.summary} ${a.source}`.toLowerCase().includes(k)));
 }
 function renderArticles() {
+  renderCategoryIntro();
   const list = filteredArticles();
   const f = state.filter, active = f.cat !== 'ALL' || f.source !== 'ALL' || f.q;
   $('clearFilters').classList.toggle('hidden', !active);
@@ -570,3 +579,60 @@ function renderCompoundChart(labels, investedData, totalBalanceData) {
 
 
 document.addEventListener('DOMContentLoaded', bootstrap);
+
+
+// ------------------------------------------------------------------ tema chiaro/scuro
+function applyTheme(t) {
+  document.documentElement.classList.toggle('dark', t === 'dark');
+  const b = document.getElementById('themeToggle');
+  if (b) { b.textContent = t === 'dark' ? '☀️' : '🌙'; b.setAttribute('aria-pressed', String(t === 'dark')); b.setAttribute('aria-label', t === 'dark' ? 'Attiva modalità chiara' : 'Attiva modalità scura'); }
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', t === 'dark' ? '#0a0d14' : '#f4f5f7');
+}
+function initTheme() {
+  applyTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  const b = document.getElementById('themeToggle');
+  if (b) b.addEventListener('click', () => {
+    const t = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(t); try { localStorage.setItem('ts-theme', t); } catch (e) {}
+  });
+}
+
+// ------------------------------------------------------------------ intro categoria ETF
+function renderCategoryIntro() {
+  const el = $('categoryIntro'); if (!el) return;
+  if (state.filter.cat !== 'ETF e Investimenti') { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="rounded-2xl border border-indigo-200 bg-indigo-50 p-5 text-sm leading-relaxed" style="background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.35)">
+    <div class="font-extrabold text-lg mb-1">📦 Cos'è un ETF?</div>
+    <p>Un <b>ETF</b> (Exchange Traded Fund) è un fondo <b>quotato in borsa</b> che replica un indice: con una sola quota acquisti in un colpo molti titoli, quindi ti diversifichi con costi in genere bassi. Con un <b>PAC</b> lo compri a rate fisse (es. 200 € al mese) e con l'<b>interesse composto</b> i rendimenti reinvestiti lavorano per te nel tempo. Nessun rendimento è garantito.</p>
+    <div class="mt-3 flex flex-wrap gap-2 text-xs font-bold">
+      <button data-scroll="guide-etf" class="btn-ghost">Leggi la guida sugli ETF</button>
+      <button data-scroll="guide-composto" class="btn-ghost">PAC e interesse composto</button>
+      <button data-scroll="guide-broker" class="btn-ghost">Broker con PAC a costi bassi</button>
+    </div></div>`;
+}
+
+// ------------------------------------------------------------------ tabella broker
+// "aff": se imposti un link di affiliazione compare l'etichetta "Pubblicità" e rel="sponsored".
+const BROKERS = [
+  { name: 'Trade Republic', url: 'https://traderepublic.com/it-it', aff: '', pac: '0 € (da 1 €)', ordine: '1 € a ordine', fisco: 'Amministrato (dal 30/01/2025)', note: 'Circa 2.000+ ETF per PAC; app semplice. Catalogo ETF concentrato su alcuni emittenti.' },
+  { name: 'Scalable Capital', url: 'https://it.scalable.capital', aff: '', pac: '0 € (piano FREE)', ordine: '0,99 € a ordine (FREE)', fisco: 'Amministrato su scelta (da 09/2026): verifica', note: '2.500+ ETF per PAC; nessun canone nel piano FREE; PRIME+ a pagamento.' },
+  { name: 'Directa', url: 'https://www.directa.it', aff: '', pac: '0 € su ETF convenzionati (600+)', ordine: 'da circa 1,50 € (verifica tariffe)', fisco: 'Solo amministrato', note: 'Broker italiano storico; PAC solo su ETF in lista (iShares, Amundi, Xtrackers, Vanguard).' },
+  { name: 'Fineco', url: 'https://www.finecobank.com', aff: '', pac: 'Gratis su selezione ETF e per under 30; altrimenti da 2,95 €/mese per ETF', ordine: 'secondo conto/tariffa', fisco: 'Amministrato o dichiarativo', note: 'Banca completa con ampia gamma di mercati; costi più alti se non rientri nelle promo.' }
+];
+function renderBrokers() {
+  const el = $('brokerTable'); if (!el) return;
+  const hasAff = BROKERS.some(b => b.aff);
+  const rows = BROKERS.map(b => {
+    const href = b.aff || b.url;
+    const rel = b.aff ? 'sponsored noopener noreferrer' : 'noopener noreferrer';
+    return `<tr class="border-b border-gray-800/60 align-top">
+      <td class="px-4 py-3 font-bold text-white whitespace-nowrap">${esc(b.name)}${b.aff ? ' <span class="ml-1 px-1.5 py-0.5 rounded bg-amber-900/60 text-amber-200 text-[9px] uppercase">Pubblicità</span>' : ''}</td>
+      <td class="px-4 py-3 text-emerald-300">${esc(b.pac)}</td><td class="px-4 py-3">${esc(b.ordine)}</td><td class="px-4 py-3">${esc(b.fisco)}</td>
+      <td class="px-4 py-3 text-gray-300">${esc(b.note)}</td>
+      <td class="px-4 py-3"><a href="${esc(safeUrl(href))}" target="_blank" rel="${rel}" class="text-indigo-300 underline whitespace-nowrap">Sito ufficiale ↗</a></td></tr>`;
+  }).join('');
+  el.innerHTML = `<div class="overflow-x-auto rounded-2xl border border-gray-800"><table class="w-full text-xs text-left min-w-[820px] text-gray-200">
+    <thead class="text-gray-400 uppercase text-[10px] border-b border-gray-800"><tr><th class="px-4 py-2">Broker</th><th class="px-4 py-2">Costo PAC</th><th class="px-4 py-2">Ordine manuale</th><th class="px-4 py-2">Regime fiscale</th><th class="px-4 py-2">Note</th><th class="px-4 py-2"></th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+  const n = $('affiliateNote'); if (n) n.classList.toggle('hidden', !hasAff);
+}
