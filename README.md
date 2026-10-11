@@ -65,3 +65,6 @@ Il sito è predisposto ma **non mostra annunci** finché non attivi `public/ads.
 - **Search Console**: aggiungi il sito su https://search.google.com/search-console (proprietà «Prefisso URL»), verifica la proprietà, invia `sitemap.xml` e usa «Controllo URL → Richiedi indicizzazione». Fai lo stesso su Bing Webmaster Tools.
 - **Plugin Netlify «Sitemap»**: rigenera `sitemap.xml` a ogni pubblicazione e può sovrascrivere questa versione; conviene disinstallarlo (Netlify → Integrations).
 - Quando le sezioni avranno indirizzi propri (`/guide/...`) vanno aggiunte alla sitemap.
+
+## Pagine di fiducia
+`/chi-siamo/`, `/contatti/` (email trendscan@proton.me), `/metodo/`, `/privacy/`, `/cookie/`, `/avvertenze/` sono pagine HTML statiche (cartelle in `public/`), collegate dal footer e presenti in `sitemap.xml`. Prima dell'attivazione di pubblicità o statistiche vanno aggiornate privacy e cookie policy. Nella privacy c'è un commento HTML «TODO» per inserire nome e recapito del titolare del trattamento.
