@@ -82,6 +82,7 @@ async function bootstrap() {
   state.videosLoaded = !!v;
 
   initTheme();
+  initFontSize();
   renderBudgetDownload();
   renderBrokers();
   renderCategoryBar();
@@ -665,4 +666,30 @@ async function renderBudgetDownload() {
   el.innerHTML = ok
     ? `<a href="${esc(BUDGET_SHEET.file)}" download="${esc(BUDGET_SHEET.label)}" class="${btn} bg-emerald-600 hover:bg-emerald-500 text-white w-full justify-center">⬇️ Scarica gratis</a>`
     : `<span class="${btn} bg-gray-300 text-gray-600 cursor-not-allowed w-full justify-center">⏳ Disponibile a breve</span>`;
+}
+
+
+// ------------------------------------------------------------------ dimensione del testo (Guide)
+const FS_STEPS = [85, 100, 115, 130, 150];
+let fsIndex = 1;
+function applyFontSize() {
+  const pct = FS_STEPS[fsIndex];
+  const root = document.getElementById('academyRoot');
+  const zoomOk = window.CSS && CSS.supports && CSS.supports('zoom', '1.2');
+  if (zoomOk) { if (root) root.style.setProperty('--guide-zoom', String(pct / 100)); document.documentElement.style.fontSize = ''; }
+  else document.documentElement.style.fontSize = pct + '%';   // browser molto vecchi: ingrandisce tutto il sito
+  document.querySelectorAll('.fs-label').forEach(el => { el.textContent = pct + '%'; });
+  document.querySelectorAll('[data-fs="-1"]').forEach(b => { b.disabled = fsIndex === 0; });
+  document.querySelectorAll('[data-fs="1"]').forEach(b => { b.disabled = fsIndex === FS_STEPS.length - 1; });
+}
+function initFontSize() {
+  try { const v = parseInt(localStorage.getItem('ts-guide-fs'), 10); if (v >= 0 && v < FS_STEPS.length) fsIndex = v; } catch (e) {}
+  applyFontSize();
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-fs]'); if (!b || b.disabled) return;
+    const d = parseInt(b.dataset.fs, 10);
+    fsIndex = d === 0 ? 1 : Math.min(FS_STEPS.length - 1, Math.max(0, fsIndex + d));
+    try { localStorage.setItem('ts-guide-fs', String(fsIndex)); } catch (err) {}
+    applyFontSize();
+  });
 }

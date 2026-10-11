@@ -116,3 +116,15 @@ html.dark code.bg-gray-100 { background: #1c2335 !important; }
 .ad-slot { min-height: 120px; text-align: center; }
 .ad-slot::before { content: 'Pubblicità'; display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
 .ad-slot.hidden { display: none; }
+
+
+/* ==== Guide: capitoli, sommario e dimensione del testo ==== */
+#academyRoot { zoom: var(--guide-zoom, 1); }
+[id^="guide-"] { scroll-margin-top: 84px; }
+.guide-tools { position: fixed; right: 12px; bottom: 16px; z-index: 30; display: flex; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(17,24,39,.92); border: 1px solid #374151; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.guide-tools button { min-width: 38px; height: 38px; padding: 0 10px; border-radius: 999px; color: #fff; font-weight: 900; font-size: 14px; background: #1f2937; }
+.guide-tools button:hover { background: #4f46e5; }
+.guide-tools button[disabled], .fs-btn[disabled] { opacity: .35; cursor: not-allowed; }
+.view.hidden .guide-tools { display: none; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
