@@ -398,7 +398,19 @@ function showView(name) {
   $('view-' + name).classList.remove('hidden');
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === name));
   window.scrollTo({ top: 0 });
+  setPageMeta(name);
   if (name === 'guide') setTimeout(updateCalculator, 60);
+}
+const PAGE_META = {
+  home: ['TrendScan – Hub di Finanza Personale: articoli, video e guide', 'Gli articoli di finanza personale più utili dai principali giornali italiani, video educativi e guide pratiche su risparmio, ETF e PAC.'],
+  articoli: ['Articoli di finanza personale: risparmio, ETF, pensione, mutui | TrendScan', 'Le notizie di finanza personale dai principali giornali italiani, divise per argomento: risparmio, ETF, pensione, casa, tasse e conti.'],
+  video: ['Video educativi di finanza personale e investimenti | TrendScan', 'La playlist dei migliori canali YouTube italiani di finanza: risparmio, ETF, PAC e gestione del denaro, da guardare uno dopo l\'altro.'],
+  guide: ['Guide: cos\'è un ETF, PAC e PIC, interesse composto, broker | TrendScan', 'Guide semplici per principianti: cos\'è un ETF, differenza tra PAC e PIC, interesse composto, broker con PAC a costi bassi e foglio Excel gratuito per il bilancio familiare.']
+};
+function setPageMeta(name) {
+  const m = PAGE_META[name] || PAGE_META.home;
+  document.title = m[0];
+  const d = document.querySelector('meta[name="description"]'); if (d) d.setAttribute('content', m[1]);
 }
 function route() {
   const h = (location.hash || '#home').slice(1);

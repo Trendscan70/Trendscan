@@ -16,3 +16,13 @@
   for = "/data/*"
   [headers.values]
     Cache-Control = "public, max-age=300"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
