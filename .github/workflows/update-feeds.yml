@@ -38,6 +38,8 @@ jobs:
 
       - name: Raccogli articoli e video
         id: feeds
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}   # facoltativo: vedi README
         run: node scripts/build-feeds.mjs
         continue-on-error: true      # salviamo comunque quello che e' riuscito
 
