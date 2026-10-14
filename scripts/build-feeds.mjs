@@ -12,7 +12,8 @@
  * VIDEO     per ogni canale trova il channelId (verificando che il nome del canale corrisponda), legge il feed
  *           pubblico di YouTube e scrive data/videos.json.
  *
- * Variabili: DATA_DIR (default public/data), FEEDS_CONFIG (percorso config), YT_BASE (default https://www.youtube.com)
+ * Variabili: DATA_DIR (default public/data), FEEDS_CONFIG (percorso config), YT_BASE (default https://www.youtube.com),
+ *            YOUTUBE_API_KEY (facoltativa: usa l'API ufficiale di YouTube, molto più affidabile dei feed RSS)
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -147,6 +148,43 @@ async function loadSource(src) {
   return { ok: false, tried };
 }
 
+// Immagine di anteprima presa dalla pagina originale dell'articolo (og:image / twitter:image) quando il feed non la fornisce.
+// Non scarica l'immagine: salva solo il suo indirizzo, che la pagina usa come miniatura.
+const BAD_IMG = /(logo|favicon|sprite|placeholder|default[-_]?(og|share|image)|blank|spacer)/i;
+function extractPageImage(html, pageUrl) {
+  const head = html.slice(0, 250000);
+  const found = {};
+  for (const tag of head.match(/<meta\b[^>]*>/gi) || []) {
+    const key = (attrOf(tag, 'property') || attrOf(tag, 'name')).toLowerCase();
+    if (['og:image', 'og:image:secure_url', 'og:image:url', 'twitter:image', 'twitter:image:src'].includes(key) && !found[key]) found[key] = attrOf(tag, 'content');
+  }
+  const link = (head.match(/<link\b[^>]*rel\s*=\s*["']image_src["'][^>]*>/i) || [''])[0];
+  const cands = [found['og:image:secure_url'], found['og:image'], found['og:image:url'], found['twitter:image'], found['twitter:image:src'], link && attrOf(link, 'href')];
+  for (const c of cands) {
+    if (!c) continue;
+    try { const u = httpsUrl(new URL(c.trim(), pageUrl).toString()); if (u && !BAD_IMG.test(u)) return u; } catch { /* non valido */ }
+  }
+  return '';
+}
+
+async function enrichImages(list, { limit = 90, concurrency = 6, maxTries = 3 } = {}) {
+  const todo = list.filter(a => !a.image && (a.imgTry || 0) < maxTries).slice(0, limit);
+  let got = 0, i = 0;
+  async function worker() {
+    while (i < todo.length) {
+      const a = todo[i++];
+      try {
+        const html = await fetchText(a.url, { timeout: 12000, headers: { Accept: 'text/html,*/*' } });
+        const img = extractPageImage(html, a.url);
+        if (img) { a.image = img; delete a.imgTry; got++; } else a.imgTry = (a.imgTry || 0) + 1;
+      } catch { a.imgTry = (a.imgTry || 0) + 1; }
+      await sleep(150);
+    }
+  }
+  await Promise.all(Array.from({ length: concurrency }, worker));
+  console.log(`IMMAGINI: ${got}/${todo.length} miniature recuperate dalle pagine originali`);
+}
+
 async function buildArticles() {
   const A = CFG.articles;
   const exclude = new RegExp(A.exclude, 'i');
@@ -188,8 +226,8 @@ async function buildArticles() {
   if (!collected.length) {
     const msg = 'nessun articolo raccolto: i siti non rispondono dal server di raccolta o nessun articolo supera il filtro';
     report.forEach(r => console.log(`  ${r.status === 'ok' ? '✓' : '✗'} ${r.name} ${r.detail || ''}`));
-    await writeFailure(`${DATA_DIR}/articles.json`, { meta: { count: 0 }, articles: [] }, msg, report);
-    throw new Error(msg);
+    const kept = await writeFailure(`${DATA_DIR}/articles.json`, { meta: { count: 0 }, articles: [] }, msg, report);
+    throw Object.assign(new Error(msg), { kept });
   }
 
   // unisce con il file precedente (cosi' gli articoli non spariscono quando escono dalla finestra del feed)
@@ -208,6 +246,8 @@ async function buildArticles() {
     seenUrl.add(a.url); seenTitle.add(nt); out.push(a);
     if (out.length >= A.maxTotal) break;
   }
+
+  await enrichImages(out);
 
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(`${DATA_DIR}/articles.json`, JSON.stringify({ meta: { generatedAt: new Date().toISOString(), count: out.length, sources: report }, articles: out }));
@@ -275,6 +315,56 @@ function parseVideoFeed(xml, max) {
   return out;
 }
 
+const YT_API = process.env.YT_API_BASE || 'https://www.googleapis.com/youtube/v3';
+const YT_KEY = process.env.YOUTUBE_API_KEY || '';   // facoltativa: chiave "YouTube Data API v3" (segreto di GitHub)
+
+async function withRetry(fn, tries = 2) {
+  let last;
+  for (let i = 0; i < tries; i++) {
+    try { return await fn(); } catch (e) {
+      last = e;
+      if (/HTTP 404/.test(e.message)) break;   // inutile riprovare se la pagina non esiste
+      await sleep(800 * (i + 1));
+    }
+  }
+  throw last;
+}
+const isoSeconds = d => { const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(d || ''); return m ? (+m[1] || 0) * 3600 + (+m[2] || 0) * 60 + (+m[3] || 0) : null; };
+
+// Ultimi video di un canale tramite l'API ufficiale di YouTube (playlist "caricamenti" = UU + resto dell'ID canale)
+async function videosViaApi(channelId, max) {
+  const q = (path, o) => `${YT_API}/${path}?${new URLSearchParams({ ...o, key: YT_KEY })}`;
+  const list = JSON.parse(await fetchText(q('playlistItems', { part: 'snippet,contentDetails', playlistId: 'UU' + channelId.slice(2), maxResults: String(Math.min(50, max * 2)) })));
+  const items = (list.items || [])
+    .map(i => ({ id: i.contentDetails?.videoId || i.snippet?.resourceId?.videoId, title: i.snippet?.title || '', publishedAt: i.contentDetails?.videoPublishedAt || i.snippet?.publishedAt || '' }))
+    .filter(v => v.id && v.title && !/^(Private|Deleted) video$/.test(v.title));
+  const det = {};
+  if (items.length) {
+    const d = JSON.parse(await fetchText(q('videos', { part: 'contentDetails,statistics', id: items.map(v => v.id).join(',') })));
+    for (const v of d.items || []) det[v.id] = { sec: isoSeconds(v.contentDetails?.duration), views: v.statistics?.viewCount ? Number(v.statistics.viewCount) : null };
+  }
+  return items
+    .filter(v => { const sec = det[v.id]?.sec; return sec == null || sec > 70; })   // niente Shorts
+    .slice(0, max)
+    .map(v => ({ ...v, views: det[v.id]?.views ?? null, thumb: `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` }));
+}
+
+// Prova più strade, nell'ordine: API ufficiale (se c'è la chiave), feed RSS del canale, feed RSS della playlist "caricamenti".
+async function fetchChannelVideos(channelId, max) {
+  const errors = [];
+  const rss = async path => parseVideoFeed(await fetchText(`${YT}/feeds/videos.xml?${path}`), max);
+  const tries = [
+    ['rss-canale', () => rss(`channel_id=${channelId}`)],
+    ['rss-playlist', () => rss(`playlist_id=UU${channelId.slice(2)}`)]
+  ];
+  if (YT_KEY) tries.unshift(['api', () => videosViaApi(channelId, max)]);
+  for (const [how, fn] of tries) {
+    try { const v = await withRetry(fn, 2); if (v.length) return { vids: v, how }; errors.push(how + ': nessun video'); }
+    catch (e) { errors.push(how + ': ' + e.message); }
+  }
+  throw new Error(errors.join(' | '));
+}
+
 async function buildVideos() {
   const V = CFG.videos;
   let cache = {};
@@ -294,11 +384,10 @@ async function buildVideos() {
     base.url = `https://www.youtube.com/channel/${info.channelId}`;
     base.handle = info.handle || base.handle;
     try {
-      const xml = await fetchText(`${YT}/feeds/videos.xml?channel_id=${info.channelId}`);
-      const vids = parseVideoFeed(xml, V.perChannel);
+      const { vids, how } = await fetchChannelVideos(info.channelId, V.perChannel);
       vids.forEach(v => allVideos.push({ ...v, channelId: ch.id }));
       base.videoCount = vids.length;
-      report.push({ name: ch.name, status: 'ok', via: info.how, video: vids.length });
+      report.push({ name: ch.name, status: 'ok', via: info.how + ' + ' + how, video: vids.length });
     } catch (e) { report.push({ name: ch.name, status: 'feed video non letto: ' + e.message }); }
     channels.push(base);
     await sleep(300);
@@ -309,8 +398,8 @@ async function buildVideos() {
   if (!videos.length) {
     const msg = 'nessun video raccolto: YouTube non risponde dal server di raccolta o i canali non sono stati risolti';
     report.forEach(r => console.log(`  ✗ ${r.name}  ${r.status}`));
-    await writeFailure(`${DATA_DIR}/videos.json`, { meta: { channels: channels.length, resolved: 0, count: 0 }, channels, videos: [] }, msg, report);
-    throw new Error(msg);
+    const kept = await writeFailure(`${DATA_DIR}/videos.json`, { meta: { channels: channels.length, resolved: 0, count: 0 }, channels, videos: [] }, msg, report);
+    throw Object.assign(new Error(msg), { kept });
   }
 
   await mkdir(DATA_DIR, { recursive: true });
@@ -326,14 +415,15 @@ async function buildVideos() {
 async function writeFailure(file, emptyShape, error, report) {
   let prevOk = false;
   try { const p = JSON.parse(await readFile(file, 'utf8')); prevOk = (p.articles || p.videos || []).length > 0; } catch { /* nessun file */ }
-  if (prevOk) { console.log(`  (tengo i dati precedenti di ${file})`); return; }
+  if (prevOk) { console.log(`  (tengo i dati precedenti di ${file})`); return true; }
   await mkdir(DATA_DIR, { recursive: true });
   const base = JSON.parse(JSON.stringify(emptyShape));
   base.meta = { ...base.meta, generatedAt: new Date().toISOString(), error, report };
   await writeFile(file, JSON.stringify(base));
+  return false;
 }
 
 let failed = false;
-if (DO_ARTICLES) await buildArticles().catch(e => { console.error('\nERRORE ARTICOLI:', e.message); failed = true; });
-if (DO_VIDEOS) await buildVideos().catch(e => { console.error('\nERRORE VIDEO:', e.message); failed = true; });
+if (DO_ARTICLES) await buildArticles().catch(e => { if (e.kept) console.log('::warning::Articoli non aggiornati (' + e.message + '). Restano online quelli precedenti.'); else { console.error('\nERRORE ARTICOLI:', e.message); failed = true; } });
+if (DO_VIDEOS) await buildVideos().catch(e => { if (e.kept) console.log('::warning::Video non aggiornati (' + e.message + '). Restano online quelli precedenti.'); else { console.error('\nERRORE VIDEO:', e.message); failed = true; } });
 process.exit(failed ? 1 : 0);
