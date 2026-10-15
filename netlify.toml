@@ -2,9 +2,8 @@
 [build]
   publish = "public"
   command = ""
-  # Non pubblicare il ramo "data": contiene solo i file JSON aggiornati ogni ora dal workflow GitHub.
-  # (Una pubblicazione in produzione costa 15 crediti: i dati NON devono far ripubblicare il sito.)
-  ignore = "test \"$BRANCH\" = \"data\""
+  # Controlla se il ramo corrente è esattamente "data" ed esce interrompendo il build
+  ignore = "git rev-parse --abbrev-ref HEAD | grep -q '^data$'"
 
 [[headers]]
   for = "/*"
