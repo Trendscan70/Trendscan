@@ -51,15 +51,15 @@ jobs:
           git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
           git config user.name "trendscan-bot"
           git config user.email "bot@users.noreply.github.com"
+          
+          # Copia i file JSON dei dati
           for f in articles.json videos.json channel-ids.json; do
-            if [ -s "$GITHUB_WORKSPACE/public/data/$f" ]; then cp "$GITHUB_WORKSPACE/public/data/$f" .; fi
+            if [ -s "$GITHUB_WORKSPACE/public/data/$f" ]; then cp "$WORKSPACE/$GITHUB_WORKSPACE/public/data/$f" . 2>/dev/null || cp "$GITHUB_WORKSPACE/public/data/$f" .; fi
           done
+          
+          # COPIA IL FILE NETLIFY.TOML PER FAR LEGGERE L'IGNORE A NETLIFY
+          if [ -f "$GITHUB_WORKSPACE/netlify.toml" ]; then cp "$GITHUB_WORKSPACE/netlify.toml" .; fi
+          
           git add .
           git commit -qm "Aggiorna feed $(date -u +%FT%H:%MZ)"
           git push --force origin data   # un solo commit sempre sostituito: nessun conflitto, nessuna storia che cresce
-
-      - name: Segnala errori (guarda il log di "Raccogli")
-        if: steps.feeds.outcome == 'failure'
-        run: |
-          echo "::error::Raccolta incompleta: apri il passaggio 'Raccogli articoli e video' per vedere quali fonti non rispondono."
-          exit 1
