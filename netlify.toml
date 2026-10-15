@@ -26,3 +26,10 @@
   for = "/sitemap.xml"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+
+# Pagina "Chi siamo": /chi-siamo (e /chi-siamo/) mostrano chi-siamo.html
+[[redirects]]
+  from = "/chi-siamo"
+  to = "/chi-siamo.html"
+  status = 200
+  force = true
