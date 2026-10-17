@@ -43,6 +43,16 @@ npm run serve         # http://localhost:8080
 ```
 Dopo la raccolta leggi il log: indica testate raggiunte e canali non trovati.
 
+## Lettura dentro TrendScan e filtri di qualità
+- **Pagina articolo interna.** Cliccando una notizia si resta su TrendScan (indirizzo `/#a/ID`, condivisibile). Si vedono titolo, fonte, data, immagine, categoria e la breve anteprima pubblicata dalla testata. Il pulsante «Torna alla home di TrendScan» è in cima e in fondo; il tasto indietro del browser riporta alla stessa posizione della home. Il testo integrale **non** viene riprodotto (diritto d'autore, e i giornali non permettono l'incorporamento in iframe): un pulsante rimanda all'articolo sul sito della fonte, che è citata in ogni card e in ogni pagina.
+- **Cosa viene scartato** (in `scripts/build-feeds.mjs`, soglie in `config/sources.json` → `articles`):
+  - `minSummaryChars` (90): notizie con anteprima più corta, o che ripete solo il titolo.
+  - `excludeTitle`: flash di borsa/spread del tipo «Borsa: Milano chiude in rialzo…».
+  - `similarTitle` (0,6): doppioni sullo stesso fatto, anche da testate diverse (resta il più recente).
+  - fuori tema: dalle testate non `trusted` passano solo gli articoli che corrispondono a una categoria (su titolo e anteprima).
+  - **a pagamento** (`checkPaywall`): la pagina originale viene visitata una sola volta e si scarta l'articolo se dichiara di non essere gratuito (JSON-LD `isAccessibleForFree: false` o meta `article:content_tier` = `locked`/`metered`). Se la pagina non risponde o non dichiara nulla, l'articolo resta. Per escludere del tutto una testata aggiungi `"paywall": "skip"` alla sua riga in `sources`.
+- Il log della raccolta (Actions) elenca quanti articoli sono stati scartati e per quale motivo. I risultati dei controlli sono salvati in `articles.json` (campi `pw` e `blocked`), così le pagine non vengono rivisitate a ogni ora.
+
 ## Note
 - **Tailwind** è precompilato in `public/tailwind.css`; se cambi le classi: `npm install` e `npm run build:css`.
 - **Diritti.** Si mostrano solo titolo, anteprima breve e link all'originale; i video sono incorporati dal player ufficiale di YouTube.

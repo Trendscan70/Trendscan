@@ -20,7 +20,8 @@ const state = {
   shown: 12,
   queue: [], qIndex: -1, channelFilter: 'ALL',
   player: null, playerReady: false,
-  compoundChartInstance: null
+  compoundChartInstance: null,
+  scroll: {}
 };
 
 // ------------------------------------------------------------------ utilita'
@@ -44,6 +45,30 @@ const validVid = id => /^[\w-]{11}$/.test(id || '');
 function imgTag(src, alt = '') {
   if (!/^https?:\/\//i.test(src || '')) return '';
   return `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`;
+}
+
+// ------------------------------------------------------------------ qualita' degli articoli
+// Rete di sicurezza: il filtro principale (brevi, flash di borsa, a pagamento, doppioni) e' in scripts/build-feeds.mjs.
+// Qui si evita solo di mostrare notizie senza anteprima o doppie finche' i dati online non sono stati rigenerati.
+const MIN_SUMMARY = 90, SIMILAR_TITLE = 0.6;
+const STOP_W = new Set('il lo la i gli le un uno una di a da in con su per tra fra e ed o che del dello della dei degli delle al allo alla ai agli alle nel nello nella nei negli nelle sul sulla sui come non si ma piu ha'.split(' '));
+const titleTokens = t => new Set(String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim().split(' ').filter(w => w.length > 2 && !STOP_W.has(w)));
+function similarTitles(A, B) {
+  if (A.size < 3 || B.size < 3) return false;
+  let n = 0; for (const w of A) if (B.has(w)) n++;
+  return n / (A.size + B.size - n) >= SIMILAR_TITLE;
+}
+function cleanArticles(list) {
+  const valid = list.filter(x => x && x.id && x.title && /^https?:\/\//i.test(x.url));
+  let kept = valid.filter(x => String(x.summary || '').trim().length >= MIN_SUMMARY);
+  if (kept.length < 6) kept = valid; // mai un sito vuoto: se il filtro svuota troppo, mostra comunque tutto
+  const out = [], toks = [];
+  for (const a of kept) {
+    const t = titleTokens(a.title);
+    if (toks.some(o => similarTitles(t, o))) continue;
+    out.push(a); toks.push(t);
+  }
+  return out;
 }
 
 // ------------------------------------------------------------------ caricamento dati
@@ -76,7 +101,7 @@ async function loadData(name) {
 async function bootstrap() {
   $('todayLabel').textContent = new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const [a, v] = await Promise.all([loadData('articles.json'), loadData('videos.json')]);
-  if (a && Array.isArray(a.articles)) { state.articles = a.articles.filter(x => x && x.title && /^https?:\/\//i.test(x.url)); state.articleMeta = a.meta || null; }
+  if (a && Array.isArray(a.articles)) { state.articles = cleanArticles(a.articles); state.articleMeta = a.meta || null; }
   state.articlesLoaded = !!a;
   if (v) { state.channels = v.channels || []; state.videos = (v.videos || []).filter(x => validVid(x.id)); state.videoMeta = v.meta || null; }
   state.videosLoaded = !!v;
@@ -94,15 +119,17 @@ async function bootstrap() {
 }
 
 function renderAll() {
-  renderHero(); renderTopicTiles(); renderHomeLatest(); renderHomeVideos(); renderGuideTeasers();
+  renderHero(); renderTopicTiles(); renderHomeLatest(); renderHomeTopics(); renderHomeVideos(); renderGuideTeasers();
   renderArticles(); renderVideoPage();
 }
 
 // ------------------------------------------------------------------ componenti
+// Le notizie si aprono dentro TrendScan (#a/ID); l'articolo originale e' raggiungibile solo dal pulsante nella pagina interna.
+const articleHref = a => '#a/' + encodeURIComponent(a.id);
 function articleCard(a) {
   const c = catOf(a.category);
   return `
-    <a href="${esc(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer" class="card group">
+    <a href="${articleHref(a)}" class="card group">
       <div class="thumb aspect-[16/10] ${c.cls}">
         <span class="cat-badge">${esc(c.name)}</span>
         <span class="thumb-emoji">${c.icon}</span>
@@ -112,7 +139,7 @@ function articleCard(a) {
         <h3 class="card-title font-extrabold leading-snug text-[17px] line-clamp-3 transition-colors">${esc(a.title)}</h3>
         ${a.summary ? `<p class="text-sm text-gray-600 mt-2 line-clamp-3 leading-relaxed">${esc(a.summary)}</p>` : ''}
         <div class="mt-auto pt-3 flex items-center justify-between text-[11px] text-gray-500">
-          <span class="font-bold text-gray-700 truncate pr-2">${esc(a.source)}</span><span class="whitespace-nowrap">${timeAgo(a.publishedAt)}</span>
+          <span class="font-bold text-gray-700 truncate pr-2" title="Fonte: ${esc(a.source)}">Fonte: ${esc(a.source)}</span><span class="whitespace-nowrap">${timeAgo(a.publishedAt)}</span>
         </div>
       </div>
     </a>`;
@@ -157,23 +184,23 @@ function renderHero() {
   const side = arts.filter(a => a !== main).slice(0, 3);
   const c = catOf(main.category);
   g.innerHTML = `
-    <a href="${esc(safeUrl(main.url))}" target="_blank" rel="noopener noreferrer" class="hero-main lg:col-span-2 ${c.cls}">
+    <a href="${articleHref(main)}" class="hero-main lg:col-span-2 ${c.cls}">
       <span class="thumb-emoji" style="font-size:6rem">${c.icon}</span>
       ${imgTag(main.image, main.title)}<div class="shade"></div>
       <div class="relative z-10 h-full min-h-[380px] flex flex-col justify-end p-6 sm:p-8">
         <span class="self-start px-3 py-1 rounded-md brand-bg text-[11px] font-extrabold uppercase tracking-widest">${esc(c.name)}</span>
         <h1 class="text-2xl sm:text-4xl font-black leading-tight mt-3 max-w-3xl">${esc(main.title)}</h1>
         ${main.summary ? `<p class="mt-2 text-gray-200 max-w-2xl text-sm line-clamp-2">${esc(main.summary)}</p>` : ''}
-        <div class="mt-3 text-xs text-gray-300 font-semibold">${esc(main.source)} · ${timeAgo(main.publishedAt)}</div>
+        <div class="mt-3 text-xs text-gray-300 font-semibold">Fonte: ${esc(main.source)} · ${timeAgo(main.publishedAt)}</div>
       </div>
     </a>
     <div class="flex flex-col gap-4">
       ${side.map(a => { const k = catOf(a.category); return `
-        <a href="${esc(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer" class="hero-side">
+        <a href="${articleHref(a)}" class="hero-side">
           <div class="thumb w-28 h-24 rounded-lg shrink-0 ${k.cls}"><span class="thumb-emoji" style="font-size:2rem">${k.icon}</span>${imgTag(a.image, a.title)}</div>
           <div class="min-w-0 flex flex-col"><div class="text-[10px] font-extrabold uppercase brand-text">${esc(k.name)}</div>
             <div class="side-title font-extrabold leading-snug line-clamp-3 text-[15px] transition-colors">${esc(a.title)}</div>
-            <div class="mt-auto text-[11px] text-gray-500">${esc(a.source)} · ${timeAgo(a.publishedAt)}</div></div>
+            <div class="mt-auto text-[11px] text-gray-500">Fonte: ${esc(a.source)} · ${timeAgo(a.publishedAt)}</div></div>
         </a>`; }).join('')}
     </div>`;
   state.heroIds = new Set([main.id, ...side.map(s => s.id)]);
@@ -192,7 +219,28 @@ function renderHomeLatest() {
   const el = $('homeLatest');
   if (!state.articles.length) { el.innerHTML = emptyBox('Gli articoli arrivano dai feed dei giornali', SETUP_HINT + failureHint(state.articleMeta)); return; }
   const skip = state.heroIds || new Set();
-  el.innerHTML = state.articles.filter(a => !skip.has(a.id)).slice(0, 9).map(articleCard).join('');
+  const latest = state.articles.filter(a => !skip.has(a.id)).slice(0, 6);
+  state.latestIds = new Set(latest.map(a => a.id));
+  el.innerHTML = latest.map(articleCard).join('');
+}
+
+// Titoli per argomento: solo notizie non gia' viste in alto, cosi' la home non si ripete.
+function renderHomeTopics() {
+  const wrap = $('homeTopicsWrap'), el = $('homeByTopic');
+  if (!wrap || !el) return;
+  const seen = new Set([...(state.heroIds || []), ...(state.latestIds || [])]);
+  const boxes = CATEGORIES.map(c => ({ c, list: state.articles.filter(a => a.category === c.name && !seen.has(a.id)).slice(0, 4) }))
+    .filter(b => b.list.length >= 2).slice(0, 6);
+  wrap.classList.toggle('hidden', !boxes.length);
+  el.innerHTML = boxes.map(({ c, list }) => `
+    <div class="topic-box">
+      <div class="topic-head ${c.cls}"><span>${c.icon} ${esc(c.name)}</span><button type="button" data-cat="${esc(c.name)}" class="topic-all">Tutti →</button></div>
+      <div class="topic-list">${list.map(a => `
+        <a href="${articleHref(a)}" class="topic-link">
+          <span class="topic-title">${esc(a.title)}</span>
+          <span class="topic-meta">Fonte: ${esc(a.source)} · ${timeAgo(a.publishedAt)}</span>
+        </a>`).join('')}</div>
+    </div>`).join('');
 }
 
 function videoCardDark(v) {
@@ -264,6 +312,54 @@ function renderArticles() {
   } else st.innerHTML = '';
   $('articleGrid').innerHTML = list.length ? list.slice(0, state.shown).map(articleCard).join('') : emptyBox('Nessun risultato', 'Prova a cambiare categoria, testata o parola cercata.');
   $('moreArticles').classList.toggle('hidden', list.length <= state.shown);
+}
+
+// ------------------------------------------------------------------ lettura dentro TrendScan
+// Mostra titolo, fonte, data, immagine e la breve anteprima pubblicata dalla testata. Il testo completo e' dei giornali:
+// non lo riproduciamo (diritto d'autore, e i giornali non consentono l'incorporamento), rimandiamo alla fonte con un pulsante.
+const domainOf = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
+function readerBar() {
+  return `<nav class="reader-bar" aria-label="Navigazione articolo">
+    <a href="#home" class="reader-back reader-back-home">← Torna alla home di TrendScan</a>
+    <a href="#articoli" class="reader-back">Tutti gli articoli</a>
+  </nav>`;
+}
+function showArticle(id) {
+  const a = state.articles.find(x => x.id === id);
+  showView('articolo');
+  const el = $('articleView');
+  if (!a) {
+    document.title = 'Articolo non disponibile | TrendScan';
+    el.innerHTML = readerBar() + emptyBox('Questa notizia non è più disponibile',
+      'È uscita dall\'elenco oppure il link è vecchio. <a href="#home" class="brand-text font-bold underline">Torna alla home di TrendScan</a> per vedere le notizie aggiornate.');
+    return;
+  }
+  const c = catOf(a.category), dom = domainOf(a.url);
+  const when = new Date(a.publishedAt).toLocaleString('it-IT', { dateStyle: 'long', timeStyle: 'short' });
+  const others = state.articles.filter(x => x.id !== a.id);
+  const related = [...others.filter(x => x.category === a.category), ...others.filter(x => x.category !== a.category)].slice(0, 3);
+  el.innerHTML = `
+    ${readerBar()}
+    <article class="reader-article">
+      <button type="button" data-cat="${esc(a.category)}" class="reader-cat ${c.cls}">${c.icon} ${esc(c.name)}</button>
+      <h1 class="reader-title">${esc(a.title)}</h1>
+      <p class="reader-meta"><span>Fonte: <b>${esc(a.source)}</b>${dom ? ` (${esc(dom)})` : ''}</span><span>${esc(when)} · ${timeAgo(a.publishedAt)}</span></p>
+      ${a.image ? `<figure class="reader-figure"><div class="thumb ${c.cls}"><span class="thumb-emoji">${c.icon}</span>${imgTag(a.image, a.title)}</div><figcaption>Immagine: ${esc(a.source)}</figcaption></figure>` : ''}
+      <section class="reader-summary" aria-label="Anteprima dalla fonte">
+        <div class="reader-label">Anteprima dalla fonte</div>
+        <p>${esc(a.summary || 'La testata non ha pubblicato un’anteprima per questa notizia.')}</p>
+      </section>
+      <a class="reader-cta" href="${esc(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer">Leggi l'articolo completo su ${esc(a.source)} <span aria-hidden="true">↗</span></a>
+      <p class="reader-note">TrendScan riporta solo titolo e breve anteprima. L'articolo è di proprietà di <b>${esc(a.source)}</b> e ogni diritto resta della testata: il testo completo si legge sul suo sito${dom ? ` (${esc(dom)})` : ''}. Contenuto informativo, non consulenza finanziaria.</p>
+    </article>
+    ${related.length ? `<section class="reader-related"><div class="section-title"><h2>Altre notizie</h2><span class="section-bar"></span></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${related.map(articleCard).join('')}</div></section>` : ''}
+    <div class="reader-bottom"><a href="#home" class="reader-back reader-back-home">← Torna alla home di TrendScan</a></div>`;
+  document.title = `${a.title} | TrendScan`;
+  const d = document.querySelector('meta[name="description"]'); if (d) d.setAttribute('content', `${a.summary || a.title} — Fonte: ${a.source}`);
+  const fig = el.querySelector('.reader-figure'), im = fig && fig.querySelector('img');
+  if (fig && !im) fig.remove(); else if (im) im.addEventListener('error', () => fig.remove());
+  const h1 = el.querySelector('h1'); if (h1) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); }
 }
 
 // ------------------------------------------------------------------ video / playlist
@@ -392,12 +488,13 @@ function playById(id) {
 }
 
 // ------------------------------------------------------------------ navigazione ed eventi
-function showView(name) {
+function showView(name, restoreY) {
   state.view = name;
   document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
   $('view-' + name).classList.remove('hidden');
-  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === name));
-  window.scrollTo({ top: 0 });
+  const navKey = name === 'articolo' ? 'articoli' : name;
+  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === navKey));
+  window.scrollTo(restoreY != null ? { top: restoreY, behavior: 'instant' } : { top: 0 });
   setPageMeta(name);
   if (name === 'guide') setTimeout(updateCalculator, 60);
 }
@@ -413,8 +510,14 @@ function setPageMeta(name) {
   const d = document.querySelector('meta[name="description"]'); if (d) d.setAttribute('content', m[1]);
 }
 function route() {
+  // ricorda dove era l'utente in home/articoli: tornando dalla lettura riparte dallo stesso punto
+  if (state.view === 'home' || state.view === 'articoli') state.scroll[state.view] = window.scrollY;
   const h = (location.hash || '#home').slice(1);
-  showView(['home', 'articoli', 'video', 'guide'].includes(h) ? h : 'home');
+  const m = h.match(/^a\/([\w-]+)$/);
+  if (m) { showArticle(decodeURIComponent(m[1])); return; }
+  const name = ['home', 'articoli', 'video', 'guide'].includes(h) ? h : 'home';
+  const back = state.view === 'articolo' ? state.scroll[name] : undefined;
+  showView(name, back);
 }
 function goArticles(cat) {
   state.filter.cat = cat; state.shown = 12;

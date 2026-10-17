@@ -3,6 +3,10 @@
     "maxAgeDays": 30,
     "maxPerSource": 30,
     "maxTotal": 160,
+    "minSummaryChars": 90,
+    "similarTitle": 0.6,
+    "checkPaywall": true,
+    "excludeTitle": "^(borsa:.*\\b(apre|chiude|chiusura|apertura)\\b|lo spread\\b.*\\b(apre|chiude)\\b|spread btp.*\\b(apre|chiude)\\b|piazza affari:)",
     "sources": [
       { "id": "sole-fp", "name": "Il Sole 24 Ore – Finanza Personale", "site": "https://www.ilsole24ore.com/", "feeds": ["https://www.ilsole24ore.com/rss/finanza-personale--investimenti.xml"], "trusted": true },
       { "id": "sole-tributi", "name": "Il Sole 24 Ore – Norme e Tributi", "site": "https://www.ilsole24ore.com/", "feeds": ["https://www.ilsole24ore.com/rss/norme-e-tributi.xml"], "trusted": false },

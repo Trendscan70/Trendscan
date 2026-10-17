@@ -167,35 +167,98 @@ function extractPageImage(html, pageUrl) {
   return '';
 }
 
-async function enrichImages(list, { limit = 90, concurrency = 6, maxTries = 3 } = {}) {
-  const todo = list.filter(a => !a.image && (a.imgTry || 0) < maxTries).slice(0, limit);
-  let got = 0, i = 0;
+// ---------------------------------------------------------------------------
+// Articoli a pagamento: si guarda cio' che la pagina originale dichiara di se' (nessun aggiramento).
+//  - JSON-LD schema.org: "isAccessibleForFree": false (lo usano i giornali per segnalare il paywall a Google)
+//  - meta article:content_tier = locked | metered
+// Se la pagina non e' raggiungibile o non dice nulla, l'articolo resta (meglio uno in piu' che uno scartato a torto).
+// ---------------------------------------------------------------------------
+function findFree(node) {
+  if (!node || typeof node !== 'object') return undefined;
+  if (Array.isArray(node)) { for (const n of node) { const r = findFree(n); if (r !== undefined) return r; } return undefined; }
+  if ('isAccessibleForFree' in node) {
+    const v = String(node.isAccessibleForFree).toLowerCase();
+    if (v === 'false') return false;
+    if (v === 'true') return true;
+  }
+  for (const k of Object.keys(node)) { const r = findFree(node[k]); if (r !== undefined) return r; }
+  return undefined;
+}
+function detectPaywall(html) {
+  const head = html.slice(0, 400000);
+  for (const m of head.matchAll(/<script[^>]+type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    try { if (findFree(JSON.parse(decode(m[1]).trim())) === false) return true; } catch { /* JSON non valido: provo il controllo testuale */ }
+  }
+  if (/["']isAccessibleForFree["']\s*:\s*["']?false["']?/i.test(head)) return true;
+  for (const tag of head.match(/<meta\b[^>]*>/gi) || []) {
+    const key = (attrOf(tag, 'property') || attrOf(tag, 'name')).toLowerCase();
+    if (key === 'article:content_tier' && /^(locked|metered)$/i.test(attrOf(tag, 'content').trim())) return true;
+  }
+  return false;
+}
+
+// Una sola visita alla pagina originale per articolo: ricava l'immagine di anteprima e controlla il paywall.
+// L'esito del controllo resta nel campo "pw" (0 = libero, 1 = a pagamento) cosi' non si rifa' ogni ora.
+async function enrichPages(list, { limit = 120, concurrency = 6, maxTries = 3, checkPaywall = true } = {}) {
+  const needImg = a => !a.image && (a.imgTry || 0) < maxTries;
+  const needPw = a => checkPaywall && a.pw === undefined && (a.pwTry || 0) < maxTries;
+  const todo = list.filter(a => needImg(a) || needPw(a)).slice(0, limit);
+  let img = 0, paid = 0, i = 0;
   async function worker() {
     while (i < todo.length) {
       const a = todo[i++];
+      const wantImg = needImg(a), wantPw = needPw(a);
       try {
         const html = await fetchText(a.url, { timeout: 12000, headers: { Accept: 'text/html,*/*' } });
-        const img = extractPageImage(html, a.url);
-        if (img) { a.image = img; delete a.imgTry; got++; } else a.imgTry = (a.imgTry || 0) + 1;
-      } catch { a.imgTry = (a.imgTry || 0) + 1; }
+        if (wantImg) {
+          const u = extractPageImage(html, a.url);
+          if (u) { a.image = u; delete a.imgTry; img++; } else a.imgTry = (a.imgTry || 0) + 1;
+        }
+        if (wantPw) { a.pw = detectPaywall(html) ? 1 : 0; delete a.pwTry; if (a.pw) paid++; }
+      } catch {
+        if (wantImg) a.imgTry = (a.imgTry || 0) + 1;
+        if (wantPw) a.pwTry = (a.pwTry || 0) + 1;
+      }
       await sleep(150);
     }
   }
   await Promise.all(Array.from({ length: concurrency }, worker));
-  console.log(`IMMAGINI: ${got}/${todo.length} miniature recuperate dalle pagine originali`);
+  console.log(`PAGINE ORIGINALI: ${todo.length} visitate, ${img} miniature recuperate, ${paid} segnalate a pagamento`);
+}
+
+// ---------------------------------------------------------------------------
+// Qualita': scarta notizie troppo stringate, flash di borsa e doppioni sullo stesso fatto
+// ---------------------------------------------------------------------------
+const STOP = new Set('il lo la i gli le un uno una di a da in con su per tra fra e ed o che del dello della dei degli delle al allo alla ai agli alle nel nello nella nei negli nelle sul sulla sui come non si ma piu ha'.split(' '));
+const titleTokens = t => new Set(normTitle(t).split(' ').filter(w => w.length > 2 && !STOP.has(w)));
+function jaccard(A, B) {
+  if (A.size < 3 || B.size < 3) return 0;
+  let n = 0; for (const w of A) if (B.has(w)) n++;
+  return n / (A.size + B.size - n);
+}
+// anteprima che ripete solo il titolo = nessuna anteprima
+function realSummary(title, summary) {
+  const s = (summary || '').trim();
+  const nt = normTitle(title), ns = normTitle(s);
+  return !s || ns === nt || (ns.startsWith(nt) && ns.length - nt.length < 20) ? '' : s;
 }
 
 async function buildArticles() {
   const A = CFG.articles;
   const exclude = new RegExp(A.exclude, 'i');
+  const excludeTitle = A.excludeTitle ? new RegExp(A.excludeTitle, 'i') : null;
+  const minSummary = A.minSummaryChars ?? 0;
+  const similarTh = A.similarTitle ?? 0;
   const cats = A.categories.map(c => ({ ...c, re: new RegExp(c.pattern, 'i') }));
   const maxAge = A.maxAgeDays * 86400e3, now = Date.now();
+  const skipped = { troppoBrevi: 0, flashBorsa: 0, doppioni: 0, fuoriTema: 0, aPagamento: 0 };
 
   const results = await Promise.all(A.sources.map(async s => ({ s, r: await loadSource(s) })));
   const report = [];
   let collected = [];
 
   for (const { s, r } of results) {
+    if (s.paywall === 'skip') { report.push({ id: s.id, name: s.name, status: 'ok', feed: '(saltata: paywall=skip)', letti: 0, tenuti: 0 }); continue; }
     if (!r.ok) { report.push({ id: s.id, name: s.name, status: 'errore', detail: 'nessun feed raggiungibile (' + r.tried.length + ' indirizzi provati)' }); continue; }
     let kept = 0;
     for (const it of r.items) {
@@ -203,14 +266,18 @@ async function buildArticles() {
       if (!it.title || !url || !it.date) continue;
       const age = now - it.date.getTime();
       if (age > maxAge || age < -3600e3) continue;
-      const hay = `${it.title} ${it.summary} ${it.cats}`;
       if (exclude.test(it.title)) continue;
-      const cat = cats.find(c => c.re.test(hay));
-      if (!s.trusted && !cat) continue;
+      if (excludeTitle && excludeTitle.test(it.title)) { skipped.flashBorsa++; continue; }
+      const summary = realSummary(it.title, it.summary);
+      if (summary.length < minSummary) { skipped.troppoBrevi++; continue; }
+      // categoria dal titolo e dall'anteprima; le categorie del feed solo come ripiego per le fonti fidate
+      let cat = cats.find(c => c.re.test(`${it.title} ${summary}`));
+      if (!cat && s.trusted) cat = cats.find(c => c.re.test(it.cats));
+      if (!s.trusted && !cat) { skipped.fuoriTema++; continue; }
       collected.push({
         id: sha(url),
         title: it.title,
-        summary: clip(it.summary, 230),
+        summary: clip(summary, 230),
         url,
         image: it.image || null,
         source: s.name,
@@ -230,28 +297,58 @@ async function buildArticles() {
     throw Object.assign(new Error(msg), { kept });
   }
 
-  // unisce con il file precedente (cosi' gli articoli non spariscono quando escono dalla finestra del feed)
+  // unisce con il file precedente (cosi' gli articoli non spariscono quando escono dalla finestra del feed).
+  // Anche quelli vecchi passano dal filtro di qualita': i flash gia' salvati escono alla prima raccolta.
+  let blocked = {};
   try {
     const prev = JSON.parse(await readFile(`${DATA_DIR}/articles.json`, 'utf8'));
-    for (const p of prev.articles || []) if (now - new Date(p.publishedAt).getTime() <= maxAge) collected.push(p);
+    blocked = prev.blocked || {};
+    // chi e' gia' stato visitato non si rivisita: si ereditano immagine ed esito del controllo paywall
+    const prevById = new Map((prev.articles || []).map(p => [p.id, p]));
+    for (const a of collected) {
+      const p = prevById.get(a.id); if (!p) continue;
+      if (!a.image && p.image) a.image = p.image;
+      for (const k of ['imgTry', 'pw', 'pwTry']) if (p[k] !== undefined) a[k] = p[k];
+    }
+    for (const p of prev.articles || []) {
+      if (now - new Date(p.publishedAt).getTime() > maxAge) continue;
+      if (excludeTitle && excludeTitle.test(p.title)) { skipped.flashBorsa++; continue; }
+      if (realSummary(p.title, p.summary).length < minSummary) { skipped.troppoBrevi++; continue; }
+      const src = A.sources.find(x => x.id === p.sourceId);
+      if (src && !src.trusted && !cats.some(c => c.re.test(`${p.title} ${p.summary}`))) { skipped.fuoriTema++; continue; }
+      collected.push(p);
+    }
   } catch { /* primo avvio */ }
+  for (const id of Object.keys(blocked)) if (now - blocked[id] > maxAge) delete blocked[id];
 
   collected.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-  const seenUrl = new Set(), seenTitle = new Set(), perSource = {}, out = [];
+  const seenUrl = new Set(), seenTitle = new Set(), perSource = {}, pool = [], poolTokens = [];
+  const poolMax = A.maxTotal + 40; // un po' di margine: gli a pagamento verranno tolti dopo
   for (const a of collected) {
+    if (blocked[a.id]) { skipped.aPagamento++; continue; }
     const nt = normTitle(a.title);
     if (seenUrl.has(a.url) || seenTitle.has(nt)) continue;
+    const tk = titleTokens(a.title);
+    if (similarTh && poolTokens.some(o => jaccard(tk, o) >= similarTh)) { skipped.doppioni++; continue; }
     perSource[a.sourceId] = (perSource[a.sourceId] || 0) + 1;
     if (perSource[a.sourceId] > A.maxPerSource) continue;
-    seenUrl.add(a.url); seenTitle.add(nt); out.push(a);
+    seenUrl.add(a.url); seenTitle.add(nt); pool.push(a); poolTokens.push(tk);
+    if (pool.length >= poolMax) break;
+  }
+
+  await enrichPages(pool, { checkPaywall: A.checkPaywall !== false });
+
+  const out = [];
+  for (const a of pool) {
+    if (a.pw === 1) { blocked[a.id] = now; skipped.aPagamento++; continue; }
+    out.push(a);
     if (out.length >= A.maxTotal) break;
   }
 
-  await enrichImages(out);
-
   await mkdir(DATA_DIR, { recursive: true });
-  await writeFile(`${DATA_DIR}/articles.json`, JSON.stringify({ meta: { generatedAt: new Date().toISOString(), count: out.length, sources: report }, articles: out }));
+  await writeFile(`${DATA_DIR}/articles.json`, JSON.stringify({ meta: { generatedAt: new Date().toISOString(), count: out.length, sources: report, skipped }, articles: out, blocked }));
   console.log(`\nARTICOLI: ${out.length} scritti in ${DATA_DIR}/articles.json`);
+  console.log(`  scartati: ${skipped.troppoBrevi} troppo brevi, ${skipped.flashBorsa} flash di borsa, ${skipped.doppioni} doppioni sullo stesso fatto, ${skipped.fuoriTema} fuori tema, ${skipped.aPagamento} a pagamento`);
   report.forEach(r => console.log(`  ${r.status === 'ok' ? '✓' : '✗'} ${r.name}${r.status === 'ok' ? `  (${r.tenuti}/${r.letti} tenuti)  ${r.feed}` : '  ' + r.detail}`));
 }
 

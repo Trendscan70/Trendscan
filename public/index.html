@@ -123,7 +123,15 @@
       <div>
         <div class="section-title"><h2>Ultimi articoli di finanza personale</h2><span class="section-bar"></span>
           <a href="#articoli" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli articoli →</a></div>
+        <p class="text-xs text-gray-500 -mt-2 mb-4 max-w-3xl">Anteprime dalle testate italiane: cliccando resti su TrendScan. L'articolo completo è sempre sul sito della fonte, che trovi citata su ogni notizia.</p>
         <div id="homeLatest" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      </div>
+
+      <!-- Per argomento -->
+      <div id="homeTopicsWrap" class="hidden">
+        <div class="section-title"><h2>Per argomento</h2><span class="section-bar"></span>
+          <a href="#articoli" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli articoli →</a></div>
+        <div id="homeByTopic" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
       </div>
 
       <!-- Video band -->
@@ -162,6 +170,11 @@
       <div class="ad-slot hidden" data-ad-slot="articoli-1" aria-label="Pubblicità"></div>
       <div id="articleGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
       <div class="text-center"><button id="moreArticles" class="hidden px-6 py-3 rounded-full bg-white border border-gray-300 font-extrabold text-sm hover:border-[#e8412c] hover:text-[#e8412c]">Mostra altri articoli</button></div>
+    </section>
+
+    <!-- ========================= ARTICOLO (lettura interna) ========================= -->
+    <section id="view-articolo" class="view hidden">
+      <div id="articleView" class="reader"></div>
     </section>
 
     <!-- =========================== VIDEO =========================== -->
