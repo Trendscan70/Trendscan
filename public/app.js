@@ -21,7 +21,8 @@ const state = {
   queue: [], qIndex: -1, channelFilter: 'ALL',
   player: null, playerReady: false,
   compoundChartInstance: null,
-  scroll: {}
+  scroll: {},
+  markets: null
 };
 
 // ------------------------------------------------------------------ utilita'
@@ -86,21 +87,22 @@ function mirrorBase() {
   return m ? `https://cdn.jsdelivr.net/gh/${m[1]}/${m[2]}@${m[3]}/` : '';
 }
 const okData = d => d && d.meta && d.meta.generatedAt;
-async function loadData(name) {
+async function loadData(name, optional = false) {
   if (DATA_BASE) {
     const remote = await loadJson(DATA_BASE + name);
     if (okData(remote)) return remote;
     const mb = mirrorBase();
     const mirror = mb ? await loadJson(mb + name) : null;
     if (okData(mirror)) return mirror;
-    DATA_DIAG = `Impossibile leggere i dati online da <code class="bg-gray-100 px-1 rounded">${esc(DATA_BASE)}</code>. Controlla che il repository sia pubblico, che il ramo <b>data</b> esista e che nessun blocco (adblock, rete aziendale, estensioni) impedisca l'accesso a raw.githubusercontent.com.`;
+    if (!optional) DATA_DIAG = `Impossibile leggere i dati online da <code class="bg-gray-100 px-1 rounded">${esc(DATA_BASE)}</code>. Controlla che il repository sia pubblico, che il ramo <b>data</b> esista e che nessun blocco (adblock, rete aziendale, estensioni) impedisca l'accesso a raw.githubusercontent.com.`;
   }
   return loadJson('data/' + name);
 }
 
 async function bootstrap() {
   $('todayLabel').textContent = new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const [a, v] = await Promise.all([loadData('articles.json'), loadData('videos.json')]);
+  const [a, v, mk] = await Promise.all([loadData('articles.json'), loadData('videos.json'), loadData('markets.json', true)]);
+  if (mk && okData(mk)) state.markets = mk; // facoltativo: senza dati la fascia Mercati resta nascosta
   if (a && Array.isArray(a.articles)) { state.articles = cleanArticles(a.articles); state.articleMeta = a.meta || null; }
   state.articlesLoaded = !!a;
   if (v) { state.channels = v.channels || []; state.videos = (v.videos || []).filter(x => validVid(x.id)); state.videoMeta = v.meta || null; }
@@ -119,8 +121,8 @@ async function bootstrap() {
 }
 
 function renderAll() {
-  renderHero(); renderTopicTiles(); renderHomeLatest(); renderHomeTopics(); renderHomeVideos(); renderGuideTeasers();
-  renderArticles(); renderVideoPage();
+  renderHero(); renderMarketStrip(); renderTopicTiles(); renderHomeLatest(); renderHomeTopics(); renderHomeVideos(); renderGuideTeasers();
+  renderArticles(); renderMarketsView(); renderVideoPage();
 }
 
 // ------------------------------------------------------------------ componenti
@@ -314,14 +316,138 @@ function renderArticles() {
   $('moreArticles').classList.toggle('hidden', list.length <= state.shown);
 }
 
+// ------------------------------------------------------------------ mercati: cambi BCE + Termometro TrendScan
+// I tassi sono mostrati cifra per cifra come li pubblica la BCE (cambia solo il separatore decimale, all'italiana):
+// la politica di riutilizzo BCE chiede fonte citata e statistiche non modificate. Variazioni e grafici sono
+// elaborazioni TrendScan e sono dichiarati tali.
+const fmtRate = r => String(r).replace('.', ',');
+const fmtPct = n => n == null ? '–' : (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(2).replace('.', ',') + '%';
+const pctCls = n => n == null || n === 0 ? '' : n > 0 ? 'mk-up' : 'mk-down';
+const pctArrow = n => n == null || n === 0 ? '' : n > 0 ? '▲ ' : '▼ ';
+const dateIt = d => { const x = new Date(d + 'T12:00:00'); return isNaN(x) ? d : x.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }); };
+const DEFAULT_ZONES = [{ max: 40, name: 'Tono negativo' }, { max: 60, name: 'Tono neutro' }, { max: 100, name: 'Tono positivo' }];
+
+function spark(values, w = 96, h = 28, cls = 'mk-spark') {
+  const v = (values || []).map(Number).filter(Number.isFinite);
+  if (v.length < 2) return '';
+  const min = Math.min(...v), max = Math.max(...v), rng = max - min || 1;
+  const pts = v.map((x, i) => `${(i / (v.length - 1) * w).toFixed(1)},${(h - 2 - (x - min) / rng * (h - 4)).toFixed(1)}`).join(' ');
+  return `<svg class="${cls}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+function gauge(s) {
+  const zones = s.labels && s.labels.length ? s.labels : DEFAULT_ZONES;
+  let prevMax = 0;
+  const bars = zones.map((z, i) => { const w = Math.max(0, z.max - prevMax); prevMax = z.max; return `<span class="mk-z${i + 1}" style="width:${w}%"></span>`; }).join('');
+  return `<div class="mk-gauge" role="img" aria-label="Termometro TrendScan: ${s.score} su 100, ${esc(s.label)}">
+    <div class="mk-gauge-bar">${bars}<i class="mk-marker" style="left:${Math.min(100, Math.max(0, s.score))}%"></i></div>
+    <div class="mk-gauge-scale"><span>0</span><span>50</span><span>100</span></div></div>`;
+}
+const toneCls = s => { const z = s.labels && s.labels.length ? s.labels : DEFAULT_ZONES; const i = z.findIndex(l => s.score <= l.max); return 'mk-t' + (i < 0 ? z.length : i + 1); };
+
+function fxCredit(fx) {
+  const src = fx.source || {};
+  const link = src.url ? `<a href="${esc(safeUrl(src.url))}" target="_blank" rel="noopener noreferrer" class="underline">${esc(src.attribution || 'Source: ECB statistics.')}</a>` : esc(src.attribution || 'Source: ECB statistics.');
+  return `Cambi: ${link} Tassi di riferimento del ${esc(dateIt(fx.asOf))}, solo a scopo informativo.${fx.stale ? ' <b>Dati non aggiornati: la BCE non risponde al momento.</b>' : ''}`;
+}
+
+function renderMarketStrip() {
+  const el = $('marketStrip'); if (!el) return;
+  const m = state.markets, fx = m && m.fx, s = m && m.sentiment;
+  const hasFx = !!(fx && fx.pairs && fx.pairs.length), hasS = !!(s && s.ready);
+  el.classList.toggle('hidden', !(hasFx || hasS));
+  if (!(hasFx || hasS)) { el.innerHTML = ''; return; }
+  const thermo = hasS ? `
+    <a href="#mercati" class="mk-tile mk-thermo">
+      <div class="mk-label">Termometro TrendScan</div>
+      <div class="mk-thermo-row"><span class="mk-score ${toneCls(s)}">${s.score}</span><span class="mk-of">/100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div>
+      ${gauge(s)}
+      <div class="mk-sub">Tono di ${s.n} notizie delle ultime ${s.windowHours} ore</div>
+    </a>` : '';
+  const tiles = hasFx ? fx.pairs.map(p => `
+    <a href="#mercati" class="mk-tile" title="1 euro = ${esc(fmtRate(p.rate))} ${esc(p.currency)}">
+      <div class="mk-label">${esc(p.label)}</div>
+      <div class="mk-rate">${esc(fmtRate(p.rate))}</div>
+      <div class="mk-chg ${pctCls(p.changePct)}">${pctArrow(p.changePct)}${fmtPct(p.changePct)}</div>
+      <div class="mk-sparkwrap ${pctCls(p.changePct)}">${spark((p.series || []).slice(-30).map(x => x.r))}</div>
+    </a>`).join('') : '';
+  el.innerHTML = `
+    <div class="section-title"><h2>Mercati</h2><span class="section-bar"></span>
+      <a href="#mercati" class="text-sm font-bold brand-text whitespace-nowrap">Tutti i dati →</a></div>
+    <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">${thermo}${tiles}</div>
+    <p class="mk-credit">${hasFx ? fxCredit(fx) : ''}${hasS ? ' Termometro: elaborazione TrendScan sul tono dei titoli, non è un indice di mercato.' : ''} Variazioni e grafici: elaborazione TrendScan.</p>`;
+}
+
+function renderMarketsView() {
+  const el = $('marketsView'); if (!el) return;
+  const m = state.markets, fx = m && m.fx, s = m && m.sentiment;
+  const hasFx = !!(fx && fx.pairs && fx.pairs.length);
+  const upd = m && m.meta && m.meta.generatedAt ? new Date(m.meta.generatedAt).toLocaleString('it-IT', { dateStyle: 'long', timeStyle: 'short' }) : '';
+  const bar = readerBar(false);
+  if (!m || !(hasFx || (s && s.ready))) {
+    el.innerHTML = bar + emptyBox('Dati di mercato non ancora disponibili', 'Si aggiornano automaticamente ogni ora: riprova tra poco. <a href="#home" class="brand-text font-bold underline">Torna alla home di TrendScan</a>.');
+    return;
+  }
+  let thermo;
+  if (s && s.ready) {
+    const hist = (s.history || []).map(h => h.s);
+    const chg = s.change == null ? '' : `<li>Rispetto a ieri: <b class="${pctCls(s.change)}">${s.change > 0 ? '+' : s.change < 0 ? '−' : ''}${Math.abs(s.change)} punti</b></li>`;
+    const avg = s.avg7 == null ? '' : `<li>Media degli ultimi giorni: <b>${s.avg7}</b></li>`;
+    thermo = `
+      <div class="mk-big">
+        <div class="mk-thermo-row"><span class="mk-score mk-score-xl ${toneCls(s)}">${s.score}</span><span class="mk-of">/100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div>
+        ${gauge(s)}
+        <ul class="mk-facts">
+          <li>Notizie analizzate (ultime ${s.windowHours} ore): <b>${s.n}</b> — <span class="mk-up">${s.counts.pos} positive</span> · ${s.counts.neutral} neutre · <span class="mk-down">${s.counts.neg} negative</span></li>
+          ${chg}${avg}
+        </ul>
+        ${hist.length >= 2 ? `<div class="mk-histwrap"><div class="mk-label">Andamento del Termometro</div>${spark(hist, 300, 60, 'mk-hist')}<div class="mk-sub">${hist.length} giorni di storico</div></div>` : `<p class="mk-sub mt-2">Lo storico si costruisce giorno dopo giorno: il grafico comparirà con almeno due giorni di dati.</p>`}
+      </div>`;
+  } else {
+    thermo = `<p class="text-sm text-gray-600">Dati insufficienti per calcolare il Termometro: servono almeno alcune notizie recenti. Si aggiorna ogni ora.</p>`;
+  }
+  const rows = hasFx ? fx.pairs.map(p => `
+    <tr>
+      <th scope="row"><span class="font-black">${esc(p.label)}</span><span class="mk-sub block">${esc(p.name || p.currency)}</span></th>
+      <td class="mk-num"><b>${esc(fmtRate(p.rate))}</b></td>
+      <td class="mk-num ${pctCls(p.changePct)}">${pctArrow(p.changePct)}${fmtPct(p.changePct)}</td>
+      <td class="mk-num ${pctCls(p.change30dPct)}">${pctArrow(p.change30dPct)}${fmtPct(p.change30dPct)}</td>
+      <td class="mk-trend ${pctCls(p.change30dPct)}">${spark((p.series || []).map(x => x.r), 120, 32)}</td>
+    </tr>`).join('') : '';
+  el.innerHTML = `
+    ${bar}
+    <header class="mk-head"><h1>Mercati</h1><p>Cambi di riferimento della BCE e il Termometro TrendScan. Dati a scopo informativo${upd ? `, aggiornati il ${esc(upd)}` : ''}.</p></header>
+
+    <section class="mk-card" aria-labelledby="mkThermoTitle">
+      <h2 id="mkThermoTitle" class="mk-h2">Termometro TrendScan <span class="mk-badge">elaborazione TrendScan</span></h2>
+      <p class="mk-lead">Misura il <b>tono delle notizie</b> di finanza che raccogliamo dai giornali, su una scala da 0 (molto negative) a 100 (molto positive). Non misura i mercati e non è un consiglio: è un termometro dell’umore dei titoli.</p>
+      ${thermo}
+      <p class="mk-note">Come si calcola: conteggio di parole chiave su titoli e anteprime, con più peso alle notizie recenti. È un metodo semplice e ha limiti (ironia, contesto, titoli ambigui). <a href="/metodo/#termometro" class="underline font-bold brand-text">Leggi il metodo</a>.</p>
+    </section>
+
+    ${hasFx ? `
+    <section class="mk-card" aria-labelledby="mkFxTitle">
+      <h2 id="mkFxTitle" class="mk-h2">Cambi dell’euro <span class="mk-badge">dati BCE</span></h2>
+      <p class="mk-lead">Quanto vale 1 euro in altre valute, secondo i tassi di riferimento della Banca centrale europea.</p>
+      <div class="mk-tablewrap"><table class="mk-table">
+        <thead><tr><th scope="col">Coppia</th><th scope="col" class="mk-num">Tasso BCE</th><th scope="col" class="mk-num" title="Variazione rispetto al giorno precedente">Var. 1g*</th><th scope="col" class="mk-num" title="Variazione rispetto a circa 30 giorni prima">Var. 30g*</th><th scope="col">Andamento*</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      <p class="mk-note"><b>${fxCredit(fx)}</b> I tassi sono riportati come pubblicati dalla BCE (solo il separatore decimale è adattato all’italiano). Sono pubblicati intorno alle 16:00 CET nei giorni di apertura TARGET: nei weekend e nei festivi restano quelli dell’ultimo giorno disponibile. Non sono adatti a operazioni di cambio.<br>* Elaborazione TrendScan sui tassi BCE.</p>
+    </section>` : ''}
+
+    <p class="mk-disclaimer">Contenuti informativi, non consulenza finanziaria né raccomandazione di investimento. Altri mercati (indici, titoli di Stato, materie prime) saranno aggiunti quando avremo verificato le condizioni d’uso delle relative fonti.</p>
+    <div class="reader-bottom"><a href="#home" class="reader-back reader-back-home">← Torna alla home di TrendScan</a></div>`;
+}
+
 // ------------------------------------------------------------------ lettura dentro TrendScan
 // Mostra titolo, fonte, data, immagine e la breve anteprima pubblicata dalla testata. Il testo completo e' dei giornali:
 // non lo riproduciamo (diritto d'autore, e i giornali non consentono l'incorporamento), rimandiamo alla fonte con un pulsante.
 const domainOf = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
-function readerBar() {
-  return `<nav class="reader-bar" aria-label="Navigazione articolo">
+function readerBar(withArticles = true) {
+  return `<nav class="reader-bar" aria-label="Navigazione">
     <a href="#home" class="reader-back reader-back-home">← Torna alla home di TrendScan</a>
-    <a href="#articoli" class="reader-back">Tutti gli articoli</a>
+    ${withArticles ? '<a href="#articoli" class="reader-back">Tutti gli articoli</a>' : ''}
   </nav>`;
 }
 function showArticle(id) {
@@ -499,6 +625,7 @@ function showView(name, restoreY) {
   if (name === 'guide') setTimeout(updateCalculator, 60);
 }
 const PAGE_META = {
+  mercati: ['Mercati: cambi BCE e Termometro TrendScan | TrendScan', 'I tassi di cambio di riferimento della BCE (EUR/USD, EUR/GBP, EUR/CHF, EUR/JPY) e il Termometro TrendScan, che misura il tono delle notizie di finanza.'],
   home: ['TrendScan – Hub di Finanza Personale: articoli, video e guide', 'Gli articoli di finanza personale più utili dai principali giornali italiani, video educativi e guide pratiche su risparmio, ETF e PAC.'],
   articoli: ['Articoli di finanza personale: risparmio, ETF, pensione, mutui | TrendScan', 'Le notizie di finanza personale dai principali giornali italiani, divise per argomento: risparmio, ETF, pensione, casa, tasse e conti.'],
   video: ['Video educativi di finanza personale e investimenti | TrendScan', 'La playlist dei migliori canali YouTube italiani di finanza: risparmio, ETF, PAC e gestione del denaro, da guardare uno dopo l\'altro.'],
@@ -515,7 +642,7 @@ function route() {
   const h = (location.hash || '#home').slice(1);
   const m = h.match(/^a\/([\w-]+)$/);
   if (m) { showArticle(decodeURIComponent(m[1])); return; }
-  const name = ['home', 'articoli', 'video', 'guide'].includes(h) ? h : 'home';
+  const name = ['home', 'articoli', 'mercati', 'video', 'guide'].includes(h) ? h : 'home';
   const back = state.view === 'articolo' ? state.scroll[name] : undefined;
   showView(name, back);
 }

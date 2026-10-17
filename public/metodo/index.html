@@ -44,11 +44,28 @@
 <ul class="list-disc pl-6 text-gray-700 leading-relaxed mt-3 space-y-1.5">
 <li>Gli articoli provengono dai feed RSS pubblici delle testate che trovi qui sotto e vengono aggiornati automaticamente ogni ora.</li>
 <li>Mostriamo solo titolo, breve anteprima e link: il testo completo si legge sul sito della testata, a cui vanno i diritti e le visite.</li>
+<li>Non mostriamo le notizie troppo brevi o prive di anteprima, i doppioni sullo stesso fatto e gli articoli che la testata segnala come <strong>a pagamento</strong>. Il controllo è automatico: se la testata non lo dichiara, un articolo riservato agli abbonati può comunque comparire.</li>
 <li>La divisione per argomento è <strong>automatica</strong> (parole chiave): può capitare che un articolo sia poco pertinente o nella categoria sbagliata. Segnalacelo e lo sistemiamo.</li>
 <li>Non verifichiamo i contenuti degli articoli: la responsabilità è delle testate che li pubblicano. Pubblicarli qui non significa condividerne le opinioni.</li>
 </ul>
 <p class="text-gray-700 leading-relaxed mt-3"><strong>Testate attualmente collegate:</strong></p>
 <ul class="list-disc pl-6 text-gray-700 leading-relaxed mt-2 columns-2"><li>ANSA</li><li>Corriere</li><li>FinanzaOnline</li><li>Forbes Italia</li><li>Il Sole 24 Ore</li><li>Milano Finanza</li><li>Money.it</li><li>QuiFinanza</li><li>Soldionline</li><li>Wall Street Italia</li><li>la Repubblica</li></ul>
+<h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 mt-8 mb-2" id="mercati">Mercati e cambi</h2>
+<ul class="list-disc pl-6 text-gray-700 leading-relaxed mt-3 space-y-1.5">
+<li>I tassi di cambio dell'euro sono i <strong>tassi di riferimento della Banca centrale europea (BCE)</strong>, letti dal suo sito e aggiornati automaticamente. Li riportiamo come pubblicati, senza modificarli (cambia solo il separatore decimale, all'italiana), e citiamo sempre la fonte: <em>Source: ECB statistics.</em></li>
+<li>Sono tassi <strong>solo a scopo informativo</strong>, pubblicati intorno alle 16:00 CET nei giorni di apertura del sistema TARGET: nei weekend e nei festivi restano quelli dell'ultimo giorno disponibile. Non vanno usati per operazioni di cambio.</li>
+<li>Le variazioni percentuali e i piccoli grafici sono <strong>elaborazioni di TrendScan</strong> sui tassi della BCE e sono indicati come tali.</li>
+<li>Aggiungeremo altri mercati (indici, titoli di Stato, materie prime) solo dopo aver verificato le condizioni d'uso delle relative fonti.</li>
+</ul>
+<h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 mt-8 mb-2" id="termometro">Termometro TrendScan</h2>
+<p class="text-gray-700 leading-relaxed mt-3">Il Termometro è un indicatore da 0 a 100 che misura il <strong>tono delle notizie di finanza</strong> che raccogliamo dalle testate. <strong>Non misura l'andamento dei mercati</strong>, non è un indice di riferimento e non è un segnale operativo né una raccomandazione.</p>
+<ul class="list-disc pl-6 text-gray-700 leading-relaxed mt-3 space-y-1.5">
+<li><strong>Quali notizie.</strong> Quelle delle ultime 48 ore, con un peso che si dimezza ogni 24 ore: le più recenti contano di più. Servono almeno 15 notizie, altrimenti non pubblichiamo il valore.</li>
+<li><strong>Come si giudica una notizia.</strong> Contiamo le parole chiave positive (per esempio «rialzo», «crescita», «ripresa») e negative («crollo», «perdite», «crisi») nel titolo, che pesa il doppio, e nell'anteprima. La notizia è positiva, negativa o neutra a seconda di quale gruppo prevale. Un calo di spread, inflazione o bollette è trattato come notizia positiva, un loro aumento come negativa.</li>
+<li><strong>Come si ottiene il numero.</strong> 50 più il saldo pesato tra notizie positive e negative (da −1 a +1) moltiplicato per 125, limitato tra 0 e 100. Fino a 40 il tono è «negativo», da 41 a 60 «neutro», oltre 60 «positivo». Le soglie sono provvisorie: le rivedremo quando avremo uno storico più lungo.</li>
+<li><strong>Cosa non facciamo.</strong> Nel calcolo si usano solo conteggi: i testi delle notizie non vengono ripubblicati.</li>
+</ul>
+<p class="text-gray-700 leading-relaxed mt-3"><strong>I limiti.</strong> È un metodo volutamente semplice, basato su parole chiave: non capisce ironia, sfumature o il contesto, e può sbagliare su titoli ambigui. Riflette solo le testate che seguiamo, e non è un parere sui mercati o su cosa fare dei propri soldi. Se noti un risultato che non ti convince, <a class="underline font-semibold" style="color:var(--brand)" href="mailto:trendscan@proton.me">scrivici</a>.</p>
 <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 mt-8 mb-2">Video</h2>
 <ul class="list-disc pl-6 text-gray-700 leading-relaxed mt-3 space-y-1.5">
 <li>I video sono incorporati dal player di YouTube e restano dei rispettivi autori. Non siamo affiliati ai canali.</li>
@@ -66,7 +83,7 @@
 </ul>
 <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 mt-8 mb-2">Dove approfondire: fonti ufficiali</h2>
 <ul class="list-disc pl-6 text-gray-700 leading-relaxed mt-3 space-y-1.5"><li><a class="underline font-semibold" style="color:var(--brand)" href="https://www.consob.it" target="_blank" rel="noopener noreferrer">Consob</a> – vigilanza sui mercati e sugli intermediari; elenchi degli intermediari autorizzati</li><li><a class="underline font-semibold" style="color:var(--brand)" href="https://www.bancaditalia.it" target="_blank" rel="noopener noreferrer">Banca d'Italia</a> – banche, conti correnti e tutela del cliente</li><li><a class="underline font-semibold" style="color:var(--brand)" href="https://www.agenziaentrate.gov.it" target="_blank" rel="noopener noreferrer">Agenzia delle Entrate</a> – tasse e dichiarazione dei redditi</li><li><a class="underline font-semibold" style="color:var(--brand)" href="https://www.borsaitaliana.it" target="_blank" rel="noopener noreferrer">Borsa Italiana</a> – titoli ed ETF quotati in Italia</li><li><a class="underline font-semibold" style="color:var(--brand)" href="https://www.esma.europa.eu" target="_blank" rel="noopener noreferrer">ESMA</a> – autorità europea dei mercati finanziari</li><li><a class="underline font-semibold" style="color:var(--brand)" href="https://www.covip.it" target="_blank" rel="noopener noreferrer">COVIP</a> – previdenza complementare</li><li><a class="underline font-semibold" style="color:var(--brand)" href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer">Garante Privacy</a> – protezione dei dati personali</li></ul>
-      <p class="mt-10 pt-4 border-t border-gray-200 text-xs text-gray-500">Ultimo aggiornamento: 11 ottobre 2026</p>
+      <p class="mt-10 pt-4 border-t border-gray-200 text-xs text-gray-500">Ultimo aggiornamento: 17 ottobre 2026</p>
     </article>
   </main>
   <footer class="bg-[#111] text-gray-400 mt-10">

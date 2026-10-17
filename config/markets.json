@@ -1,0 +1,61 @@
+{
+  "_nota": "Ogni fonte in 'sources' gira SOLO se enabled=true E license.verified=true. Per aggiungerne una: implementa il tipo in scripts/build-markets.mjs (PROVIDERS), verifica le condizioni d'uso, compila 'license' e metti verified=true. Vedi README, sezione Mercati.",
+  "sources": [
+    {
+      "id": "ecb-fx",
+      "type": "ecb-xml",
+      "enabled": true,
+      "name": "Banca centrale europea (BCE)",
+      "url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml",
+      "fallbackUrl": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "pageUrl": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+      "refreshHours": 3,
+      "pairs": [
+        { "id": "EURUSD", "label": "EUR/USD", "currency": "USD", "name": "Dollaro USA" },
+        { "id": "EURGBP", "label": "EUR/GBP", "currency": "GBP", "name": "Sterlina britannica" },
+        { "id": "EURCHF", "label": "EUR/CHF", "currency": "CHF", "name": "Franco svizzero" },
+        { "id": "EURJPY", "label": "EUR/JPY", "currency": "JPY", "name": "Yen giapponese" }
+      ],
+      "license": {
+        "verified": true,
+        "checked": "2026-10-17",
+        "policyUrl": "https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html",
+        "attribution": "Source: ECB statistics.",
+        "conditions": "Riutilizzo gratuito, anche commerciale, a condizione di citare la fonte e di NON modificare le statistiche (né i metadati). Tassi di riferimento pubblicati solo a scopo informativo: non per transazioni, né come benchmark."
+      }
+    }
+  ],
+  "sentiment": {
+    "windowHours": 48,
+    "halfLifeHours": 24,
+    "minArticles": 15,
+    "gain": 1.25,
+    "titleWeight": 2,
+    "labels": [
+      { "max": 40, "name": "Tono negativo" },
+      { "max": 60, "name": "Tono neutro" },
+      { "max": 100, "name": "Tono positivo" }
+    ],
+    "historyDays": 180,
+    "inverse": {
+      "_nota": "Un calo di questi soggetti e' una buona notizia, un loro aumento una cattiva. La regola vale se il movimento compare entro ~60 caratteri dal soggetto.",
+      "subjects": ["spread", "inflazione", "bollette", "prezzi", "costi", "disoccupazione", "debito", "deficit"],
+      "down": ["calo", "cala", "calano", "scende", "scendono", "scesa", "ribass\\w+", "frena", "rallenta", "rientra"],
+      "up": ["rialz\\w+", "sale", "salgono", "salita", "aumento", "aumenta\\w*", "cresce", "crescono", "crescita", "vola", "impenna\\w*", "balz\\w+"]
+    },
+    "lexicon": {
+      "negative": [
+        "crollo", "crolla\\w*", "tonfo", "tonfi", "perdit\\w+", "paura", "panico", "crisi", "recessione", "allarm\\w+",
+        "rischio", "rischi", "rischia\\w*", "calo", "cali", "cala", "calano", "scende", "scendono", "scesa", "ribass\\w+",
+        "tagli", "rincar\\w+", "stangata", "batosta", "salasso", "truffa", "truffe", "frode", "fallimento", "default",
+        "shock", "guerra", "dazi", "tension\\w+", "incertezza", "volatilita", "sanzion\\w+", "affonda", "debolezza",
+        "peggior\\w+", "stagflazione", "licenziament\\w+", "scontro", "stretta", "pesa", "pesano", "bruciat\\w+", "brucia"
+      ],
+      "positive": [
+        "rialz\\w+", "sale", "salgono", "salita", "cresce", "crescono", "crescita", "record", "rimbalz\\w+", "guadagn\\w+",
+        "utile", "utili", "ripresa", "recuper\\w+", "sgravi", "sgravio", "agevolazion\\w+", "incentiv\\w+", "vantaggi",
+        "migliora\\w*", "miglioramento", "boom", "slancio", "fiducia", "ottimismo", "accordo"
+      ]
+    }
+  }
+}

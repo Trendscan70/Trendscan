@@ -196,3 +196,103 @@ html.dark .topic-link:hover { background: #1a2030; }
   .section-title h1, .section-title h2 { white-space: normal; }
   .section-bar { display: none; }
 }
+
+
+/* ==== Mercati: cambi BCE + Termometro TrendScan ==== */
+.mk-tile { display: flex; flex-direction: column; gap: .15rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 1rem; padding: .85rem 1rem; transition: border-color .15s, box-shadow .15s; min-width: 0; }
+.mk-tile:hover { border-color: var(--brand); box-shadow: 0 4px 14px rgba(0,0,0,.06); }
+.mk-label { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #6b7280; }
+.mk-rate { font-size: 1.45rem; font-weight: 900; letter-spacing: -.02em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.mk-chg { font-size: .8rem; font-weight: 800; font-variant-numeric: tabular-nums; color: #6b7280; }
+.mk-sub { font-size: 11px; color: #6b7280; }
+.mk-up { color: #059669; }
+.mk-down { color: #dc2626; }
+.mk-sparkwrap { margin-top: auto; padding-top: .35rem; color: #6b7280; }
+.mk-sparkwrap.mk-up, .mk-trend.mk-up { color: #059669; }
+.mk-sparkwrap.mk-down, .mk-trend.mk-down { color: #dc2626; }
+.mk-spark { display: block; width: 100%; height: 28px; }
+.mk-credit { margin-top: .6rem; font-size: 11px; line-height: 1.5; color: #6b7280; }
+.mk-thermo-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: .35rem .5rem; margin-top: .1rem; }
+.mk-score { font-size: 2.1rem; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+.mk-score-xl { font-size: 3.4rem; }
+.mk-of { font-size: .85rem; font-weight: 700; color: #9ca3af; }
+.mk-tone { margin-left: auto; font-size: .8rem; font-weight: 900; padding: .15rem .6rem; border-radius: 999px; background: #f3f4f6; }
+.mk-t1 { color: #dc2626; } .mk-t2 { color: #b45309; } .mk-t3 { color: #059669; }
+.mk-tone.mk-t1 { background: #fee2e2; } .mk-tone.mk-t2 { background: #fef3c7; } .mk-tone.mk-t3 { background: #d1fae5; }
+.mk-gauge { margin-top: .55rem; }
+.mk-gauge-bar { position: relative; display: flex; height: .6rem; border-radius: 999px; overflow: visible; }
+.mk-gauge-bar > span { display: block; height: 100%; }
+.mk-gauge-bar > span:first-of-type { border-radius: 999px 0 0 999px; }
+.mk-gauge-bar > span:last-of-type { border-radius: 0 999px 999px 0; }
+.mk-z1 { background: #fca5a5; } .mk-z2 { background: #fcd34d; } .mk-z3 { background: #6ee7b7; }
+.mk-marker { position: absolute; top: -.3rem; width: .9rem; height: 1.2rem; margin-left: -.45rem; border-radius: 999px; background: #111827; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.mk-gauge-scale { display: flex; justify-content: space-between; margin-top: .3rem; font-size: 10px; color: #9ca3af; }
+/* vista Mercati */
+.mk-page { max-width: 56rem; margin: 0 auto; }
+.mk-head h1 { font-size: 2rem; font-weight: 900; letter-spacing: -.02em; }
+.mk-head p { margin-top: .3rem; font-size: .9rem; color: #6b7280; }
+.mk-card { margin-top: 1.25rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 1.25rem; padding: 1.25rem 1.25rem 1.4rem; }
+@media (min-width: 640px) { .mk-card { padding: 1.6rem 1.9rem 1.8rem; } }
+.mk-h2 { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font-size: 1.25rem; font-weight: 900; }
+.mk-badge { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .55rem; border-radius: 999px; background: #f3f4f6; color: #4b5563; }
+.mk-lead { margin-top: .5rem; font-size: .92rem; line-height: 1.6; color: #4b5563; }
+.mk-big { margin-top: 1rem; }
+.mk-facts { margin-top: 1rem; display: grid; gap: .3rem; font-size: .88rem; color: #374151; }
+.mk-facts b { font-weight: 800; }
+.mk-histwrap { margin-top: 1rem; }
+.mk-hist { display: block; width: 100%; height: 60px; color: #6366f1; margin-top: .3rem; }
+.mk-note { margin-top: 1rem; font-size: 12px; line-height: 1.6; color: #6b7280; }
+.mk-disclaimer { margin-top: 1.25rem; font-size: 12px; line-height: 1.6; color: #6b7280; text-align: center; }
+.mk-tablewrap { margin-top: 1rem; overflow-x: auto; }
+.mk-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.mk-table th, .mk-table td { padding: .65rem .5rem; border-bottom: 1px solid #f1f2f4; text-align: left; white-space: nowrap; vertical-align: middle; }
+.mk-table thead th { font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #6b7280; }
+.mk-table .mk-num { text-align: right; font-variant-numeric: tabular-nums; }
+.mk-trend { width: 8rem; color: #6b7280; }
+.mk-trend .mk-spark { height: 32px; }
+.mk-table tbody tr:last-child th, .mk-table tbody tr:last-child td { border-bottom: 0; }
+@media (max-width: 639px) { .mk-score-xl { font-size: 2.8rem; } .mk-head h1 { font-size: 1.6rem; } .mk-trend { display: none; } .mk-table thead th:last-child { display: none; } }
+
+html.dark .mk-tile, html.dark .mk-card { background: #121826; border-color: #2b3347; color: #e5e7eb; }
+html.dark .mk-label, html.dark .mk-sub, html.dark .mk-credit, html.dark .mk-note, html.dark .mk-disclaimer, html.dark .mk-head p, html.dark .mk-table thead th { color: #8b94a7; }
+html.dark .mk-lead, html.dark .mk-facts { color: #c3c9d6; }
+html.dark .mk-tone, html.dark .mk-badge { background: #1c2438; color: #c3c9d6; }
+html.dark .mk-tone.mk-t1 { background: #4c1d1d; color: #fca5a5; } html.dark .mk-tone.mk-t2 { background: #4a3a14; color: #fcd34d; } html.dark .mk-tone.mk-t3 { background: #11392c; color: #6ee7b7; }
+html.dark .mk-t1 { color: #f87171; } html.dark .mk-t2 { color: #fbbf24; } html.dark .mk-t3 { color: #34d399; }
+html.dark .mk-up { color: #34d399; } html.dark .mk-down { color: #f87171; }
+html.dark .mk-sparkwrap.mk-up, html.dark .mk-trend.mk-up { color: #34d399; } html.dark .mk-sparkwrap.mk-down, html.dark .mk-trend.mk-down { color: #f87171; }
+html.dark .mk-marker { background: #f3f4f6; border-color: #121826; }
+html.dark .mk-table th, html.dark .mk-table td { border-color: #1f2740; }
+html.dark .mk-hist { color: #818cf8; }
+
+/* ==== Menu: con la voce "Mercati" le etichette non devono andare a capo ==== */
+.nav-link { white-space: nowrap; }
+.mk-thermo { grid-column: span 2; }
+@media (min-width: 1024px) and (max-width: 1439px) {
+  #mainNav .nav-link { padding-left: .6rem; padding-right: .6rem; }
+  #searchInput { width: 11rem; }
+}
+@media (min-width: 1280px) and (max-width: 1439px) { #searchInput { width: 14rem; } }
+/* tra 1024 e 1279px sei voci non entrano nell'intestazione: "Chi siamo" resta raggiungibile dal piè di pagina */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  #mainNav a[href="/chi-siamo"] { display: none; }
+  #searchInput { width: 9rem; }
+}
+@media (min-width: 1024px) and (max-width: 1099px) {
+  #mainNav { font-size: 12px; margin-left: .25rem; }
+  #searchInput { width: 7rem; }
+}
+@media (max-width: 639px) {
+  .mk-table { font-size: .82rem; }
+  .mk-table th, .mk-table td { padding: .6rem .3rem; }
+  .mk-table thead th { font-size: 10px; letter-spacing: 0; }
+}
+@media (max-width: 639px) {
+  .mk-table tbody th { white-space: normal; max-width: 5.6rem; }
+  .mk-table tbody th .mk-sub { white-space: normal; line-height: 1.25; }
+}
+@media (max-width: 639px) {
+  .mk-card { padding: 1.1rem .9rem 1.25rem; }
+  .mk-table th, .mk-table td { padding: .6rem .2rem; }
+  .mk-table tbody th { max-width: 5rem; }
+}

@@ -60,6 +60,7 @@
       <nav class="hidden lg:flex items-center gap-1 ml-4 text-[13px] font-extrabold uppercase tracking-wide" id="mainNav">
         <a href="#home" data-nav="home" class="nav-link">Home</a>
         <a href="#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="#mercati" data-nav="mercati" class="nav-link">Mercati</a>
         <a href="#video" data-nav="video" class="nav-link">Video Educativi</a>
         <a href="#guide" data-nav="guide" class="nav-link">Guide &amp; Calcolatore</a>
         <a href="/chi-siamo" class="nav-link">Chi siamo</a>
@@ -78,6 +79,7 @@
       <div class="flex gap-1 px-3 py-2 text-xs font-extrabold uppercase whitespace-nowrap">
         <a href="#home" data-nav="home" class="nav-link">Home</a>
         <a href="#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="#mercati" data-nav="mercati" class="nav-link">Mercati</a>
         <a href="#video" data-nav="video" class="nav-link">Video</a>
         <a href="#guide" data-nav="guide" class="nav-link">Guide</a>
         <a href="/chi-siamo" class="nav-link">Chi siamo</a>
@@ -99,6 +101,9 @@
 
       <!-- Hero -->
       <div id="heroGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-5"></div>
+
+      <!-- Mercati: cambi BCE + Termometro TrendScan (si nasconde da solo se i dati non ci sono) -->
+      <section id="marketStrip" class="hidden" aria-label="Mercati e Termometro TrendScan"></section>
 
       <!-- Regalo: foglio Excel -->
       <a href="#guide" data-gift="1" class="block rounded-3xl overflow-hidden border border-emerald-400/60 p-5 sm:p-6 text-white relative" style="background:linear-gradient(120deg,#065f46,#10b981)">
@@ -170,6 +175,11 @@
       <div class="ad-slot hidden" data-ad-slot="articoli-1" aria-label="Pubblicità"></div>
       <div id="articleGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
       <div class="text-center"><button id="moreArticles" class="hidden px-6 py-3 rounded-full bg-white border border-gray-300 font-extrabold text-sm hover:border-[#e8412c] hover:text-[#e8412c]">Mostra altri articoli</button></div>
+    </section>
+
+    <!-- =========================== MERCATI =========================== -->
+    <section id="view-mercati" class="view hidden">
+      <div id="marketsView" class="mk-page"></div>
     </section>
 
     <!-- ========================= ARTICOLO (lettura interna) ========================= -->
