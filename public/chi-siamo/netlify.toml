@@ -1,0 +1,41 @@
+# Configurazione Netlify per TrendScan (sito statico)
+[build]
+  publish = "public"
+  command = ""
+  # Controlla se il ramo corrente è esattamente "data" ed esce interrompendo il build
+  ignore = "git rev-parse --abbrev-ref HEAD | grep -q '^data$'"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Pagina "Chi siamo": un solo indirizzo ufficiale, /chi-siamo/ (file public/chi-siamo/index.html).
+# Gli indirizzi alternativi vengono reindirizzati in modo permanente (301) per non disperdere la SEO.
+[[redirects]]
+  from = "/chi-siamo"
+  to = "/chi-siamo/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/chi-siamo.html"
+  to = "/chi-siamo/"
+  status = 301
+  force = true
