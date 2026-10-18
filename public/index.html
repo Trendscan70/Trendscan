@@ -11,6 +11,8 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.ico" sizes="48x48">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="TrendScan">
   <!-- Anteprime sui social (Open Graph / Twitter) -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="TrendScan">
@@ -100,6 +102,9 @@
     <!-- =========================== HOME =========================== -->
     <section id="view-home" class="view space-y-10">
       <h1 class="sr-only">TrendScan – Hub di finanza personale: articoli, video e guide su risparmio, ETF e PAC</h1>
+
+      <!-- Installa l'app (PWA): il banner viene creato da pwa-install.js, solo se il browser permette l'installazione -->
+      <div id="pwa-install-slot" hidden></div>
 
       <!-- Hero -->
       <div id="heroGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-5"></div>
@@ -696,5 +701,6 @@
     window.TRENDSCAN_CONFIG = { DATA_BASE: "https://raw.githubusercontent.com/Trendscan70/trendscan/data/" };
   </script>
   <script defer src="app.js"></script>
+  <script defer src="pwa-install.js"></script>
 </body>
 </html>
