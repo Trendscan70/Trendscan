@@ -296,3 +296,82 @@ html.dark .mk-hist { color: #818cf8; }
   .mk-table th, .mk-table td { padding: .6rem .2rem; }
   .mk-table tbody th { max-width: 5rem; }
 }
+
+
+/* ==== Pagina Criptovalute (guida per principianti) ==== */
+.cx-lead { font-size: 1.1rem; line-height: 1.65; color: #374151; margin-top: .9rem; }
+.cx-updated { display: inline-block; margin-top: .9rem; padding: .2rem .7rem; border-radius: 999px; background: #f3f4f6; color: #4b5563; font-size: 12px; font-weight: 700; }
+.cx-warn, .cx-note { margin-top: 1.25rem; padding: 1rem 1.15rem; border-radius: .9rem; font-size: .95rem; line-height: 1.6; }
+.cx-warn { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+.cx-warn strong:first-child, .cx-note strong:first-child { display: block; margin-bottom: .2rem; font-size: 1rem; }
+.cx-note { background: #fff7f5; border: 1px solid #fbd5cc; color: #374151; border-left: 4px solid var(--brand); }
+.cx-toc { margin-top: 1.5rem; padding: 1rem 1.15rem; border-radius: .9rem; background: #f9fafb; border: 1px solid #e5e7eb; }
+.cx-toc b { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #6b7280; }
+.cx-toc ol { margin-top: .5rem; padding-left: 1.2rem; list-style: decimal; display: grid; gap: .25rem; font-weight: 700; font-size: .92rem; }
+.cx-toc a { color: var(--brand); }
+.cx-toc a:hover { text-decoration: underline; }
+.cx-h3 { margin-top: 1.4rem; font-size: 1.05rem; font-weight: 900; color: #111827; }
+.cx-stats { margin-top: 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+@media (min-width: 640px) { .cx-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.cx-stat { padding: .85rem .9rem; border-radius: .9rem; background: #f9fafb; border: 1px solid #e5e7eb; }
+.cx-stat b { display: block; font-size: 1.5rem; font-weight: 900; letter-spacing: -.02em; line-height: 1.1; color: #111827; }
+.cx-stat span { display: block; margin-top: .25rem; font-size: 12px; line-height: 1.4; color: #6b7280; }
+.cx-tablewrap { margin-top: 1rem; overflow-x: auto; border: 1px solid #e5e7eb; border-radius: .9rem; }
+.cx-table { width: 100%; min-width: 34rem; border-collapse: collapse; font-size: .9rem; line-height: 1.5; }
+.cx-table th, .cx-table td { padding: .75rem .85rem; text-align: left; vertical-align: top; border-bottom: 1px solid #f1f2f4; }
+.cx-table thead th { background: #f9fafb; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #6b7280; }
+.cx-table tbody th { font-weight: 900; color: #111827; width: 7.5rem; }
+.cx-table.cx-t4 { min-width: 35rem; }
+.cx-table tbody tr:last-child th, .cx-table tbody tr:last-child td { border-bottom: 0; }
+.cx-pills { margin-top: .9rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+.cx-pill { padding: .4rem .8rem; border-radius: 999px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: .85rem; font-weight: 700; color: #1f2937; }
+.cx-pill small { font-weight: 600; color: #6b7280; }
+.cx-cards { margin-top: 1rem; display: grid; gap: .9rem; }
+@media (min-width: 640px) { .cx-cards.cols2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cx-card { padding: 1rem 1.1rem; border-radius: .9rem; border: 1px solid #e5e7eb; background: #fff; }
+.cx-card h4 { font-weight: 900; font-size: 1rem; color: #111827; }
+.cx-card p, .cx-card li { margin-top: .4rem; font-size: .9rem; line-height: 1.55; color: #4b5563; }
+.cx-card ul { list-style: disc; padding-left: 1.1rem; }
+.cx-tag { display: inline-block; margin-bottom: .35rem; padding: .1rem .55rem; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; background: #f3f4f6; color: #4b5563; }
+.cx-tag.ok { background: #d1fae5; color: #065f46; } .cx-tag.mid { background: #fef3c7; color: #92400e; } .cx-tag.no { background: #fee2e2; color: #991b1b; }
+.cx-steps { margin-top: .9rem; padding-left: 1.3rem; list-style: decimal; display: grid; gap: .5rem; color: #374151; line-height: 1.6; }
+.cx-small { margin-top: .9rem; font-size: 12px; line-height: 1.6; color: #6b7280; }
+.cx-sources { margin-top: .6rem; padding-left: 1.2rem; list-style: disc; display: grid; gap: .3rem; font-size: .85rem; color: #4b5563; }
+.cx-sources a, .cx-link { color: var(--brand); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+
+html.dark .cx-lead { color: #c3c9d6; }
+html.dark .cx-updated, html.dark .cx-pill, html.dark .cx-tag { background: #1c2438; color: #c3c9d6; border-color: #2b3347; }
+html.dark .cx-warn { background: #3b1414; border-color: #6b2323; color: #fecaca; }
+html.dark .cx-note { background: #1c1f2e; border-color: #3a2a2a; color: #d1d5db; }
+html.dark .cx-toc, html.dark .cx-stat, html.dark .cx-card { background: #121826; border-color: #2b3347; }
+html.dark .cx-toc b, html.dark .cx-stat span, html.dark .cx-small, html.dark .cx-pill small { color: #8b94a7; }
+html.dark .cx-h3, html.dark .cx-stat b, html.dark .cx-card h4, html.dark .cx-table tbody th { color: #f3f4f6; }
+html.dark .cx-card p, html.dark .cx-card li, html.dark .cx-sources, html.dark .cx-steps { color: #b8c0cf; }
+html.dark .cx-tablewrap { border-color: #2b3347; }
+html.dark .cx-table thead th { background: #121826; color: #8b94a7; }
+html.dark .cx-table th, html.dark .cx-table td { border-color: #1f2740; }
+html.dark .cx-table td { color: #c3c9d6; }
+html.dark .cx-tag.ok { background: #11392c; color: #6ee7b7; } html.dark .cx-tag.mid { background: #4a3a14; color: #fcd34d; } html.dark .cx-tag.no { background: #4c1d1d; color: #fca5a5; }
+/* le sezioni raggiunte dall'indice non devono finire sotto l'intestazione fissa */
+article h2[id], article h3[id] { scroll-margin-top: 5.5rem; }
+
+/* su telefono e tablet stretti le tabelle diventano schede impilate: niente colonne tagliate */
+@media (max-width: 719px) {
+  .cx-tablewrap { border: 0; overflow: visible; }
+  .cx-table, .cx-table.cx-t4 { min-width: 0; }
+  .cx-table thead { display: none; }
+  .cx-table, .cx-table tbody, .cx-table tr, .cx-table th, .cx-table td { display: block; width: auto; }
+  .cx-table tr { margin-top: .75rem; padding: .85rem 1rem; border: 1px solid #e5e7eb; border-radius: .9rem; background: #fff; }
+  .cx-table tbody th { padding: 0 0 .35rem; border: 0; font-size: 1rem; width: auto; }
+  .cx-table td { padding: .45rem 0 0; border: 0; }
+  .cx-table td::before { content: attr(data-label); display: block; margin-bottom: .1rem; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #6b7280; }
+  html.dark .cx-table tr { background: #121826; border-color: #2b3347; }
+  html.dark .cx-table td::before { color: #8b94a7; }
+}
+
+/* pagine statiche su telefono e tablet stretti: logo e interruttore del tema sulla stessa riga, menu a tutta larghezza sotto */
+@media (max-width: 819px) {
+  header > div.max-w-5xl { row-gap: .35rem; }
+  header > div.max-w-5xl > #themeToggle { order: 2; }
+  header > div.max-w-5xl > nav { order: 3; flex: 1 0 100%; }
+}
