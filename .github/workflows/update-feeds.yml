@@ -31,7 +31,7 @@ jobs:
           mkdir -p public/data
           if git ls-remote --exit-code --heads origin data >/dev/null 2>&1; then
             git fetch --depth 1 origin data
-            for f in articles.json videos.json channel-ids.json markets.json; do
+            for f in articles.json videos.json channel-ids.json markets.json radar.json radar-state.json; do
               git show "FETCH_HEAD:$f" > "/tmp/prev-$f" 2>/dev/null && cp "/tmp/prev-$f" "public/data/$f" || true
             done
           fi
@@ -49,6 +49,11 @@ jobs:
         run: node scripts/build-markets.mjs
         continue-on-error: true
 
+      # Trend Radar (dentro Mercati): interesse (Wikipedia) e notizie (menzioni e copertura). Gira dopo gli articoli (li legge), nello stesso job.
+      - name: Calcola il Trend Radar
+        run: node scripts/build-radar.mjs
+        continue-on-error: true
+
       - name: Pubblica i dati sul ramo "data"
         run: |
           set -e
@@ -59,7 +64,7 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           
           # Copia i file JSON dei dati
-          for f in articles.json videos.json channel-ids.json markets.json; do
+          for f in articles.json videos.json channel-ids.json markets.json radar.json radar-state.json; do
             if [ -s "$GITHUB_WORKSPACE/public/data/$f" ]; then cp "$WORKSPACE/$GITHUB_WORKSPACE/public/data/$f" . 2>/dev/null || cp "$GITHUB_WORKSPACE/public/data/$f" .; fi
           done
           

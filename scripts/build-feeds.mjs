@@ -236,6 +236,19 @@ function jaccard(A, B) {
   let n = 0; for (const w of A) if (B.has(w)) n++;
   return n / (A.size + B.size - n);
 }
+// ---------------------------------------------------------------------------
+// Copertura: quante testate DIVERSE raccontano la stessa storia (segnale del Trend Radar).
+// Si conta prima di scartare i doppioni, perche' proprio i doppioni sono il segnale.
+// Si ignorano le parole di routine delle cronache ("borsa", "chiude", "rialzo"...) e si chiedono almeno 3 parole in comune.
+// ---------------------------------------------------------------------------
+const COVER_ROUTINE = new Set('borsa borse chiude chiudono chiusura apre apertura rialzo ribasso calo cala sale scende punti base milano oggi ieri domani euro miliardi milioni cosa come perche nuovo nuova nuovi nuove ecco quanto quando dove anche ancora dopo prima fino oltre contro verso italia italiano italiana italiani 2025 2026 anno anni mese mesi'.split(' '));
+const coverTokens = t => new Set([...titleTokens(t)].filter(w => !COVER_ROUTINE.has(w)));
+const outletOf = name => String(name || '').replace(/\s[–-]\s.*/, '').trim(); // "ANSA – Economia" -> "ANSA"
+function coverSimilar(A, B, th, minShared) {
+  let n = 0; for (const w of A) if (B.has(w)) n++;
+  return n >= minShared && n / (A.size + B.size - n) >= th;
+}
+
 // anteprima che ripete solo il titolo = nessuna anteprima
 function realSummary(title, summary) {
   const s = (summary || '').trim();
@@ -256,6 +269,7 @@ async function buildArticles() {
   const results = await Promise.all(A.sources.map(async s => ({ s, r: await loadSource(s) })));
   const report = [];
   let collected = [];
+  const coverPool = []; // {tk, outlet, t} di tutti i titoli visti, anche quelli poi scartati per brevita'
 
   for (const { s, r } of results) {
     if (s.paywall === 'skip') { report.push({ id: s.id, name: s.name, status: 'ok', feed: '(saltata: paywall=skip)', letti: 0, tenuti: 0 }); continue; }
@@ -268,6 +282,7 @@ async function buildArticles() {
       if (age > maxAge || age < -3600e3) continue;
       if (exclude.test(it.title)) continue;
       if (excludeTitle && excludeTitle.test(it.title)) { skipped.flashBorsa++; continue; }
+      coverPool.push({ tk: coverTokens(it.title), outlet: outletOf(s.name), t: it.date.getTime() });
       const summary = realSummary(it.title, it.summary);
       if (summary.length < minSummary) { skipped.troppoBrevi++; continue; }
       // categoria dal titolo e dall'anteprima; le categorie del feed solo come ripiego per le fonti fidate
@@ -309,6 +324,7 @@ async function buildArticles() {
       const p = prevById.get(a.id); if (!p) continue;
       if (!a.image && p.image) a.image = p.image;
       for (const k of ['imgTry', 'pw', 'pwTry']) if (p[k] !== undefined) a[k] = p[k];
+      if (p.covBy) a.covBy = p.covBy;
     }
     for (const p of prev.articles || []) {
       if (now - new Date(p.publishedAt).getTime() > maxAge) continue;
@@ -316,6 +332,7 @@ async function buildArticles() {
       if (realSummary(p.title, p.summary).length < minSummary) { skipped.troppoBrevi++; continue; }
       const src = A.sources.find(x => x.id === p.sourceId);
       if (src && !src.trusted && !cats.some(c => c.re.test(`${p.title} ${p.summary}`))) { skipped.fuoriTema++; continue; }
+      coverPool.push({ tk: coverTokens(p.title), outlet: outletOf(p.source), t: Date.parse(p.publishedAt) });
       collected.push(p);
     }
   } catch { /* primo avvio */ }
@@ -334,6 +351,17 @@ async function buildArticles() {
     if (perSource[a.sourceId] > A.maxPerSource) continue;
     seenUrl.add(a.url); seenTitle.add(nt); pool.push(a); poolTokens.push(tk);
     if (pool.length >= poolMax) break;
+  }
+
+  // copertura: testate diverse che hanno pubblicato la stessa storia entro la finestra (si tiene solo se sono almeno 2)
+  const covTh = A.coverageSimilarity ?? 0.4, covMin = A.coverageMinShared ?? 3, covMs = (A.coverageHours ?? 36) * 3600e3;
+  for (const a of pool) {
+    const own = outletOf(a.source), tk = coverTokens(a.title), t = Date.parse(a.publishedAt);
+    const outlets = new Set(a.covBy || []); outlets.add(own);
+    if (tk.size >= covMin) for (const c of coverPool) {
+      if (c.outlet !== own && Math.abs(c.t - t) <= covMs && coverSimilar(tk, c.tk, covTh, covMin)) outlets.add(c.outlet);
+    }
+    if (outlets.size >= 2) a.covBy = [...outlets].sort().slice(0, 8); else delete a.covBy;
   }
 
   await enrichPages(pool, { checkPaywall: A.checkPaywall !== false });

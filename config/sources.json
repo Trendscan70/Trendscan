@@ -5,6 +5,9 @@
     "maxTotal": 160,
     "minSummaryChars": 90,
     "similarTitle": 0.6,
+    "coverageSimilarity": 0.4,
+    "coverageMinShared": 3,
+    "coverageHours": 36,
     "checkPaywall": true,
     "excludeTitle": "^(borsa:.*\\b(apre|chiude|chiusura|apertura)\\b|lo spread\\b.*\\b(apre|chiude)\\b|spread btp.*\\b(apre|chiude)\\b|piazza affari:)",
     "sources": [

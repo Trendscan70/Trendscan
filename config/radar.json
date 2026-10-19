@@ -1,0 +1,72 @@
+{
+  "_nota": "Trend Radar. Tre misure SEPARATE, mai sommate: interesse (visualizzazioni Wikipedia), notizie (menzioni e copertura nelle testate che seguiamo), prezzi (dai cambi BCE di markets.json). I temi sono scelti dalla redazione; la crescita e' calcolata in automatico. Le fonti girano solo se enabled=true E license.verified=true. Le espressioni regolari vanno scritte senza accenti (il testo viene normalizzato).",
+  "sources": {
+    "wikipedia": {
+      "enabled": true,
+      "name": "Wikimedia Foundation (Wikipedia in italiano)",
+      "project": "it.wikipedia",
+      "pageviewsApi": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article",
+      "actionApi": "https://it.wikipedia.org/w/api.php",
+      "pageUrl": "https://it.wikipedia.org/",
+      "userAgent": "TrendScanHub/1.0 (https://trendscan26.netlify.app; trendscan@proton.me) node-fetch",
+      "refreshHours": 12,
+      "requestDelayMs": 450,
+      "windowDays": 7,
+      "minPrevViews": 150,
+      "license": {
+        "verified": true,
+        "checked": "2026-10-17",
+        "policyUrl": "https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy",
+        "attribution": "Dati: Wikimedia Foundation, visualizzazioni di pagina (CC0)",
+        "conditions": "Dati delle visualizzazioni di pagina rilasciati in CC0 1.0. Richiesto uno User-Agent identificabile con contatto; limite 200 richieste al minuto per client non autenticato (se ne usano ~40 ogni 12 ore, a distanza di circa mezzo secondo l'una dall'altra)."
+      }
+    }
+  },
+  "news": {
+    "windowDays": 7,
+    "minSpanDays": 4,
+    "fullSpanDays": 14,
+    "retentionDays": 45,
+    "minMentions": 3,
+    "coverageHours": 48,
+    "coverageTop": 8,
+    "coverageSimilarity": 0.4,
+    "coverageMinShared": 3
+  },
+  "top": 8,
+  "topics": [
+    {"id": "mutui", "label": "Mutui", "kind": "established", "wiki": "Mutuo", "pattern": "\\bmutu\\w*|surrog\\w*|tasso fisso|tasso variabile"},
+    {"id": "tassi-banche-centrali", "label": "Tassi e banche centrali", "kind": "established", "wiki": "Banca centrale europea", "pattern": "\\bbce\\b|banca centrale europea|lagarde|tassi di interesse|tassi d.interesse|taglio dei tassi|rialzo dei tassi|\\bfed\\b|federal reserve|powell|warsh"},
+    {"id": "inflazione", "label": "Inflazione e prezzi", "kind": "established", "wiki": "Inflazione", "pattern": "inflazion\\w*|carovita|prezzi al consumo|\\bipca\\b|rincar\\w+"},
+    {"id": "btp-spread", "label": "Btp e spread", "kind": "established", "wiki": "Buono del Tesoro Poliennale", "pattern": "\\bbtp\\b|spread|titoli di stato|\\bbund\\b|btp valore"},
+    {"id": "pensioni", "label": "Pensioni", "kind": "established", "wiki": "Pensione", "pattern": "pension\\w*|\\binps\\b|quota 10\\d|opzione donna|ape sociale"},
+    {"id": "tfr-previdenza", "label": "TFR e previdenza complementare", "kind": "established", "wiki": "Trattamento di fine rapporto", "pattern": "\\btfr\\b|fond\\w* pension\\w*|previdenza complementare|previdenz\\w*"},
+    {"id": "etf", "label": "ETF", "kind": "established", "wiki": "Exchange-traded fund", "pattern": "\\betf\\b|exchange traded fund"},
+    {"id": "criptovalute", "label": "Criptovalute", "kind": "established", "wiki": "Criptovaluta", "pattern": "bitcoin|\\bbtc\\b|cripto\\w*|ethereum|blockchain"},
+    {"id": "fisco-tasse", "label": "Tasse e fisco", "kind": "established", "wiki": "Imposta sul reddito delle persone fisiche", "pattern": "irpef|\\b730\\b|dichiarazione dei redditi|fisco|rottamazione|\\biva\\b|flat tax|cedolare|agenzia delle entrate|\\btasse\\b"},
+    {"id": "bonus-agevolazioni", "label": "Bonus e agevolazioni", "kind": "established", "wiki": null, "pattern": "\\bbonus\\b|agevolazion\\w*|detrazion\\w*|incentiv\\w*|sgravi\\w*|superbonus|\\bisee\\b|assegno unico"},
+    {"id": "bollette-energia", "label": "Bollette ed energia", "kind": "established", "wiki": null, "pattern": "bollett\\w*|\\bgas\\b|energia elettrica|\\barera\\b|luce e gas|caro energia"},
+    {"id": "lavoro-stipendi", "label": "Lavoro e stipendi", "kind": "established", "wiki": null, "pattern": "stipend\\w*|salari\\w*|assunzion\\w*|disoccupazion\\w*|\\bnaspi\\b|\\blavoro\\b"},
+    {"id": "banche-conti", "label": "Banche e conti correnti", "kind": "established", "wiki": "Conto corrente", "pattern": "conto corrente|conti deposito|\\bbanche\\b|\\bbanca\\b|\\biban\\b|carta di credito"},
+    {"id": "borsa-azioni", "label": "Borsa e azioni", "kind": "established", "wiki": "Borsa Italiana", "pattern": "\\bborsa\\b|piazza affari|ftse mib|\\bazioni\\b|listini|wall street|nasdaq"},
+    {"id": "materie-prime", "label": "Oro e materie prime", "kind": "established", "wiki": "Oro", "pattern": "\\boro\\b|argento|petrolio|\\bbrent\\b|materie prime|gas naturale"},
+    {"id": "dollaro-cambi", "label": "Dollaro e cambi", "kind": "established", "wiki": "Dollaro statunitense", "pattern": "dollaro|euro dollaro|cambio euro|\\byen\\b|sterlina|franco svizzero|valute", "price": "EURUSD"},
+    {"id": "casa-immobili", "label": "Casa e immobili", "kind": "established", "wiki": "Mercato immobiliare", "pattern": "affitt\\w*|immobil\\w*|compravendit\\w*|prezzi delle case|\\bcasa\\b"},
+    {"id": "conti-pubblici", "label": "Manovra e conti pubblici", "kind": "established", "wiki": "Debito pubblico", "pattern": "manovra|legge di bilancio|debito pubblico|deficit|conti pubblici"},
+    {"id": "ia", "label": "Intelligenza artificiale", "kind": "emerging", "wiki": "Intelligenza artificiale", "pattern": "intelligenza artificiale|\\bia\\b|openai|chatgpt|nvidia|data center"},
+    {"id": "stablecoin", "label": "Stablecoin", "kind": "emerging", "wiki": "Stablecoin", "pattern": "stablecoin|\\busdt\\b|\\busdc\\b|tether"},
+    {"id": "regole-cripto", "label": "Regole sulle cripto (MiCA, DAC8)", "kind": "emerging", "wiki": null, "pattern": "\\bmica\\b|\\bdac8\\b|\\bcasp\\b"},
+    {"id": "dazi", "label": "Dazi e guerra commerciale", "kind": "emerging", "wiki": "Dazio", "pattern": "\\bdazi\\b|\\bdazio\\b|guerra commerciale|tariffe doganali"},
+    {"id": "euro-digitale", "label": "Euro digitale", "kind": "emerging", "wiki": "Euro digitale", "pattern": "euro digitale|\\bcbdc\\b"},
+    {"id": "difesa", "label": "Difesa e riarmo", "kind": "emerging", "wiki": null, "pattern": "riarmo|spese militari|\\bdifesa\\b|\\bnato\\b"},
+    {"id": "transizione", "label": "Transizione energetica", "kind": "emerging", "wiki": "Transizione energetica", "pattern": "transizione energetica|rinnovabil\\w*|fotovoltaic\\w*|eolic\\w*|idrogeno|auto elettric\\w*|batterie"},
+    {"id": "terre-rare", "label": "Terre rare e chip", "kind": "emerging", "wiki": "Terre rare", "pattern": "terre rare|litio|materie prime critiche|semiconduttor\\w*|\\bchip\\b"},
+    {"id": "tokenizzazione", "label": "Tokenizzazione degli asset", "kind": "emerging", "wiki": null, "pattern": "tokenizz\\w*|asset digitali"},
+    {"id": "mercati-predittivi", "label": "Mercati predittivi", "kind": "emerging", "wiki": null, "pattern": "mercati predittiv\\w*|prediction market|polymarket|kalshi"},
+    {"id": "sp500", "label": "S&P 500", "kind": "index", "wiki": "S&P 500", "pattern": "s&p ?500|sp500"},
+    {"id": "nasdaq", "label": "Nasdaq", "kind": "index", "wiki": "NASDAQ-100", "pattern": "nasdaq"},
+    {"id": "msci-world", "label": "MSCI World", "kind": "index", "wiki": "MSCI World", "pattern": "msci|all world|all-world"},
+    {"id": "ftse-mib", "label": "FTSE MIB", "kind": "index", "wiki": "FTSE MIB", "pattern": "ftse mib|piazza affari"},
+    {"id": "dax-stoxx", "label": "DAX e Stoxx 600", "kind": "index", "wiki": "DAX", "pattern": "\\bdax\\b|stoxx"}
+  ]
+}
