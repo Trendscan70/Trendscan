@@ -10,6 +10,7 @@
     "coverageHours": 36,
     "checkPaywall": true,
     "excludeTitle": "^(borsa:.*\\b(apre|chiude|chiusura|apertura)\\b|lo spread\\b.*\\b(apre|chiude)\\b|spread btp.*\\b(apre|chiude)\\b|piazza affari:)",
+    "excludeOffTopic": "\\b(sciopero|scioperi|autotrasportator\\w*|tir|fatturato|trimestre|trimestrale|semestrale|volkswagen|general motors|saipem|ftse ?mib|ftsemib|piazza affari|borsa di milano|borsa milano|private banking)\\b",
     "sources": [
       { "id": "sole-fp", "name": "Il Sole 24 Ore – Finanza Personale", "site": "https://www.ilsole24ore.com/", "feeds": ["https://www.ilsole24ore.com/rss/finanza-personale--investimenti.xml"], "trusted": true },
       { "id": "sole-tributi", "name": "Il Sole 24 Ore – Norme e Tributi", "site": "https://www.ilsole24ore.com/", "feeds": ["https://www.ilsole24ore.com/rss/norme-e-tributi.xml"], "trusted": false },
@@ -29,8 +30,8 @@
       { "name": "Pensione e TFR", "icon": "👴", "pattern": "\\b(pension\\w*|previdenz\\w*|tfr|inps|fondo pension\\w*|assegno sociale|contributi)\\b" },
       { "name": "Casa e Mutui", "icon": "🏠", "pattern": "\\b(mutu\\w*|surroga|affitt\\w*|prima casa|immobil\\w*|bonus casa|bonus ristrutturazion\\w*|superbonus|canone|catasto|imu)\\b" },
       { "name": "Tasse e Fisco", "icon": "🧾", "pattern": "\\b(tasse|tassa\\w*|fisco|fiscal\\w*|730|isee|irpef|bollo|imposta\\w*|detrazion\\w*|dichiarazione dei redditi|redditi|cedolare|aliquot\\w*|tributi|rottamazione)\\b" },
-      { "name": "ETF e Investimenti", "icon": "📈", "pattern": "\\b(etf|pac|azion\\w*|obbligazion\\w*|btp|bot|cct|portafoglio|invest\\w*|fondi? comun\\w*|dividend\\w*|titoli di stato|rendiment\\w*|cedol\\w*|criptovalut\\w*|bitcoin|oro|borsa|diversificazion\\w*|interesse composto)\\b" },
-      { "name": "Banche e Conti", "icon": "🏦", "pattern": "\\b(conto corrente|conti correnti|conto deposito|conti deposito|carta di credito|carte|banca|banche|bancomat|truffa\\w*|phishing|iban|prestit\\w*|finanziament\\w*|bancari\\w*|polizz\\w*|assicurazion\\w*)\\b" },
+      { "name": "ETF e Investimenti", "icon": "📈", "pattern": "\\b(etf|pac|azion\\w*|obbligazion\\w*|btp|bot|cct|portafoglio|invest(?:ire|i|iment\\w*|itor\\w*|ito)|fondi? comun\\w*|dividend\\w*|titoli di stato|rendiment\\w*|cedol\\w*|criptovalut\\w*|bitcoin|oro|borsa|diversificazion\\w*|interesse composto)\\b" },
+      { "name": "Banche e Conti", "icon": "🏦", "pattern": "\\b(conto corrente|conti correnti|conto deposito|conti deposito|carta di credito|carte|banca|banche|revolut|n26|fintech|home banking|conto online|bancomat|truffa\\w*|phishing|iban|prestit\\w*|finanziament\\w*|bancari\\w*|polizz\\w*|assicurazion\\w*)\\b" },
       { "name": "Risparmio e Budget", "icon": "💶", "pattern": "\\b(risparmi\\w*|budget|spese|bollett\\w*|stipendi\\w*|inflazione|fondo (di )?emergenza|bonus|salari\\w*|pagament\\w*|libretto|consigli|guida)\\b" }
     ]
   },

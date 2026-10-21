@@ -3,12 +3,12 @@
 // Nessun contenuto e' scritto a mano: senza i file il sito mostra uno stato vuoto, mai articoli inventati.
 
 const CATEGORIES = [
-  { name: 'Risparmio e Budget',  icon: '💶', cls: 'g-risparmio',   img: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=900&auto=format&fit=crop' },
-  { name: 'ETF e Investimenti',  icon: '📈', cls: 'g-investimenti', img: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Pensione e TFR',      icon: '👴', cls: 'g-pensione',    img: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Casa e Mutui',        icon: '🏠', cls: 'g-casa',        img: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Tasse e Fisco',       icon: '🧾', cls: 'g-tasse',       img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Banche e Conti',      icon: '🏦', cls: 'g-banche',      img: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=900&auto=format&fit=crop' }
+  { name: 'Risparmio e Budget', q: 'Come metto da parte più soldi?',  icon: '💶', cls: 'g-risparmio',   img: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=900&auto=format&fit=crop' },
+  { name: 'ETF e Investimenti', q: 'Come inizio a investire?',  icon: '📈', cls: 'g-investimenti', img: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=900&auto=format&fit=crop' },
+  { name: 'Pensione e TFR', q: 'Che pensione avrò?',      icon: '👴', cls: 'g-pensione',    img: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=900&auto=format&fit=crop' },
+  { name: 'Casa e Mutui', q: 'Affitto, mutuo o bonus casa?',        icon: '🏠', cls: 'g-casa',        img: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=900&auto=format&fit=crop' },
+  { name: 'Tasse e Fisco', q: 'Cosa devo sapere sulle tasse?',       icon: '🧾', cls: 'g-tasse',       img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900&auto=format&fit=crop' },
+  { name: 'Banche e Conti', q: 'Quale conto scelgo?',      icon: '🏦', cls: 'g-banche',      img: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=900&auto=format&fit=crop' }
 ];
 const HERO_IMG = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1400&auto=format&fit=crop';
 
@@ -20,7 +20,6 @@ const state = {
   shown: 12,
   queue: [], qIndex: -1, channelFilter: 'ALL',
   player: null, playerReady: false,
-  compoundChartInstance: null,
   scroll: {},
   markets: null,
   radar: null, radarSort: 'interest'
@@ -111,19 +110,17 @@ async function bootstrap() {
   state.videosLoaded = !!v;
 
   initTheme();
-  initFontSize();
-  renderBudgetDownload();
-  renderBrokers();
   renderCategoryBar();
   renderSourceFilter();
   renderAll();
   setupEvents();
-  setupCalculatorListeners();
+  setupHomeSim();
+  setupGlossaryTip();
   route();
 }
 
 function renderAll() {
-  renderHero(); renderMarketStrip(); renderTopicTiles(); renderHomeLatest(); renderHomeTopics(); renderHomeVideos(); renderGuideTeasers();
+  renderHero(); renderMarketStrip(); renderTopicTiles(); renderHomeLatest(); renderHomeTopics(); renderHomeVideos(); renderGuideTeasers(); renderGlossary(); applyGlossary();
   renderArticles(); renderMarketsView(); renderVideoPage();
 }
 
@@ -168,17 +165,17 @@ function renderHero() {
   const arts = state.articles;
   if (!arts.length) {
     g.innerHTML = `
-      <a href="#guide" class="hero-main lg:col-span-2 g-risparmio">
+      <a href="/guide/" class="hero-main lg:col-span-2 g-risparmio">
         ${imgTag(HERO_IMG, '')}<div class="shade"></div>
         <div class="relative z-10 h-full min-h-[380px] flex flex-col justify-end p-6 sm:p-9">
           <span class="self-start px-3 py-1 rounded-md brand-bg text-[11px] font-extrabold uppercase tracking-widest">Hub di finanza personale</span>
-          <h1 class="text-3xl sm:text-5xl font-black leading-tight mt-3 max-w-2xl">Metti in ordine i tuoi soldi, una guida alla volta.</h1>
+          <h2 class="text-3xl sm:text-5xl font-black leading-tight mt-3 max-w-2xl">Metti in ordine i tuoi soldi, una guida alla volta.</h2>
           <p class="mt-3 text-gray-200 max-w-xl text-sm sm:text-base">Articoli dei giornali, video dei migliori youtuber italiani e un simulatore PAC per capire quanto può crescere il tuo risparmio.</p>
         </div>
       </a>
       <div class="flex flex-col gap-4">
         <a href="#video" class="hero-side"><div class="w-24 h-20 rounded-lg g-casa flex items-center justify-center text-3xl shrink-0">▶️</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Video Educativi</div><div class="side-title font-extrabold leading-snug">La playlist dei migliori canali italiani di finanza</div></div></a>
-        <a href="#guide" class="hero-side"><div class="w-24 h-20 rounded-lg g-investimenti flex items-center justify-center text-3xl shrink-0">🧮</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Strumenti</div><div class="side-title font-extrabold leading-snug">Simulatore PAC e interesse composto</div></div></a>
+        <a href="/guide/" class="hero-side"><div class="w-24 h-20 rounded-lg g-investimenti flex items-center justify-center text-3xl shrink-0">🧮</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Strumenti</div><div class="side-title font-extrabold leading-snug">Simulatore PAC e interesse composto</div></div></a>
         <a href="#articoli" class="hero-side"><div class="w-24 h-20 rounded-lg g-pensione flex items-center justify-center text-3xl shrink-0">📰</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Articoli</div><div class="side-title font-extrabold leading-snug">I consigli di finanza personale dei giornali</div></div></a>
       </div>`;
     return;
@@ -193,7 +190,7 @@ function renderHero() {
       ${imgTag(main.image, main.title)}<div class="shade"></div>
       <div class="relative z-10 h-full min-h-[380px] flex flex-col justify-end p-6 sm:p-8">
         <span class="self-start px-3 py-1 rounded-md brand-bg text-[11px] font-extrabold uppercase tracking-widest">${esc(c.name)}</span>
-        <h1 class="text-2xl sm:text-4xl font-black leading-tight mt-3 max-w-3xl">${esc(main.title)}</h1>
+        <h2 class="text-2xl sm:text-4xl font-black leading-tight mt-3 max-w-3xl">${esc(main.title)}</h2>
         ${main.summary ? `<p class="mt-2 text-gray-200 max-w-2xl text-sm line-clamp-2">${esc(main.summary)}</p>` : ''}
         <div class="mt-3 text-xs text-gray-300 font-semibold">Fonte: ${esc(main.source)} · ${timeAgo(main.publishedAt)}</div>
       </div>
@@ -211,12 +208,14 @@ function renderHero() {
 }
 
 function renderTopicTiles() {
-  $('topicTiles').innerHTML = CATEGORIES.map(c => `
+  $('topicTiles').innerHTML = CATEGORIES.map(c => {
+    const n = state.articles.filter(a => a.category === c.name).length;
+    return `
     <button class="tile ${c.cls} text-left" data-cat="${esc(c.name)}">
-      <span class="thumb-emoji" style="font-size:3rem">${c.icon}</span>${imgTag(c.img, c.name)}<div class="shade"></div>
-      <div class="absolute left-3 bottom-3 right-3 z-10"><div class="text-[11px] opacity-80">${state.articles.filter(a => a.category === c.name).length || ''} ${state.articles.length ? 'articoli' : ''}</div>
-      <div class="font-extrabold leading-tight">${esc(c.name)}</div></div>
-    </button>`).join('');
+      <span class="thumb-emoji" style="font-size:3rem">${c.icon}</span>${imgTag(c.img, '')}<div class="shade"></div>
+      <div class="absolute left-3 bottom-3 right-3 z-10"><div class="text-[11px] opacity-80">${esc(c.name)}${n ? ' · ' + n + ' articoli' : ''}</div>
+      <div class="font-extrabold leading-tight">${esc(c.q || c.name)}</div></div>
+    </button>`; }).join('');
 }
 
 function renderHomeLatest() {
@@ -257,32 +256,115 @@ function videoCardDark(v) {
     </button>`;
 }
 
+// In home si mostrano solo video adatti a chi inizia: fuori quelli con promesse di guadagni facili o strumenti molto rischiosi.
+// Euristica sul titolo; la playlist completa (#video) resta invariata.
+const RISKY_VIDEO = /\b(leva|leverage|2x|3x|guadagn\w*|extra|ricc\w+|milion\w*|trading|scalping|short|opzion\w*|futures|cfd|segnali|forex|rendita passiva)\b/i;
 function renderHomeVideos() {
   const el = $('homeVideos');
-  if (state.videos.length) { el.innerHTML = state.videos.slice(0, 4).map(videoCardDark).join(''); return; }
+  if (state.videos.length) {
+    const calm = state.videos.filter(v => !RISKY_VIDEO.test(v.title || ''));
+    el.innerHTML = (calm.length >= 4 ? calm : state.videos).slice(0, 4).map(videoCardDark).join('');
+    return;
+  }
   el.innerHTML = state.channels.slice(0, 4).map(c => `
     <a href="#video" class="rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition">
       ${avatar(c, 'w-12 h-12 text-lg')}<div class="mt-3 font-extrabold">${esc(c.name)}</div><div class="text-xs text-gray-400 mt-1 line-clamp-2">${esc(c.blurb || '')}</div></a>`).join('') ||
     '<p class="col-span-full text-sm text-gray-400">Nessun canale disponibile.</p>';
 }
 
+const PATH_STEPS = [
+  { href: '/guide/risparmio-50-30-20/', t: 'Metti in ordine il budget', d: 'La regola 50/30/20 e il fondo di emergenza: da qui si parte.', icon: '💶', cls: 'g-risparmio' },
+  { href: '/guide/etf/', t: 'Cos\'è un ETF',            d: 'Un paniere di titoli in un solo acquisto: vantaggi, rischi e costi.', icon: '📦', cls: 'g-investimenti' },
+  { href: '/guide/pac/', t: 'Come funziona un PAC',      d: 'Investire una cifra fissa ogni mese, senza dover indovinare il momento giusto.', icon: '🔁', cls: 'g-pensione' },
+  { href: '/guide/simulatore-pac/', t: 'Fai i tuoi conti',          d: 'Il simulatore: quanto può crescere un risparmio mensile nel tempo.', icon: '🧮', cls: 'g-casa' },
+  { href: '/guide/broker-pac/', t: 'Dove aprire un PAC',        d: 'Confronto informativo dei broker con PAC a costi bassi.', icon: '🏦', cls: 'g-banche' }
+];
 function renderGuideTeasers() {
-  const items = [
-    { id: 'guide-etf', t: 'Cos\'è un ETF', d: 'Il paniere di titoli che si compra con un solo ordine: vantaggi, rischi e costi.', cls: 'g-investimenti', icon: '📦', img: CATEGORIES[1].img },
-    { id: 'guide-composto', t: 'PAC e potenza dell\'interesse composto', d: 'Perché cominciare presto conta più di versare tanto.', cls: 'g-risparmio', icon: '❄️', img: CATEGORIES[2].img },
-    { id: 'guide-broker', t: 'Broker con PAC a costi bassi', d: 'Confronto di Trade Republic, Scalable, Directa e Fineco.', cls: 'g-casa', icon: '🏦', img: CATEGORIES[5].img }
-  ];
-  const _old = [
-    { id: 'guide-1', t: 'Cosa sono le azioni', d: 'Quote di un\'azienda, dividendi e orizzonte di lungo periodo.', cls: 'g-investimenti', icon: '🏢', img: CATEGORIES[1].img },
-    { id: 'guide-2', t: 'Regola 50/30/20 e fondo di emergenza', d: 'Come dividere lo stipendio prima di investire.', cls: 'g-risparmio', icon: '🛡️', img: CATEGORIES[0].img },
-    { id: 'guide-4', t: 'Simulatore PAC e interesse composto', d: 'Prova quanto può crescere un risparmio mensile nel tempo.', cls: 'g-casa', icon: '🧮', img: CATEGORIES[4].img }
-  ];
-  void _old;
-  $('guideTeasers').innerHTML = items.map(i => `
-    <button class="card text-left" data-scroll="${i.id}">
-      <div class="thumb aspect-[16/9] ${i.cls}"><span class="thumb-emoji">${i.icon}</span>${imgTag(i.img, i.t)}</div>
-      <div class="p-4"><h3 class="font-extrabold text-lg leading-snug card-title">${esc(i.t)}</h3><p class="text-sm text-gray-600 mt-1">${esc(i.d)}</p></div>
-    </button>`).join('');
+  $('guideTeasers').innerHTML = PATH_STEPS.map((i, n) => `
+    <a class="path-card text-left" href="${i.href}">
+      <span class="path-top"><span class="path-num">${n + 1}</span><span class="path-icon ${i.cls}" aria-hidden="true">${i.icon}</span></span>
+      <h3 class="font-extrabold text-base leading-snug card-title">${esc(i.t)}</h3>
+      <p class="text-sm text-gray-600 mt-1">${esc(i.d)}</p>
+    </a>`).join('');
+}
+
+// ------------------------------------------------------------------ glossario e tooltip
+const GLOSSARY = [
+  { k: 'ETF', t: 'ETF', d: 'Un fondo che si compra in Borsa e contiene tanti titoli (azioni, obbligazioni) in un solo prodotto. Di solito segue un indice.' },
+  { k: 'PAC', t: 'PAC', d: 'Piano di accumulo del capitale: investi la stessa cifra ogni mese, in automatico, invece di una somma sola.' },
+  { k: 'PIC', t: 'PIC', d: 'Piano di investimento del capitale: investi tutta la somma in una volta sola.' },
+  { k: 'TER', t: 'TER', d: 'Il costo annuo di un fondo o ETF, in percentuale sul capitale investito. Più è basso, meno paghi.' },
+  { k: 'KID', t: 'KID', d: 'Documento breve e standard che ogni prodotto finanziario deve avere: riassume costi, rischi e scenari possibili.' },
+  { k: 'BTP', t: 'BTP', d: 'Titolo di Stato italiano: presti soldi allo Stato, che ti paga interessi (le cedole) e a scadenza ti restituisce il capitale.' },
+  { k: 'spread', t: 'Spread BTP-Bund', d: 'La differenza di rendimento tra i titoli di Stato italiani e quelli tedeschi a 10 anni. Più è alta, più il mercato considera rischioso prestare soldi all\'Italia.' },
+  { k: null, t: 'Diversificazione', d: 'Non mettere tutte le uova nello stesso paniere: distribuire i soldi su tanti titoli per ridurre il rischio.' },
+  { k: null, t: 'Interesse composto', d: 'Gli interessi che guadagni producono a loro volta altri interessi: per questo il tempo conta così tanto.' },
+  { k: null, t: 'Volatilità', d: 'Quanto il prezzo di un investimento sale e scende nel breve periodo.' },
+  { k: null, t: 'Fondo di emergenza', d: 'Una riserva di liquidità, di solito pari a qualche mese di spese, per gli imprevisti.' }
+];
+function renderGlossary() {
+  const el = $('glList'); if (!el) return;
+  el.innerHTML = GLOSSARY.map(g => `<div><dt>${esc(g.t)}</dt><dd>${esc(g.d)}</dd></div>`).join('');
+}
+// Sottolinea (una volta per blocco) le sigle nei testi scritti da noi, marcati con data-gl. Su tocco/tastiera il tooltip si apre col focus.
+function applyGlossary(root = document) {
+  const terms = GLOSSARY.filter(g => g.k);
+  const re = new RegExp('\\b(' + terms.map(g => g.k).join('|') + ')\\b', 'g');
+  root.querySelectorAll('[data-gl]').forEach(el => {
+    if (el.dataset.glDone) return; el.dataset.glDone = '1';
+    const used = new Set();
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      const txt = node.nodeValue; if (!re.test(txt)) { re.lastIndex = 0; return; } re.lastIndex = 0;
+      const frag = document.createDocumentFragment(); let last = 0, m;
+      while ((m = re.exec(txt))) {
+        const g = terms.find(x => x.k === m[1]);
+        frag.append(txt.slice(last, m.index));
+        if (used.has(g.k)) frag.append(m[1]);
+        else { used.add(g.k); const a = document.createElement('abbr'); a.className = 'gl'; a.tabIndex = 0; a.dataset.def = g.d; a.textContent = m[1]; frag.append(a); }
+        last = m.index + m[1].length;
+      }
+      frag.append(txt.slice(last)); node.replaceWith(frag);
+    });
+  });
+}
+
+// Tooltip unico, posizionato in JS e tenuto dentro lo schermo (hover, focus da tastiera, tocco)
+function setupGlossaryTip() {
+  let tip = null;
+  const hide = () => { if (tip) tip.style.display = 'none'; };
+  const show = el => {
+    if (!tip) { tip = document.createElement('div'); tip.id = 'glTip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip); }
+    tip.textContent = el.dataset.def; tip.style.display = 'block';
+    const r = el.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    const left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), window.innerWidth - w - 8);
+    const top = r.top - h - 8 >= 8 ? r.top - h - 8 : r.bottom + 8;
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+  };
+  document.addEventListener('mouseover', e => { const a = e.target.closest && e.target.closest('abbr.gl'); if (a) show(a); });
+  document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('abbr.gl')) hide(); });
+  document.addEventListener('focusin', e => { const a = e.target.closest && e.target.closest('abbr.gl'); if (a) show(a); });
+  document.addEventListener('focusout', hide);
+  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('abbr.gl'); if (a) { a.focus(); show(a); e.stopPropagation(); } else hide(); }, true);
+  window.addEventListener('scroll', hide, { passive: true });
+  window.addEventListener('hashchange', hide);
+}
+
+// ------------------------------------------------------------------ mini-simulatore in home
+function setupHomeSim() {
+  const m = $('hsMonthly'), y = $('hsYears'); if (!m || !y) return;
+  const fmt = n => Math.round(n).toLocaleString('it-IT') + ' €';
+  const fv = (pmt, years, rate) => { let b = 0; for (let i = 0; i < years * 12; i++) b = (b + pmt) * (1 + rate / 12); return b; };
+  const upd = () => {
+    const pmt = +m.value, yrs = +y.value;
+    $('hsMonthlyVal').textContent = pmt.toLocaleString('it-IT') + ' €';
+    $('hsYearsVal').textContent = yrs === 1 ? '1 anno' : yrs + ' anni';
+    $('hsPaid').textContent = fmt(pmt * yrs * 12);
+    $('hsLow').textContent = fmt(fv(pmt, yrs, 0.03));
+    $('hsHigh').textContent = fmt(fv(pmt, yrs, 0.07));
+  };
+  m.addEventListener('input', upd); y.addEventListener('input', upd); upd();
 }
 
 // ------------------------------------------------------------------ categorie, filtri, articoli
@@ -375,8 +457,9 @@ function renderMarketStrip() {
       <div class="mk-sparkwrap ${pctCls(p.changePct)}">${spark((p.series || []).slice(-30).map(x => x.r))}</div>
     </a>`).join('') : '';
   el.innerHTML = `
-    <div class="section-title"><h2>Mercati</h2><span class="section-bar"></span>
+    <div class="section-title"><h2>Per approfondire: i mercati</h2><span class="section-bar"></span>
       <a href="#mercati" class="text-sm font-bold brand-text whitespace-nowrap">Tutti i dati →</a></div>
+    <p class="text-xs text-gray-500 -mt-2 mb-4 max-w-3xl">Per cominciare non ti servono: sono i numeri che sentirai nei telegiornali (quanto vale l'euro rispetto ad altre monete, di cosa si parla di più). Se sei all'inizio parti dal percorso qui sopra.</p>
     ${hasFx || hasS ? `<div class="grid grid-cols-2 lg:grid-cols-6 gap-3">${thermo}${tiles}</div>
     <p class="mk-credit">${hasFx ? fxCredit(fx) : ''}${hasS ? ' Termometro: elaborazione TrendScan sul tono dei titoli, non è un indice di mercato.' : ''} Variazioni e grafici: elaborazione TrendScan.</p>` : ''}
     ${hasRadar ? radarStripHtml() : ''}`;
@@ -528,8 +611,6 @@ function radarStripHtml() {
 
   const c1 = grow.length ? `<ul>${grow.map(t => li(t.label, pctArrow(t.wiki.changePct) + fmtPct0(t.wiki.changePct), 'mk-up')).join('')}</ul><p class="rd-sub">letture su Wikipedia, 7 giorni contro i 7 precedenti</p>`
     : `<p class="rd-mini-empty">Nessun argomento in crescita in questo momento.</p>`;
-  const c2 = `<p class="rd-mini-empty"><b>Dato non disponibile.</b> Non esiste una fonte affidabile e riutilizzabile di ricerche per singolo ETF: non inventiamo una classifica.</p>
-    <p class="rd-sub"><a href="#mercati" data-goto-radar class="underline">Cosa misuriamo al suo posto</a></p>`;
   const c3 = !rdNewsOk() ? `<p class="rd-mini-empty">Confronto in costruzione: servono almeno 4 giorni di storico (ora ${state.radar.news ? state.radar.news.historyDays : 0}).</p>`
     : emerg.length ? `<ul>${emerg.map(t => li(t.label, t.news.isNew ? '▲ nuovo' : pctArrow(t.news.changePct) + fmtPct0(t.news.changePct), 'mk-up')).join('')}</ul><p class="rd-sub">menzioni nei titoli delle testate che seguiamo</p>`
     : `<p class="rd-mini-empty">Nessun tema emergente in questo momento.</p>`;
@@ -544,9 +625,9 @@ function radarStripHtml() {
         <span class="rd-sub">Cosa sta crescendo ora, non cosa succederà</span>
         <a href="#mercati" data-goto-radar class="rd-strip-link">Classifiche complete →</a>
       </div>
+      ${grow.length ? `<p class="rd-plain">In breve: gli argomenti di finanza che crescono di più su Wikipedia in questa settimana sono <b>${grow.map(t => esc(t.label)).join(', ')}</b>.</p>` : ''}
       <div class="rd-mini-grid">
         ${card('Argomenti finanziari in più forte crescita', mBadge('interest'), c1)}
-        ${card('ETF più cercati', '<span class="rd-badge rd-m-na">Non disponibile</span>', c2, 'rd-mini-na')}
         ${card('Temi economici emergenti', mBadge('news'), c3)}
         ${card('Notizie che ricevono più attenzione', mBadge('news'), c4)}
       </div>
@@ -822,14 +903,12 @@ function showView(name, restoreY) {
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === navKey));
   window.scrollTo(restoreY != null ? { top: restoreY, behavior: 'instant' } : { top: 0 });
   setPageMeta(name);
-  if (name === 'guide') setTimeout(updateCalculator, 60);
 }
 const PAGE_META = {
   mercati: ['Mercati: Trend Radar, cambi BCE e Termometro | TrendScan', 'Il Trend Radar (interesse, notizie e prezzi, tre misure separate), i tassi di cambio di riferimento della BCE e il Termometro TrendScan sul tono delle notizie di finanza.'],
-  home: ['TrendScan – Hub di Finanza Personale: articoli, video e guide', 'Gli articoli di finanza personale più utili dai principali giornali italiani, video educativi e guide pratiche su risparmio, ETF e PAC.'],
+  home: ['TrendScan – Finanza personale spiegata semplice: guide, video e notizie', 'Impara a gestire i tuoi soldi senza paroloni: guide semplici su risparmio, ETF e PAC, simulatore gratuito, video educativi e notizie dai giornali italiani.'],
   articoli: ['Articoli di finanza personale: risparmio, ETF, pensione, mutui | TrendScan', 'Le notizie di finanza personale dai principali giornali italiani, divise per argomento: risparmio, ETF, pensione, casa, tasse e conti.'],
   video: ['Video educativi di finanza personale e investimenti | TrendScan', 'La playlist dei migliori canali YouTube italiani di finanza: risparmio, ETF, PAC e gestione del denaro, da guardare uno dopo l\'altro.'],
-  guide: ['Guide: cos\'è un ETF, PAC e PIC, interesse composto, broker | TrendScan', 'Guide semplici per principianti: cos\'è un ETF, differenza tra PAC e PIC, interesse composto, broker con PAC a costi bassi e foglio Excel gratuito per il bilancio familiare.']
 };
 function setPageMeta(name) {
   const m = PAGE_META[name] || PAGE_META.home;
@@ -839,10 +918,12 @@ function setPageMeta(name) {
 function route() {
   // ricorda dove era l'utente in home/articoli: tornando dalla lettura riparte dallo stesso punto
   if (state.view === 'home' || state.view === 'articoli') state.scroll[state.view] = window.scrollY;
+  // le guide ora hanno pagine proprie (/guide/…): i vecchi link /#guide portano all'indice
+  if (/^#guide/.test(location.hash)) { location.replace('/guide/'); return; }
   const h = (location.hash || '#home').slice(1);
   const m = h.match(/^a\/([\w-]+)$/);
   if (m) { showArticle(decodeURIComponent(m[1])); return; }
-  const name = ['home', 'articoli', 'mercati', 'video', 'guide'].includes(h) ? h : 'home';
+  const name = ['home', 'articoli', 'mercati', 'video'].includes(h) ? h : 'home';
   const back = state.view === 'articolo' ? state.scroll[name] : undefined;
   showView(name, back);
 }
@@ -861,8 +942,7 @@ function setupEvents() {
     const cat = e.target.closest('[data-cat]'); if (cat) { goArticles(cat.dataset.cat); return; }
     const vid = e.target.closest('[data-video]'); if (vid) { playById(vid.dataset.video); return; }
     const q = e.target.closest('[data-q]'); if (q) { selectVideo(+q.dataset.q, true); return; }
-    const sc = e.target.closest('[data-scroll]');
-    if (sc) { location.hash = '#guide'; setTimeout(() => { const el = $(sc.dataset.scroll); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 120); return; }
+    const jp = e.target.closest('[data-jump]'); if (jp) { const t = $(jp.dataset.jump); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const ch = e.target.closest('[data-channel]');
     if (ch) {
       state.channelFilter = ch.dataset.channel; state.qIndex = 0; renderVideoPage();
@@ -880,150 +960,6 @@ function setupEvents() {
     if (state.view !== 'articoli' && e.target.value.trim()) location.hash = '#articoli';
   });
 }
-
-// Compound Interest & PAC Calculator Event Listeners
-function setupCalculatorListeners() {
-  const calcInitial = document.getElementById("calcInitial");
-  const calcMonthly = document.getElementById("calcMonthly");
-  const calcYears = document.getElementById("calcYears");
-  const calcReturn = document.getElementById("calcReturn");
-
-  [calcInitial, calcMonthly, calcYears, calcReturn].forEach(input => {
-    if (input) {
-      input.addEventListener("input", updateCalculator);
-    }
-  });
-}
-
-function updateCalculator() {
-  const calcInitial = document.getElementById("calcInitial");
-  const calcMonthly = document.getElementById("calcMonthly");
-  const calcYears = document.getElementById("calcYears");
-  const calcReturn = document.getElementById("calcReturn");
-
-  if (!calcInitial || !calcMonthly || !calcYears || !calcReturn) return;
-
-  const P = parseFloat(calcInitial.value);
-  const PMT = parseFloat(calcMonthly.value);
-  const years = parseInt(calcYears.value);
-  const annualRate = parseFloat(calcReturn.value) / 100;
-
-  document.getElementById("calcInitialVal").textContent = P.toLocaleString('it-IT') + " €";
-  document.getElementById("calcMonthlyVal").textContent = PMT.toLocaleString('it-IT') + " € / mese";
-  document.getElementById("calcYearsVal").textContent = years + " Anni";
-  document.getElementById("calcReturnVal").textContent = annualRate * 100 + " %";
-
-  const labels = [];
-  const investedData = [];
-  const totalBalanceData = [];
-
-  let currentBalance = P;
-  let totalInvested = P;
-
-  const monthlyRate = annualRate / 12;
-
-  labels.push("Anno 0");
-  investedData.push(P);
-  totalBalanceData.push(P);
-
-  for (let y = 1; y <= years; y++) {
-    for (let m = 1; m <= 12; m++) {
-      currentBalance = (currentBalance + PMT) * (1 + monthlyRate);
-      totalInvested += PMT;
-    }
-    labels.push(`Anno ${y}`);
-    investedData.push(Math.round(totalInvested));
-    totalBalanceData.push(Math.round(currentBalance));
-  }
-
-  const finalBalance = Math.round(currentBalance);
-  const finalInvested = Math.round(totalInvested);
-  const finalInterest = finalBalance - finalInvested;
-
-  document.getElementById("resTotalInvested").textContent = finalInvested.toLocaleString('it-IT') + " €";
-  document.getElementById("resInterestEarned").textContent = "+" + finalInterest.toLocaleString('it-IT') + " €";
-  document.getElementById("resFinalBalance").textContent = finalBalance.toLocaleString('it-IT') + " €";
-
-  renderCompoundChart(labels, investedData, totalBalanceData);
-}
-
-function renderCompoundChart(labels, investedData, totalBalanceData) {
-  const canvas = document.getElementById("compoundChart");
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-
-  if (state.compoundChartInstance) {
-    state.compoundChartInstance.destroy();
-  }
-
-  state.compoundChartInstance = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Patrimonio Totale (con Interesse Composto)",
-          data: totalBalanceData,
-          borderColor: "#10b981",
-          backgroundColor: "rgba(16, 185, 129, 0.15)",
-          fill: true,
-          tension: 0.3,
-          borderWidth: 3,
-          pointRadius: 0,
-          pointHoverRadius: 6
-        },
-        {
-          label: "Capitale Versato (Tuo Risparmio Effettivo)",
-          data: investedData,
-          borderColor: "#3b82f6",
-          backgroundColor: "rgba(59, 130, 246, 0.1)",
-          fill: true,
-          tension: 0.1,
-          borderWidth: 2.5,
-          borderDash: [5, 5],
-          pointRadius: 0
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      plugins: {
-        legend: {
-          labels: { color: "#9ca3af", font: { size: 11 } }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.dataset.label}: ${context.raw.toLocaleString('it-IT')} €`;
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { color: "rgba(255, 255, 255, 0.05)" },
-          ticks: { color: "#9ca3af", maxTicksLimit: 10 }
-        },
-        y: {
-          grid: { color: "rgba(255, 255, 255, 0.05)" },
-          ticks: {
-            color: "#9ca3af",
-            callback: function(value) {
-              return value >= 1000 ? (value / 1000).toFixed(0) + 'k €' : value + ' €';
-            }
-          }
-        }
-      }
-    }
-  });
-}
-
-
 
 document.addEventListener('DOMContentLoaded', bootstrap);
 
@@ -1052,89 +988,8 @@ function renderCategoryIntro() {
     <div class="font-extrabold text-lg mb-1">📦 Cos'è un ETF?</div>
     <p>Un <b>ETF</b> (Exchange Traded Fund) è un fondo <b>quotato in borsa</b> che replica un indice: con una sola quota acquisti in un colpo molti titoli, quindi ti diversifichi con costi in genere bassi. Con un <b>PAC</b> lo compri a rate fisse (es. 200 € al mese) e con l'<b>interesse composto</b> i rendimenti reinvestiti lavorano per te nel tempo. Nessun rendimento è garantito.</p>
     <div class="mt-3 flex flex-wrap gap-2 text-xs font-bold">
-      <button data-scroll="guide-etf" class="btn-ghost">Leggi la guida sugli ETF</button>
-      <button data-scroll="guide-composto" class="btn-ghost">PAC e interesse composto</button>
-      <button data-scroll="guide-broker" class="btn-ghost">Broker con PAC a costi bassi</button>
+      <a href="/guide/etf/" class="btn-ghost">Leggi la guida sugli ETF</a>
+      <a href="/guide/interesse-composto/" class="btn-ghost">PAC e interesse composto</a>
+      <a href="/guide/broker-pac/" class="btn-ghost">Broker con PAC a costi bassi</a>
     </div></div>`;
-}
-
-// ------------------------------------------------------------------ tabella broker
-// "aff": se imposti un link di affiliazione compare l'etichetta "Pubblicità" e rel="sponsored".
-const BROKERS = [
-  { name: 'Trade Republic', url: 'https://traderepublic.com/it-it', aff: '', pac: '0 € (da 1 €)', ordine: '1 € a ordine', fisco: 'Amministrato (dal 30/01/2025)', note: 'Circa 2.000+ ETF per PAC; app semplice. Catalogo ETF concentrato su alcuni emittenti.' },
-  { name: 'Scalable Capital', url: 'https://it.scalable.capital', aff: '', pac: '0 € (piano FREE)', ordine: '0,99 € a ordine (FREE)', fisco: 'Amministrato su scelta (da 09/2026): verifica', note: '2.500+ ETF per PAC; nessun canone nel piano FREE; PRIME+ a pagamento.' },
-  { name: 'Directa', url: 'https://www.directa.it', aff: '', pac: '0 € su ETF convenzionati (600+)', ordine: 'da circa 1,50 € (verifica tariffe)', fisco: 'Solo amministrato', note: 'Broker italiano storico; PAC solo su ETF in lista (iShares, Amundi, Xtrackers, Vanguard).' },
-  { name: 'Fineco', url: 'https://www.finecobank.com', aff: '', pac: 'Gratis su selezione ETF e per under 30; altrimenti da 2,95 €/mese per ETF', ordine: 'secondo conto/tariffa', fisco: 'Amministrato o dichiarativo', note: 'Banca completa con ampia gamma di mercati; costi più alti se non rientri nelle promo.' }
-];
-function renderBrokers() {
-  const el = $('brokerTable'); if (!el) return;
-  const hasAff = BROKERS.some(b => b.aff);
-  const rows = BROKERS.map(b => {
-    const href = b.aff || b.url;
-    const rel = b.aff ? 'sponsored noopener noreferrer' : 'noopener noreferrer';
-    return `<tr class="border-b border-gray-800/60 align-top">
-      <td class="px-4 py-3 font-bold text-white whitespace-nowrap">${esc(b.name)}${b.aff ? ' <span class="ml-1 px-1.5 py-0.5 rounded bg-amber-900/60 text-amber-200 text-[9px] uppercase">Pubblicità</span>' : ''}</td>
-      <td class="px-4 py-3 text-emerald-300">${esc(b.pac)}</td><td class="px-4 py-3">${esc(b.ordine)}</td><td class="px-4 py-3">${esc(b.fisco)}</td>
-      <td class="px-4 py-3 text-gray-300">${esc(b.note)}</td>
-      <td class="px-4 py-3"><a href="${esc(safeUrl(href))}" target="_blank" rel="${rel}" class="text-indigo-300 underline whitespace-nowrap">Sito ufficiale ↗</a></td></tr>`;
-  }).join('');
-  el.innerHTML = `<div class="overflow-x-auto rounded-2xl border border-gray-800"><table class="w-full text-xs text-left min-w-[820px] text-gray-200">
-    <thead class="text-gray-400 uppercase text-[10px] border-b border-gray-800"><tr><th class="px-4 py-2">Broker</th><th class="px-4 py-2">Costo PAC</th><th class="px-4 py-2">Ordine manuale</th><th class="px-4 py-2">Regime fiscale</th><th class="px-4 py-2">Note</th><th class="px-4 py-2"></th></tr></thead>
-    <tbody>${rows}</tbody></table></div>`;
-  const n = $('affiliateNote'); if (n) n.classList.toggle('hidden', !hasAff);
-}
-
-
-// ------------------------------------------------------------------ download foglio Excel (bilancio familiare)
-// Opzione A (consigliata): metti il file in public/downloads/bilancio-familiare.xlsx e lascia driveId vuoto.
-// Opzione B: condividi il file su Google Drive ("Chiunque abbia il link") e incolla l'ID qui sotto
-//            (l'ID è la parte tra /d/ e /view nel link di condivisione).
-const BUDGET_SHEET = { file: 'downloads/bilancio-familiare.xlsx', driveId: '', label: 'Bilancio-familiare-TrendScan.xlsx' };
-// Dimensione indicata sotto il pulsante (letta dal server se disponibile)
-async function renderBudgetDownload() {
-  const el = $('budgetDownload'); if (!el) return;
-  const btn = 'inline-flex items-center gap-2 px-5 py-3 rounded-xl font-extrabold text-sm shadow-lg';
-  if (/^[\w-]{10,}$/.test(BUDGET_SHEET.driveId || '')) {
-    const id = BUDGET_SHEET.driveId;
-    el.innerHTML = `<a href="https://drive.google.com/uc?export=download&id=${id}" target="_blank" rel="noopener noreferrer" class="${btn} bg-emerald-600 hover:bg-emerald-500 text-white">⬇️ Scarica il foglio Excel</a>
-      <div class="mt-1.5 text-[11px] text-gray-400 text-center"><a class="underline" href="https://docs.google.com/spreadsheets/d/${id}/copy" target="_blank" rel="noopener noreferrer">oppure crea la tua copia in Google Fogli</a></div>`;
-    return;
-  }
-  let ok = false;
-  try {
-    const r = await fetch(BUDGET_SHEET.file, { method: 'HEAD', cache: 'no-cache' });
-    ok = r.ok && !/text\/html/i.test(r.headers.get('content-type') || '');
-    const len = parseInt(r.headers.get('content-length') || '0', 10);
-    const meta = $('budgetMeta');
-    if (ok && meta && len > 0) meta.textContent = 'File Excel (.xlsx) · ' + Math.max(1, Math.round(len / 1024)) + ' KB';
-  } catch (e) {}
-  el.innerHTML = ok
-    ? `<a href="${esc(BUDGET_SHEET.file)}" download="${esc(BUDGET_SHEET.label)}" class="${btn} bg-emerald-600 hover:bg-emerald-500 text-white w-full justify-center">⬇️ Scarica gratis</a>`
-    : `<span class="${btn} bg-gray-300 text-gray-600 cursor-not-allowed w-full justify-center">⏳ Disponibile a breve</span>`;
-}
-
-
-// ------------------------------------------------------------------ dimensione del testo (Guide)
-const FS_STEPS = [85, 100, 115, 130, 150];
-let fsIndex = 1;
-function applyFontSize() {
-  const pct = FS_STEPS[fsIndex];
-  const root = document.getElementById('academyRoot');
-  const zoomOk = window.CSS && CSS.supports && CSS.supports('zoom', '1.2');
-  if (zoomOk) { if (root) root.style.setProperty('--guide-zoom', String(pct / 100)); document.documentElement.style.fontSize = ''; }
-  else document.documentElement.style.fontSize = pct + '%';   // browser molto vecchi: ingrandisce tutto il sito
-  document.querySelectorAll('.fs-label').forEach(el => { el.textContent = pct + '%'; });
-  document.querySelectorAll('[data-fs="-1"]').forEach(b => { b.disabled = fsIndex === 0; });
-  document.querySelectorAll('[data-fs="1"]').forEach(b => { b.disabled = fsIndex === FS_STEPS.length - 1; });
-}
-function initFontSize() {
-  try { const v = parseInt(localStorage.getItem('ts-guide-fs'), 10); if (v >= 0 && v < FS_STEPS.length) fsIndex = v; } catch (e) {}
-  applyFontSize();
-  document.addEventListener('click', e => {
-    const b = e.target.closest('[data-fs]'); if (!b || b.disabled) return;
-    const d = parseInt(b.dataset.fs, 10);
-    fsIndex = d === 0 ? 1 : Math.min(FS_STEPS.length - 1, Math.max(0, fsIndex + d));
-    try { localStorage.setItem('ts-guide-fs', String(fsIndex)); } catch (err) {}
-    applyFontSize();
-  });
 }

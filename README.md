@@ -43,6 +43,29 @@ npm run serve         # http://localhost:8080
 ```
 Dopo la raccolta leggi il log: indica testate raggiunte e canali non trovati.
 
+## Home per chi parte da zero
+La home è pensata per chi non conosce la finanza. Ordine dei blocchi (in `public/index.html`; le parti dinamiche sono in `public/app.js`):
+1. **Benvenuto** (unico `<h1>`): promessa chiara, due pulsanti che scorrono dentro la home (`data-jump`), riga di fiducia.
+2. **Inizia da qui: 5 passi** (`PATH_STEPS` in `app.js`): ogni passo apre il capitolo della guida (`data-scroll`).
+3. **Mini-glossario** (`GLOSSARY` in `app.js`): una sola lista alimenta sia l'elenco sia i tooltip. Le sigle sottolineate compaiono solo nei testi con attributo `data-gl` (una volta per blocco); i titoli delle notizie non vengono toccati.
+4. **Mini-simulatore** (`setupHomeSim`): versamento mensile e anni, con due scenari *ipotetici* (3% e 7%) e avviso. Stessa formula del simulatore completo.
+5. **Argomenti come domande** (campo `q` in `CATEGORIES`), **notizie di oggi**, **video**, e in fondo **Mercati / Trend Radar** (approfondimento).
+- **Video in home:** si nascondono i titoli che corrispondono a `RISKY_VIDEO` (guadagni facili, leva, trading…). Euristica sul titolo: modificala se serve. La pagina `#video` mostra tutto.
+- **Filtro notizie:** `config/sources.json → articles.excludeOffTopic` scarta scioperi, bilanci aziendali e flash di Borsa (si applica anche alle notizie già salvate al prossimo giro di Actions). Il pattern «ETF e Investimenti» non usa più `invest*` generico (evita «Ryanair investe 200 milioni»); in «Banche e Conti» sono state aggiunte Revolut, N26, fintech.
+- **Riquadro «ETF più cercati: non disponibile»:** tolto dalla home; la spiegazione resta nella pagina Mercati.
+- Nessuna classe Tailwind nuova: le regole aggiunte sono in fondo a `public/styles.css`.
+
+## Guide: una pagina per ogni argomento
+Ogni guida ha un indirizzo proprio (utile per la SEO e per condividerla): `/guide/` è l'indice e poi `/guide/azioni/`, `/guide/risparmio-50-30-20/`, `/guide/etf/`, `/guide/pac/`, `/guide/pic-vs-pac/`, `/guide/interesse-composto/`, `/guide/simulatore-pac/`, `/guide/broker-pac/`, `/guide/bilancio-familiare-excel/`.
+Le pagine sono **generate**: non si modificano a mano.
+- **Testi:** `content/guide/<slug>.html` (solo il contenuto, senza intestazione). Intestazione e piè di pagina comuni: `content/guide/_header.html` e `_footer.html`.
+- **Titoli, descrizioni SEO, ordine, data di aggiornamento:** costante `GUIDES` e `UPDATED` in `scripts/build-guides.mjs`.
+- **Tabella broker:** `config/brokers.json` (se aggiungi un `aff` compare «Pubblicità» e `rel="sponsored"`; la nota di trasparenza compare da sola). La tabella è HTML statico, quindi leggibile dai motori di ricerca.
+- **Dopo ogni modifica:** `npm run build:guides`, poi commit anche di `public/guide/` e `public/sitemap.xml` (Netlify pubblica `public/` così com'è, senza build).
+- **Script della pagina:** `public/guide.js` (testo A−/A+, pulsante ☰, simulatore PAC, vecchi indirizzi `/guide/#guide-xxx`). Chart.js è fissato alla 4.5.1 e si carica solo nella pagina del simulatore.
+- **Vecchi link:** `/#guide` e `/guide/#guide-etf` (ecc.) portano alla pagina giusta. La home non contiene più le guide, il calcolatore e la tabella broker: è passata da circa 70 a 23 KB.
+- **Foglio Excel:** il link punta direttamente a `public/downloads/bilancio-familiare.xlsx`.
+
 ## Lettura dentro TrendScan e filtri di qualità
 - **Pagina articolo interna.** Cliccando una notizia si resta su TrendScan (indirizzo `/#a/ID`, condivisibile). Si vedono titolo, fonte, data, immagine, categoria e la breve anteprima pubblicata dalla testata. Il pulsante «Torna alla home di TrendScan» è in cima e in fondo; il tasto indietro del browser riporta alla stessa posizione della home. Il testo integrale **non** viene riprodotto (diritto d'autore, e i giornali non permettono l'incorporamento in iframe): un pulsante rimanda all'articolo sul sito della fonte, che è citata in ogni card e in ogni pagina.
 - **Cosa viene scartato** (in `scripts/build-feeds.mjs`, soglie in `config/sources.json` → `articles`):

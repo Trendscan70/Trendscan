@@ -1,0 +1,41 @@
+{
+  "consultedOn": "2026-10-09",
+  "brokers": [
+    {
+      "name": "Trade Republic",
+      "url": "https://traderepublic.com/it-it",
+      "aff": "",
+      "pac": "0 € (da 1 €)",
+      "ordine": "1 € a ordine",
+      "fisco": "Amministrato (dal 30/01/2025)",
+      "note": "Circa 2.000+ ETF per PAC; app semplice. Catalogo ETF concentrato su alcuni emittenti."
+    },
+    {
+      "name": "Scalable Capital",
+      "url": "https://it.scalable.capital",
+      "aff": "",
+      "pac": "0 € (piano FREE)",
+      "ordine": "0,99 € a ordine (FREE)",
+      "fisco": "Amministrato su scelta (da 09/2026): verifica",
+      "note": "2.500+ ETF per PAC; nessun canone nel piano FREE; PRIME+ a pagamento."
+    },
+    {
+      "name": "Directa",
+      "url": "https://www.directa.it",
+      "aff": "",
+      "pac": "0 € su ETF convenzionati (600+)",
+      "ordine": "da circa 1,50 € (verifica tariffe)",
+      "fisco": "Solo amministrato",
+      "note": "Broker italiano storico; PAC solo su ETF in lista (iShares, Amundi, Xtrackers, Vanguard)."
+    },
+    {
+      "name": "Fineco",
+      "url": "https://www.finecobank.com",
+      "aff": "",
+      "pac": "Gratis su selezione ETF e per under 30; altrimenti da 2,95 €/mese per ETF",
+      "ordine": "secondo conto/tariffa",
+      "fisco": "Amministrato o dichiarativo",
+      "note": "Banca completa con ampia gamma di mercati; costi più alti se non rientri nelle promo."
+    }
+  ]
+}

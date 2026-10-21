@@ -260,6 +260,8 @@ async function buildArticles() {
   const A = CFG.articles;
   const exclude = new RegExp(A.exclude, 'i');
   const excludeTitle = A.excludeTitle ? new RegExp(A.excludeTitle, 'i') : null;
+  // notizie fuori tema per chi inizia (scioperi, bilanci aziendali, flash di borsa): elenco in config/sources.json → excludeOffTopic
+  const excludeOff = A.excludeOffTopic ? new RegExp(A.excludeOffTopic, 'i') : null;
   const minSummary = A.minSummaryChars ?? 0;
   const similarTh = A.similarTitle ?? 0;
   const cats = A.categories.map(c => ({ ...c, re: new RegExp(c.pattern, 'i') }));
@@ -282,6 +284,7 @@ async function buildArticles() {
       if (age > maxAge || age < -3600e3) continue;
       if (exclude.test(it.title)) continue;
       if (excludeTitle && excludeTitle.test(it.title)) { skipped.flashBorsa++; continue; }
+      if (excludeOff && excludeOff.test(it.title)) { skipped.fuoriTema++; continue; }
       coverPool.push({ tk: coverTokens(it.title), outlet: outletOf(s.name), t: it.date.getTime() });
       const summary = realSummary(it.title, it.summary);
       if (summary.length < minSummary) { skipped.troppoBrevi++; continue; }
@@ -329,6 +332,7 @@ async function buildArticles() {
     for (const p of prev.articles || []) {
       if (now - new Date(p.publishedAt).getTime() > maxAge) continue;
       if (excludeTitle && excludeTitle.test(p.title)) { skipped.flashBorsa++; continue; }
+      if (excludeOff && excludeOff.test(p.title)) { skipped.fuoriTema++; continue; }
       if (realSummary(p.title, p.summary).length < minSummary) { skipped.troppoBrevi++; continue; }
       const src = A.sources.find(x => x.id === p.sourceId);
       if (src && !src.trusted && !cats.some(c => c.re.test(`${p.title} ${p.summary}`))) { skipped.fuoriTema++; continue; }
