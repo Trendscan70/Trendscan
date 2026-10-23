@@ -144,4 +144,4 @@ Il sito è predisposto ma **non mostra annunci** finché non attivi `public/ads.
 - Quando le sezioni avranno indirizzi propri (`/guide/...`) vanno aggiunte alla sitemap.
 
 ## Pagine di fiducia
-`/chi-siamo/`, `/contatti/` (email trendscan@proton.me), `/metodo/`, `/privacy/`, `/cookie/`, `/avvertenze/` sono pagine HTML statiche (cartelle in `public/`), collegate dal footer e presenti in `sitemap.xml`. Prima dell'attivazione di pubblicità o statistiche vanno aggiornate privacy e cookie policy. Nella privacy c'è un commento HTML «TODO» per inserire nome e recapito del titolare del trattamento.
+`/chi-siamo/`, `/contatti/` (email info@trendscan.it), `/metodo/`, `/privacy/`, `/cookie/`, `/avvertenze/` sono pagine HTML statiche (cartelle in `public/`), collegate dal footer e presenti in `sitemap.xml`. Prima dell'attivazione di pubblicità o statistiche vanno aggiornate privacy e cookie policy. Nella privacy c'è un commento HTML «TODO» per inserire nome e recapito del titolare del trattamento.
