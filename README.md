@@ -55,6 +55,24 @@ La home è pensata per chi non conosce la finanza. Ordine dei blocchi (in `publi
 - **Riquadro «ETF più cercati: non disponibile»:** tolto dalla home; la spiegazione resta nella pagina Mercati.
 - Nessuna classe Tailwind nuova: le regole aggiunte sono in fondo a `public/styles.css`.
 
+## Strumenti (calcolatori) – `/strumenti/`
+Cinque calcolatori gratuiti, ognuno con una pagina propria: `/strumenti/pac-realistico/` (TER, bollo 0,2%, imposta, inflazione), `/strumenti/impatto-ter/` (0,07% contro 1,5%), `/strumenti/obiettivo-risparmio/` («voglio X tra N anni»: quanto versare al mese), `/strumenti/rendimento-netto-btp/` (BTP Valore, conto deposito, ETF obbligazionario dopo imposte) e `/strumenti/budget-fondo-emergenza/` (regola 50/30/20 + fondo di emergenza, collegato al capitolo 2).
+- **Motore di calcolo:** `public/tools-core.js` (solo funzioni, nessuna dipendenza). Convenzioni e semplificazioni sono scritte in testa al file. **Test:** `npm test` (`scripts/test-tools.mjs`, confronta il motore con formule chiuse e con i valori ufficiali del BTP Valore).
+- **Interfaccia:** `public/tools.js`. I campi si dichiarano nell'HTML della pagina con `<div class="tl-field" data-key=… data-label=… data-min/max/step/value>` (anche `data-type="select"` o `"check"`). I valori finiscono nel link (`?monthly=300&years=25`) per condividere uno scenario; il budget no (`data-noparams`), perché contiene dati personali.
+- **Testi e pagine:** `content/strumenti/<slug>.html` + elenco `TOOLS` in `scripts/build-guides.mjs` (poi `npm run build:guides`).
+- **Aliquote usate:** 26% (azioni, ETF, interessi del conto deposito), 12,5% (titoli di Stato), bollo 0,2% annuo sul valore di titoli e dossier; per il conto deposito il bollo è selezionabile (0,2% oppure 34,20 € fissi oltre 5.000 € di giacenza media) perché dipende dal conto. Se cambiano le norme: costanti in cima a `tools-core.js` e testi nelle pagine.
+- **Tassi del BTP Valore:** sono i minimi garantiti dell'emissione di ottobre 2026 (3,70% / 4,10% / 4,70%, cedola unica 22,25% per l'Insieme), scritti in `public/tools.js` (`TOOLS['rendimento-netto-btp']`) e nel testo della pagina. Vanno aggiornati a ogni nuova emissione.
+
+## Pulsante «Installa l'app»
+Nella home c'è un pulsante fisso (`data-install`, in `index.html`). `public/pwa-install.js` usa l'installazione nativa quando il browser la offre (Chrome, Edge, Android) e altrimenti apre una finestra con i passaggi per il dispositivo (iPhone/iPad, Safari su Mac, Android, Firefox…). Sparisce se l'app è già installata.
+
+## Immagini da condividere (Termometro e Trend Radar)
+- `scripts/build-og.mjs` crea due immagini 1200×630 (`termometro.png`, `radar.png`) dai dati di `markets.json` e `radar.json`. Usa il font Inter in `assets/fonts/` e la libreria `@resvg/resvg-js` (`npm run build:og`; in locale `DATA_DIR=cartella node scripts/build-og.mjs`).
+- Il workflow le rigenera **ogni ora** (passo «Genera le immagini social») e le pubblica nel ramo `data`, cartella `og/`. `netlify.toml` le espone a `/og/termometro.png` e `/og/radar.png` con una regola di proxy.
+- Le pagine `/radar/` e `/termometro/` (generate da `build-guides.mjs`) hanno i meta Open Graph giusti: sono i link da condividere. Nella pagina Mercati ci sono i pulsanti «Condividi» e «Scarica l'immagine». Sono `noindex`.
+- Le piattaforme social tengono in cache l'anteprima: dopo la prima pubblicazione puoi forzare l'aggiornamento dagli strumenti per sviluppatori di Facebook/LinkedIn.
+- **Prima volta:** le immagini esistono solo dopo il primo giro del workflow (parte da solo al push, perché cambiano `scripts/**` e `.github/workflows/**`). Fino ad allora `/og/*.png` risponde 404.
+
 ## Guide: una pagina per ogni argomento
 Ogni guida ha un indirizzo proprio (utile per la SEO e per condividerla): `/guide/` è l'indice e poi `/guide/azioni/`, `/guide/risparmio-50-30-20/`, `/guide/etf/`, `/guide/pac/`, `/guide/pic-vs-pac/`, `/guide/interesse-composto/`, `/guide/simulatore-pac/`, `/guide/broker-pac/`, `/guide/bilancio-familiare-excel/`.
 Le pagine sono **generate**: non si modificano a mano.

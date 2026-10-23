@@ -1,0 +1,48 @@
+<div class="tl" data-tool="obiettivo-risparmio">
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>Il tuo obiettivo</h2>
+      <div class="tl-field" data-key="target" data-label="Quanto vuoi avere" data-unit="€" data-min="1000" data-max="2000000" data-step="1000" data-value="100000"></div>
+      <div class="tl-field" data-key="years" data-label="Tra quanti anni" data-unit="anni" data-min="1" data-max="40" data-step="1" data-value="15"></div>
+      <div class="tl-field" data-key="initial" data-label="Capitale che hai già" data-unit="€" data-min="0" data-max="500000" data-step="500" data-value="0"></div>
+      <div class="tl-field" data-key="real" data-type="check" data-label="L'obiettivo è in euro di oggi (aumentalo in base all'inflazione)" data-value="0"></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Ipotesi sul rendimento</div>
+      <div class="tl-field" data-key="gross" data-label="Rendimento annuo lordo ipotetico" data-unit="%" data-min="0" data-max="12" data-step="0.5" data-value="5" data-hint="Ipotesi a rendimento costante, prima di costi e tasse. Non è una previsione: guarda la tabella con più scenari."></div>
+      <div class="tl-field" data-key="ter" data-label="Costo annuo del fondo (TER)" data-unit="%" data-min="0" data-max="3" data-step="0.05" data-value="0.2"></div>
+      <div class="tl-field" data-key="tax" data-type="select" data-label="Imposta sul guadagno (alla vendita)" data-value="26" data-options="26|Azioni, ETF azionari o misti (26%);12.5|Titoli di Stato italiani (12,5%)"></div>
+      <div class="tl-field" data-key="bollo" data-type="check" data-label="Considera il bollo dello 0,2% l'anno" data-value="1"></div>
+      <div class="tl-field" data-key="inflation" data-label="Inflazione annua" data-unit="%" data-min="0" data-max="8" data-step="0.1" data-value="2"></div>
+    </div>
+
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi hot"><span>Devi versare circa</span><b data-out="pmt">–</b><small data-out="goalNote"></small></div>
+        <div class="tl-kpi"><span>Versato in tutto</span><b data-out="paid">–</b><small>capitale iniziale + versamenti</small></div>
+        <div class="tl-kpi good"><span>Guadagno netto (ipotetico)</span><b data-out="gain">–</b><small>dopo costi e imposte</small></div>
+        <div class="tl-kpi"><span>Valore netto finale</span><b data-out="net">–</b><small>l'obiettivo, in euro di allora</small></div>
+      </div>
+      <div>
+        <h3 class="tl-h">Quanto cambia il versamento al variare del rendimento</h3>
+        <div class="tl-wf" data-out-html="scenarios"></div>
+        <p class="tl-hint">Più alto è il rendimento che supponi, meno devi versare, ma i rendimenti non sono garantiti. Pianificare con uno scenario prudente è più sicuro che contare su quello ottimista.</p>
+      </div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi il calcolo</button>
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Esempio teorico a rendimento costante, a scopo educativo: non è una previsione né una consulenza. Si ipotizza un ETF ad accumulazione (con un ETF a distribuzione i dividendi sono tassati ogni anno). Non include commissioni di acquisto né la compensazione di eventuali minusvalenze. Il versamento è arrotondato per eccesso all'euro.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Come funziona il calcolo "al contrario"</h2>
+  <p>Gli altri simulatori partono da quanto versi e mostrano quanto avrai. Qui si parte dal <strong>traguardo</strong> (per esempio 100.000 € tra 15 anni) e si cerca il versamento mensile che, con le ipotesi scelte, lo raggiunge <strong>al netto di costi e imposte</strong>. È lo stesso motore del <a href="/strumenti/pac-realistico/">PAC realistico</a>, usato in senso inverso.</p>
+  <h2>Euro di oggi o euro di domani?</h2>
+  <p>100.000 € tra 15 anni non comprano quello che comprano 100.000 € oggi: con un'inflazione del 2% annuo ne varranno circa 74.000 di oggi. Se spunti la casella "in euro di oggi", il calcolatore alza l'obiettivo in base all'inflazione, così il potere d'acquisto resta quello che immagini.</p>
+  <div class="tl-box"><strong>Come usarlo bene.</strong> Prova più scenari: la tabella mostra che il versamento cambia molto tra un rendimento dello 0% e uno del 7%. Se la cifra del tuo scenario prudente è sostenibile, il piano regge anche se i mercati rendono meno del previsto. Prima di partire controlla di avere un <a href="/strumenti/budget-fondo-emergenza/">fondo di emergenza</a>.</div>
+  <p>Per le basi sul PAC leggi <a href="/guide/pac/">Cos'è un PAC</a> e <a href="/guide/interesse-composto/">La potenza dell'interesse composto</a>.</p>
+</div>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulatore PAC con tasse, TER, bollo e inflazione | TrendScan</title>
+  <meta name="description" content="Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.">
+  <link rel="canonical" href="https://trendscan26.netlify.app/strumenti/pac-realistico/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="application-name" content="TrendScan">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="TrendScan">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:title" content="Simulatore PAC con tasse, TER, bollo e inflazione | TrendScan">
+  <meta property="og:description" content="Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.">
+  <meta property="og:url" content="https://trendscan26.netlify.app/strumenti/pac-realistico/">
+  <meta property="og:image" content="https://trendscan26.netlify.app/og-image.png">
+  <meta property="og:image:alt" content="Simulatore PAC con tasse, TER, bollo e inflazione">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulatore PAC con tasse, TER, bollo e inflazione | TrendScan">
+  <meta name="twitter:description" content="Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.">
+  <meta name="twitter:image" content="https://trendscan26.netlify.app/og-image.png">
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Simulatore PAC realistico: TER, tasse, bollo e inflazione","description":"Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.","url":"https://trendscan26.netlify.app/strumenti/pac-realistico/","inLanguage":"it-IT","applicationCategory":"FinanceApplication","operatingSystem":"Qualsiasi (web)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"dateModified":"2026-10-21","publisher":{"@id":"https://trendscan26.netlify.app/#org"},"image":"https://trendscan26.netlify.app/og-image.png"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://trendscan26.netlify.app/"},{"@type":"ListItem","position":2,"name":"Strumenti","item":"https://trendscan26.netlify.app/strumenti/"},{"@type":"ListItem","position":3,"name":"PAC realistico","item":"https://trendscan26.netlify.app/strumenti/pac-realistico/"}]}]</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>(function(){try{var t=localStorage.getItem('ts-theme');if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
+  <meta name="theme-color" content="#f4f5f7">
+  <link rel="stylesheet" href="/tailwind.css">
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js"></script>
+</head>
+<body class="bg-[#f4f5f7] text-gray-900 antialiased">
+
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="/#home" class="flex items-center gap-2 shrink-0" aria-label="TrendScan home">
+        <span class="w-10 h-10 rounded-xl brand-bg flex items-center justify-center text-white shadow">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </span>
+        <span class="text-2xl font-black tracking-tight leading-none">Trend<span class="brand-text">Scan</span></span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-1 ml-4 text-[13px] font-extrabold uppercase tracking-wide" id="mainNav">
+        <a href="/#home" data-nav="home" class="nav-link">Home</a>
+        <a href="/#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="/#mercati" data-nav="mercati" class="nav-link">Mercati</a>
+        <a href="/criptovalute/" class="nav-link">Criptovalute</a>
+        <a href="/#video" data-nav="video" class="nav-link" title="Video educativi">Video</a>
+        <a href="/guide/" data-nav="guide" class="nav-link" title="Guide e calcolatore PAC">Guide</a>
+        <a href="/strumenti/" data-nav="strumenti" class="nav-link active">Strumenti</a>
+        <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
+      </nav>
+
+        <button id="themeToggle" type="button" class="ml-auto w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-lg shrink-0" aria-label="Attiva modalità scura" aria-pressed="false">🌙</button>
+      </div>
+    <!-- nav mobile -->
+    <nav class="lg:hidden border-t border-gray-100 overflow-x-auto no-scrollbar">
+      <div class="flex gap-1 px-3 py-2 text-xs font-extrabold uppercase whitespace-nowrap">
+        <a href="/#home" data-nav="home" class="nav-link">Home</a>
+        <a href="/#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="/#mercati" data-nav="mercati" class="nav-link">Mercati</a>
+        <a href="/criptovalute/" class="nav-link">Criptovalute</a>
+        <a href="/#video" data-nav="video" class="nav-link">Video</a>
+        <a href="/guide/" data-nav="guide" class="nav-link">Guide</a>
+        <a href="/strumenti/" data-nav="strumenti" class="nav-link active">Strumenti</a>
+        <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <nav aria-label="Percorso" class="text-xs text-gray-500 mb-3"><a href="/" class="hover:underline">Home</a> › <a href="/strumenti/" class="hover:underline">Strumenti</a> › <span>PAC realistico</span></nav>
+    <div class="rounded-3xl bg-[#0b0f19] text-gray-100 p-3 sm:p-6 space-y-8" id="academyRoot">
+      <div class="academy-banner rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+        <div class="max-w-3xl">
+          <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold border border-purple-500/40 uppercase tracking-widest">🧰 Strumento gratuito</span>
+          <h1 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">Simulatore PAC realistico: TER, tasse, bollo e inflazione</h1>
+          <p class="text-sm text-gray-200 mt-2 leading-relaxed">Il rendimento lordo non è quello che ti resta: guarda quanto se ne vanno costi, tasse e inflazione.</p>
+          <p class="text-xs text-gray-300 mt-3">Aggiornato a ottobre 2026 · A cura della redazione di TrendScan · <a href="/metodo/" class="underline font-semibold text-white">Come lavoriamo</a> · <a href="/avvertenze/" class="underline font-semibold text-white">Avvertenze</a></p>
+        </div>
+      </div>
+
+      <section class="glass-panel p-4 sm:p-8 rounded-3xl border border-gray-800 space-y-5">
+        <div class="tl" data-tool="pac-realistico">
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>I tuoi numeri</h2>
+      <div class="tl-field" data-key="initial" data-label="Capitale iniziale" data-unit="€" data-min="0" data-max="500000" data-step="500" data-value="1000"></div>
+      <div class="tl-field" data-key="monthly" data-label="Versamento mensile" data-unit="€" data-min="0" data-max="5000" data-step="10" data-value="200"></div>
+      <div class="tl-field" data-key="years" data-label="Per quanti anni" data-unit="anni" data-min="1" data-max="40" data-step="1" data-value="20"></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Rendimento e costi</div>
+      <div class="tl-field" data-key="gross" data-label="Rendimento annuo lordo ipotetico" data-unit="%" data-min="0" data-max="12" data-step="0.5" data-value="6" data-hint="Ipotesi a rendimento costante, <strong>prima</strong> di costi e tasse. Non è una previsione."></div>
+      <div class="tl-field" data-key="ter" data-label="Costo annuo del fondo (TER)" data-unit="%" data-min="0" data-max="3" data-step="0.05" data-value="0.2" data-hint="Di solito gli ETF a basso costo stanno sotto lo 0,3%, i fondi gestiti attivamente spesso sopra l'1,5%. Lo trovi nel KID."></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Tasse e inflazione</div>
+      <div class="tl-field" data-key="tax" data-type="select" data-label="Imposta sul guadagno (alla vendita)" data-value="26" data-options="26|Azioni, ETF azionari o misti (26%);12.5|Titoli di Stato italiani (12,5%)"></div>
+      <div class="tl-field" data-key="bollo" data-type="check" data-label="Considera il bollo dello 0,2% l'anno sul valore del dossier titoli" data-value="1"></div>
+      <div class="tl-field" data-key="inflation" data-label="Inflazione annua" data-unit="%" data-min="0" data-max="8" data-step="0.1" data-value="2" data-hint="Serve a mostrare quanto varrà quella cifra in euro di oggi."></div>
+    </div>
+
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Versato da te</span><b data-out="paid">–</b><small>capitale iniziale + versamenti</small></div>
+        <div class="tl-kpi hot"><span>Ti restano, dopo costi e tasse</span><b data-out="net">–</b><small data-out="netSub"></small></div>
+        <div class="tl-kpi bad"><span>Guadagno teorico che se ne va</span><b data-out="share">–</b><small>tra TER, bollo e imposta</small></div>
+        <div class="tl-kpi"><span>Rendimento: lordo → netto → reale</span><b data-out="rates" style="font-size:1.05rem">–</b><small>annuo, dopo costi, tasse e inflazione</small></div>
+      </div>
+      <div>
+        <h3 class="tl-h">Dove va a finire il guadagno</h3>
+        <div class="tl-wf" data-out-html="waterfall"></div>
+      </div>
+      <div class="tl-chart"><canvas aria-label="Crescita del patrimonio nel tempo: teorico lordo, netto, netto in euro di oggi e versato"></canvas></div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi il risultato</button>
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Esempio teorico a rendimento costante, a scopo educativo: non è una previsione né una consulenza. Si ipotizza un ETF ad accumulazione (con un ETF a distribuzione i dividendi sono tassati ogni anno). Non include commissioni di acquisto, la compensazione di eventuali minusvalenze né variazioni delle aliquote. I mercati reali oscillano e nessun rendimento è garantito.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Perché il "7% lordo" non è quello che ti resta</h2>
+  <p>I simulatori più semplici mostrano il rendimento <strong>lordo</strong>: il numero che si legge in un grafico, prima che il fondo, lo Stato e l'inflazione facciano la loro parte. Questo strumento li mette uno dopo l'altro, così vedi quanto pesa ciascuno:</p>
+  <ul>
+    <li><strong>TER</strong>: il costo annuo del fondo o dell'ETF, in percentuale sul capitale. Si preleva ogni anno e non lo vedi in nessun estratto conto.</li>
+    <li><strong>Bollo dello 0,2%</strong>: imposta annua sul valore dei prodotti finanziari in un dossier titoli, calcolata sul valore a fine anno (in Italia si applica anche a ETF e BTP).</li>
+    <li><strong>Imposta sul guadagno</strong>: 26% sulla plusvalenza di azioni ed ETF (12,5% sui titoli di Stato italiani), pagata quando vendi e solo sulla parte di guadagno, non sul capitale versato.</li>
+    <li><strong>Inflazione</strong>: non è un costo che paghi a qualcuno, ma riduce quanto compri con la stessa cifra. Per questo mostriamo anche il valore "in euro di oggi".</li>
+  </ul>
+  <h2>Come si legge il risultato</h2>
+  <p>Il rendimento "netto" è quello annuo equivalente: il tasso che, applicato ai tuoi versamenti, ti porterebbe alla stessa cifra finale che ti resta in tasca. Il rendimento "reale" toglie anche l'inflazione. Più l'orizzonte è lungo e più il TER pesa: <a href="/strumenti/impatto-ter/">confronta due fondi con un TER diverso</a>.</p>
+  <div class="tl-box"><strong>Come calcoliamo.</strong> Rendimento annuo effettivo (composto una volta l'anno) portato a mese; versamenti all'inizio di ogni mese; il TER riduce la crescita annua con la formula (1 + rendimento) × (1 − TER); il bollo è prelevato a fine anno sul valore; l'imposta si applica una sola volta, alla fine, sulla plusvalenza. Il simulatore semplice di <a href="/guide/simulatore-pac/">TrendScan</a> compone il rendimento mese per mese (rendimento ÷ 12) e non considera costi e tasse, quindi dà numeri leggermente diversi.</div>
+  <p>Vuoi capire cosa è un PAC prima di fare i conti? Leggi la guida <a href="/guide/pac/">Cos'è un PAC</a>. Se invece parti da un obiettivo preciso, usa il <a href="/strumenti/obiettivo-risparmio/">calcolatore al contrario</a>.</p>
+</div>
+      </section>
+
+      <section aria-labelledby="guideCollegate" class="glass-panel p-5 sm:p-6 rounded-3xl border border-gray-800 space-y-3">
+        <h2 id="guideCollegate" class="text-xl font-extrabold text-white">📚 Per capire meglio</h2>
+        <div class="tl-links">
+        <a href="/guide/pac/"><b>🔁 Cos'è un PAC</b><span>Investire una cifra fissa a scadenze regolari, in automatico</span></a>
+        <a href="/guide/simulatore-pac/"><b>🧮 Simulatore: prova i tuoi numeri</b><span>Scegli capitale iniziale, versamento mensile, anni e rendimento ipotetico e guarda come cresce un PAC nel tempo.</span></a>
+        <a href="/guide/interesse-composto/"><b>❄️ La potenza dell'interesse composto</b><span>Rendimenti che generano altri rendimenti: l'effetto «palla di neve»</span></a>
+        </div>
+      </section>
+
+      <section aria-labelledby="altriStrumenti" class="glass-panel p-5 sm:p-6 rounded-3xl border border-gray-800 space-y-3">
+        <h2 id="altriStrumenti" class="text-xl font-extrabold text-white">🧰 Altri strumenti</h2>
+        <div class="tl-links">
+        <a href="/strumenti/impatto-ter/"><b>🏷️ Impatto del TER: 0,07% contro 1,5%</b><span>Due fondi con costi diversi a confronto</span></a>
+        <a href="/strumenti/obiettivo-risparmio/"><b>🎯 Obiettivo: quanto versare al mese</b><span>Da «voglio X tra N anni» al versamento mensile</span></a>
+        <a href="/strumenti/rendimento-netto-btp/"><b>🏛️ BTP Valore, conto deposito, ETF: netto</b><span>Rendimento netto di titoli di Stato e alternative</span></a>
+        <a href="/strumenti/budget-fondo-emergenza/"><b>🛟 Budget 50/30/20 e fondo di emergenza</b><span>Il tuo budget e il fondo di emergenza, su misura</span></a>
+        </div>
+        <p class="text-xs text-gray-400"><a class="underline hover:text-white" href="/strumenti/">Tutti gli strumenti</a> · <a class="underline hover:text-white" href="/guide/">Le guide</a> · <a class="underline hover:text-white" href="/">Home di TrendScan</a></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="bg-[#111] text-gray-400 mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+      <div>
+        <div class="text-2xl font-black text-white">Trend<span class="brand-text">Scan</span></div>
+        <p class="mt-2 text-xs leading-relaxed">Hub di finanza personale: articoli selezionati, video educativi e guide pratiche, in italiano.</p>
+      </div>
+      <div class="text-xs leading-relaxed space-y-2">
+        <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Fonti e diritti</div>
+        <p>Gli articoli appartengono alle rispettive testate: qui sono riportati solo titolo, breve anteprima e link alla fonte. I video sono incorporati dal player ufficiale di YouTube e restano dei rispettivi autori.</p>
+      </div>
+      <div class="text-xs leading-relaxed space-y-2">
+        <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Avvertenza</div>
+        <p>I contenuti hanno scopo informativo ed educativo e non costituiscono consulenza finanziaria, fiscale o legale né sollecitazione all'investimento. Ogni investimento comporta rischi, compresa la perdita del capitale.</p>
+      </div>
+    </div>
+    <div class="border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 py-4 text-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <nav aria-label="Pagine informative" class="leading-relaxed"><a href="/guide/" class="hover:text-white underline-offset-2 hover:underline">Guida al risparmio</a> · <a href="/chi-siamo/" class="hover:text-white underline-offset-2 hover:underline">Chi siamo</a> · <a href="/contatti/" class="hover:text-white underline-offset-2 hover:underline">Contatti</a> · <a href="/metodo/" class="hover:text-white underline-offset-2 hover:underline">Metodo e fonti</a> · <a href="/privacy/" class="hover:text-white underline-offset-2 hover:underline">Privacy</a> · <a href="/cookie/" class="hover:text-white underline-offset-2 hover:underline">Cookie</a> · <a href="/avvertenze/" class="hover:text-white underline-offset-2 hover:underline">Avvertenze</a></nav>
+        <a class="underline hover:text-white" href="mailto:trendscan@proton.me">✉️ trendscan@proton.me</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="guideTools" class="guide-tools" role="group" aria-label="Strumenti di lettura">
+    <button type="button" data-fs="-1" class="fs-btn" aria-label="Riduci il testo">A−</button>
+    <button type="button" data-fs="1" class="fs-btn" aria-label="Aumenta il testo">A+</button>
+    <button type="button" data-go="/guide/" aria-label="Tutte le guide">☰</button>
+  </div>
+  <script src="/page.js" defer></script>
+  <script src="/tools-core.js" defer></script>
+  <script src="/tools.js" defer></script>
+  <script src="/guide.js" defer></script>
+</body>
+</html>

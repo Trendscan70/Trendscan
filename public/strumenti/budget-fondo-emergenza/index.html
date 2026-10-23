@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget 50/30/20 e fondo di emergenza: calcolo personale | TrendScan</title>
+  <meta name="description" content="Inserisci reddito e spese: confronta il tuo budget con la regola 50/30/20 e scopri quanto fondo di emergenza ti serve e in quanto tempo lo costruisci.">
+  <link rel="canonical" href="https://trendscan26.netlify.app/strumenti/budget-fondo-emergenza/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="application-name" content="TrendScan">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="TrendScan">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:title" content="Budget 50/30/20 e fondo di emergenza: calcolo personale | TrendScan">
+  <meta property="og:description" content="Inserisci reddito e spese: confronta il tuo budget con la regola 50/30/20 e scopri quanto fondo di emergenza ti serve e in quanto tempo lo costruisci.">
+  <meta property="og:url" content="https://trendscan26.netlify.app/strumenti/budget-fondo-emergenza/">
+  <meta property="og:image" content="https://trendscan26.netlify.app/og-image.png">
+  <meta property="og:image:alt" content="Budget 50/30/20 e fondo di emergenza: calcolo personale">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Budget 50/30/20 e fondo di emergenza: calcolo personale | TrendScan">
+  <meta name="twitter:description" content="Inserisci reddito e spese: confronta il tuo budget con la regola 50/30/20 e scopri quanto fondo di emergenza ti serve e in quanto tempo lo costruisci.">
+  <meta name="twitter:image" content="https://trendscan26.netlify.app/og-image.png">
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Budget 50/30/20 e fondo di emergenza: il tuo piano personalizzato","description":"Inserisci reddito e spese: confronta il tuo budget con la regola 50/30/20 e scopri quanto fondo di emergenza ti serve e in quanto tempo lo costruisci.","url":"https://trendscan26.netlify.app/strumenti/budget-fondo-emergenza/","inLanguage":"it-IT","applicationCategory":"FinanceApplication","operatingSystem":"Qualsiasi (web)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"dateModified":"2026-10-21","publisher":{"@id":"https://trendscan26.netlify.app/#org"},"image":"https://trendscan26.netlify.app/og-image.png"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://trendscan26.netlify.app/"},{"@type":"ListItem","position":2,"name":"Strumenti","item":"https://trendscan26.netlify.app/strumenti/"},{"@type":"ListItem","position":3,"name":"Budget e fondo di emergenza","item":"https://trendscan26.netlify.app/strumenti/budget-fondo-emergenza/"}]}]</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>(function(){try{var t=localStorage.getItem('ts-theme');if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
+  <meta name="theme-color" content="#f4f5f7">
+  <link rel="stylesheet" href="/tailwind.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-[#f4f5f7] text-gray-900 antialiased">
+
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+      <a href="/#home" class="flex items-center gap-2 shrink-0" aria-label="TrendScan home">
+        <span class="w-10 h-10 rounded-xl brand-bg flex items-center justify-center text-white shadow">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </span>
+        <span class="text-2xl font-black tracking-tight leading-none">Trend<span class="brand-text">Scan</span></span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-1 ml-4 text-[13px] font-extrabold uppercase tracking-wide" id="mainNav">
+        <a href="/#home" data-nav="home" class="nav-link">Home</a>
+        <a href="/#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="/#mercati" data-nav="mercati" class="nav-link">Mercati</a>
+        <a href="/criptovalute/" class="nav-link">Criptovalute</a>
+        <a href="/#video" data-nav="video" class="nav-link" title="Video educativi">Video</a>
+        <a href="/guide/" data-nav="guide" class="nav-link" title="Guide e calcolatore PAC">Guide</a>
+        <a href="/strumenti/" data-nav="strumenti" class="nav-link active">Strumenti</a>
+        <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
+      </nav>
+
+        <button id="themeToggle" type="button" class="ml-auto w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-lg shrink-0" aria-label="Attiva modalità scura" aria-pressed="false">🌙</button>
+      </div>
+    <!-- nav mobile -->
+    <nav class="lg:hidden border-t border-gray-100 overflow-x-auto no-scrollbar">
+      <div class="flex gap-1 px-3 py-2 text-xs font-extrabold uppercase whitespace-nowrap">
+        <a href="/#home" data-nav="home" class="nav-link">Home</a>
+        <a href="/#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+        <a href="/#mercati" data-nav="mercati" class="nav-link">Mercati</a>
+        <a href="/criptovalute/" class="nav-link">Criptovalute</a>
+        <a href="/#video" data-nav="video" class="nav-link">Video</a>
+        <a href="/guide/" data-nav="guide" class="nav-link">Guide</a>
+        <a href="/strumenti/" data-nav="strumenti" class="nav-link active">Strumenti</a>
+        <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <nav aria-label="Percorso" class="text-xs text-gray-500 mb-3"><a href="/" class="hover:underline">Home</a> › <a href="/strumenti/" class="hover:underline">Strumenti</a> › <span>Budget e fondo di emergenza</span></nav>
+    <div class="rounded-3xl bg-[#0b0f19] text-gray-100 p-3 sm:p-6 space-y-8" id="academyRoot">
+      <div class="academy-banner rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+        <div class="max-w-3xl">
+          <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold border border-purple-500/40 uppercase tracking-widest">🧰 Strumento gratuito</span>
+          <h1 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">Budget 50/30/20 e fondo di emergenza: il tuo piano personalizzato</h1>
+          <p class="text-sm text-gray-200 mt-2 leading-relaxed">Collegato al capitolo 2: dove stai rispetto alla regola e quanta riserva ti serve.</p>
+          <p class="text-xs text-gray-300 mt-3">Aggiornato a ottobre 2026 · A cura della redazione di TrendScan · <a href="/metodo/" class="underline font-semibold text-white">Come lavoriamo</a> · <a href="/avvertenze/" class="underline font-semibold text-white">Avvertenze</a></p>
+        </div>
+      </div>
+
+      <section class="glass-panel p-4 sm:p-8 rounded-3xl border border-gray-800 space-y-5">
+        <div class="tl" data-tool="budget-fondo-emergenza" data-noparams>
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>I tuoi numeri mensili</h2>
+      <div class="tl-field" data-key="income" data-label="Reddito netto mensile" data-unit="€" data-min="0" data-max="20000" data-step="50" data-value="1800"></div>
+      <div class="tl-field" data-key="essentials" data-label="Spese essenziali (casa, bollette, cibo, trasporti, rate)" data-unit="€" data-min="0" data-max="20000" data-step="50" data-value="1000"></div>
+      <div class="tl-field" data-key="wants" data-label="Desideri e tempo libero (uscite, viaggi, hobby)" data-unit="€" data-min="0" data-max="20000" data-step="50" data-value="450"></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Il tuo fondo di emergenza</div>
+      <div class="tl-field" data-key="profile" data-type="select" data-label="La tua situazione" data-value="stabile" data-options="stabile|Lavoro dipendente stabile, nessuno a carico;incerto|Contratto a termine o un solo reddito in famiglia;autonomo|Lavoro autonomo / partita IVA" data-hint="Più il reddito è incerto, più è prudente una riserva ampia. Sono indicazioni pratiche, non regole di legge."></div>
+      <div class="tl-field" data-key="saved" data-label="Quanto hai già accantonato" data-unit="€" data-min="0" data-max="200000" data-step="100" data-value="0"></div>
+      <p class="tl-hint">🔒 I numeri restano nel tuo browser: non vengono inviati né salvati e non finiscono nel link di condivisione.</p>
+    </div>
+
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div>
+        <h3 class="tl-h">Budget 50/30/20: i tuoi numeri e la regola</h3>
+        <div class="tl-stack-lab">I tuoi numeri</div>
+        <div data-out-html="stackMine"></div>
+        <div class="tl-stack-lab">Regola 50/30/20</div>
+        <div data-out-html="stackRule"></div>
+        <div class="tl-hint" data-out-html="lines" style="margin-top:.7rem"></div>
+      </div>
+      <div class="tl-kpis">
+        <div class="tl-kpi hot"><span>Fondo di emergenza consigliato</span><b data-out="fundRange" style="font-size:1.15rem">–</b><small data-out="fundMonths"></small></div>
+        <div class="tl-kpi"><span>Oggi la tua riserva copre</span><b data-out="cover">–</b><small data-out="coverSub"></small></div>
+      </div>
+      <div data-out-html="progress"></div>
+      <div>
+        <h3 class="tl-h">Quanto tempo ci vuole</h3>
+        <div class="tl-hint" data-out-html="timeline"></div>
+      </div>
+      <div data-out-html="next"></div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi lo strumento</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Strumento educativo, non una consulenza personalizzata. La regola 50/30/20 è una guida indicativa, non un obbligo: in molte situazioni (affitti alti, famiglia) le spese essenziali superano il 50%.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Come usare questo strumento</h2>
+  <p>Inserisci il reddito netto mensile e come lo spendi. Lo strumento lo confronta con la <strong>regola 50/30/20</strong> (50% bisogni, 30% desideri, 20% risparmio) e calcola il tuo <strong>fondo di emergenza</strong>: una riserva liquida pari a <strong>3-6 mesi delle tue spese mensili</strong>, come spiegato nel <a href="/guide/risparmio-50-30-20/">capitolo sul risparmio</a>. Qui lo calcoliamo sulle spese <em>essenziali</em>, non sul reddito: sono quelle che devi comunque pagare se perdi il lavoro.</p>
+  <h2>Perché il fondo viene prima degli investimenti</h2>
+  <p>Il fondo di emergenza ti protegge dagli imprevisti (riparazioni, spese mediche, perdita del lavoro) senza costringerti a vendere gli investimenti in un momento sfavorevole. Va tenuto su un conto liquido e svincolabile, non in un investimento che può scendere di valore.</p>
+  <div class="tl-box"><strong>E se i bisogni superano il 50%?</strong> Succede spesso e non significa che stai sbagliando. La regola è un punto di partenza: parti dal risparmio che riesci davvero a mettere da parte (anche il 5-10%) e fallo crescere quando le spese cambiano.</div>
+  <p>Quando la riserva è al minimo consigliato, il passo successivo è il <a href="/guide/pac/">PAC</a>: prova i numeri con il <a href="/strumenti/pac-realistico/">PAC realistico</a> o calcola il versamento necessario per un obiettivo con il <a href="/strumenti/obiettivo-risparmio/">calcolatore obiettivo</a>. Per tenere traccia delle spese puoi scaricare il <a href="/guide/bilancio-familiare-excel/">foglio Excel per il bilancio familiare</a>.</p>
+</div>
+      </section>
+
+      <section aria-labelledby="guideCollegate" class="glass-panel p-5 sm:p-6 rounded-3xl border border-gray-800 space-y-3">
+        <h2 id="guideCollegate" class="text-xl font-extrabold text-white">📚 Per capire meglio</h2>
+        <div class="tl-links">
+        <a href="/guide/risparmio-50-30-20/"><b>🛡️ I consigli basilari sul risparmio</b><span>Costruisci solide fondamenta prima di investire</span></a>
+        <a href="/guide/pac/"><b>🔁 Cos'è un PAC</b><span>Investire una cifra fissa a scadenze regolari, in automatico</span></a>
+        </div>
+      </section>
+
+      <section aria-labelledby="altriStrumenti" class="glass-panel p-5 sm:p-6 rounded-3xl border border-gray-800 space-y-3">
+        <h2 id="altriStrumenti" class="text-xl font-extrabold text-white">🧰 Altri strumenti</h2>
+        <div class="tl-links">
+        <a href="/strumenti/pac-realistico/"><b>📉 PAC realistico: costi, tasse e inflazione</b><span>Quanto ti resta davvero dopo costi, tasse e inflazione</span></a>
+        <a href="/strumenti/impatto-ter/"><b>🏷️ Impatto del TER: 0,07% contro 1,5%</b><span>Due fondi con costi diversi a confronto</span></a>
+        <a href="/strumenti/obiettivo-risparmio/"><b>🎯 Obiettivo: quanto versare al mese</b><span>Da «voglio X tra N anni» al versamento mensile</span></a>
+        <a href="/strumenti/rendimento-netto-btp/"><b>🏛️ BTP Valore, conto deposito, ETF: netto</b><span>Rendimento netto di titoli di Stato e alternative</span></a>
+        </div>
+        <p class="text-xs text-gray-400"><a class="underline hover:text-white" href="/strumenti/">Tutti gli strumenti</a> · <a class="underline hover:text-white" href="/guide/">Le guide</a> · <a class="underline hover:text-white" href="/">Home di TrendScan</a></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="bg-[#111] text-gray-400 mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+      <div>
+        <div class="text-2xl font-black text-white">Trend<span class="brand-text">Scan</span></div>
+        <p class="mt-2 text-xs leading-relaxed">Hub di finanza personale: articoli selezionati, video educativi e guide pratiche, in italiano.</p>
+      </div>
+      <div class="text-xs leading-relaxed space-y-2">
+        <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Fonti e diritti</div>
+        <p>Gli articoli appartengono alle rispettive testate: qui sono riportati solo titolo, breve anteprima e link alla fonte. I video sono incorporati dal player ufficiale di YouTube e restano dei rispettivi autori.</p>
+      </div>
+      <div class="text-xs leading-relaxed space-y-2">
+        <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Avvertenza</div>
+        <p>I contenuti hanno scopo informativo ed educativo e non costituiscono consulenza finanziaria, fiscale o legale né sollecitazione all'investimento. Ogni investimento comporta rischi, compresa la perdita del capitale.</p>
+      </div>
+    </div>
+    <div class="border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 py-4 text-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <nav aria-label="Pagine informative" class="leading-relaxed"><a href="/guide/" class="hover:text-white underline-offset-2 hover:underline">Guida al risparmio</a> · <a href="/chi-siamo/" class="hover:text-white underline-offset-2 hover:underline">Chi siamo</a> · <a href="/contatti/" class="hover:text-white underline-offset-2 hover:underline">Contatti</a> · <a href="/metodo/" class="hover:text-white underline-offset-2 hover:underline">Metodo e fonti</a> · <a href="/privacy/" class="hover:text-white underline-offset-2 hover:underline">Privacy</a> · <a href="/cookie/" class="hover:text-white underline-offset-2 hover:underline">Cookie</a> · <a href="/avvertenze/" class="hover:text-white underline-offset-2 hover:underline">Avvertenze</a></nav>
+        <a class="underline hover:text-white" href="mailto:trendscan@proton.me">✉️ trendscan@proton.me</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="guideTools" class="guide-tools" role="group" aria-label="Strumenti di lettura">
+    <button type="button" data-fs="-1" class="fs-btn" aria-label="Riduci il testo">A−</button>
+    <button type="button" data-fs="1" class="fs-btn" aria-label="Aumenta il testo">A+</button>
+    <button type="button" data-go="/guide/" aria-label="Tutte le guide">☰</button>
+  </div>
+  <script src="/page.js" defer></script>
+  <script src="/tools-core.js" defer></script>
+  <script src="/tools.js" defer></script>
+  <script src="/guide.js" defer></script>
+</body>
+</html>

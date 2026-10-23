@@ -511,6 +511,7 @@ function renderMarketsView() {
     ${hasMk ? `<section class="mk-card" aria-labelledby="mkThermoTitle">
       <h2 id="mkThermoTitle" class="mk-h2">Termometro TrendScan <span class="mk-badge">elaborazione TrendScan</span></h2>
       <p class="mk-lead">Misura il <b>tono delle notizie</b> di finanza che raccogliamo dai giornali, su una scala da 0 (molto negative) a 100 (molto positive). Non misura i mercati e non è un consiglio: è un termometro dell’umore dei titoli.</p>
+      ${shareRowHtml('termometro', 'termometro.png', 'trendscan-termometro.png', 'Termometro TrendScan', 'Il tono delle notizie di finanza, da 0 a 100, aggiornato ogni ora.')}
       ${thermo}
       <p class="mk-note">Come si calcola: conteggio di parole chiave su titoli e anteprime, con più peso alle notizie recenti. È un metodo semplice e ha limiti (ironia, contesto, titoli ambigui). <a href="/metodo/#termometro" class="underline font-bold brand-text">Leggi il metodo</a>.</p>
     </section>` : ''}
@@ -636,6 +637,11 @@ function radarStripHtml() {
 }
 
 // ---- Pagina Mercati: classifiche complete
+// Riga "Condividi / Scarica immagine" per Termometro e Trend Radar: l'immagine (aggiornata ogni ora) e la pagina con i meta social stanno in /og/ e /radar/, /termometro/
+function shareRowHtml(slug, img, file, title, text) {
+  return `<div class="share-row"><button type="button" class="share-btn" data-share data-share-url="${location.origin}/${slug}/" data-share-title="${esc(title)}" data-share-text="${esc(text)}">📤 Condividi</button><a class="share-btn" href="/og/${img}" download="${file}">🖼️ Scarica l’immagine</a><span class="share-toast" role="status" data-toast></span></div>`;
+}
+
 function radarSectionHtml() {
   const r = state.radar, top = (r.meta && r.meta.top) || 8, w = r.wiki;
   const cov = (r.coverage || []).map(c => {
@@ -654,6 +660,7 @@ function radarSectionHtml() {
     <section id="trendRadar" class="mk-card rd-section" aria-labelledby="rdTitle">
       <h2 id="rdTitle" class="mk-h2">Trend Radar <span class="mk-badge">cosa cresce ora</span></h2>
       <p class="mk-lead">Le classifiche di ciò che sta crescendo nei temi di finanza personale. Descrivono il presente: <b>non prevedono il futuro e non sono un consiglio</b>.</p>
+      ${shareRowHtml('radar', 'radar.png', 'trendscan-trend-radar.png', 'Trend Radar di TrendScan', 'Cosa sta crescendo ora nella finanza personale, aggiornato ogni ora.')}
       ${rdNotes()}
 
       <div class="rd-legend">
@@ -942,6 +949,14 @@ function setupEvents() {
     const cat = e.target.closest('[data-cat]'); if (cat) { goArticles(cat.dataset.cat); return; }
     const vid = e.target.closest('[data-video]'); if (vid) { playById(vid.dataset.video); return; }
     const q = e.target.closest('[data-q]'); if (q) { selectVideo(+q.dataset.q, true); return; }
+    const sh = e.target.closest('[data-share]');
+    if (sh) {
+      const d = sh.dataset, toast = sh.parentNode.querySelector('[data-toast]');
+      const say = m => { if (toast) { toast.textContent = m; setTimeout(() => { toast.textContent = ''; }, 2600); } };
+      if (navigator.share) { navigator.share({ title: d.shareTitle, text: d.shareText, url: d.shareUrl }).catch(() => {}); return; }
+      (navigator.clipboard ? navigator.clipboard.writeText(d.shareUrl) : Promise.reject()).then(() => say('Link copiato: incollalo dove vuoi'), () => say('Copia l’indirizzo dalla barra del browser'));
+      return;
+    }
     const jp = e.target.closest('[data-jump]'); if (jp) { const t = $(jp.dataset.jump); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const ch = e.target.closest('[data-channel]');
     if (ch) {

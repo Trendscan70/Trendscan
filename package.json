@@ -10,9 +10,12 @@
     "build:radar": "node scripts/build-radar.mjs",
     "serve": "npx http-server public -p 8080 -c-1",
     "build:css": "tailwindcss -i src/tailwind.input.css -o public/tailwind.css --minify",
-    "build:guides": "node scripts/build-guides.mjs"
+    "build:guides": "node scripts/build-guides.mjs",
+    "build:og": "node scripts/build-og.mjs",
+    "test": "node scripts/test-tools.mjs"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "tailwindcss": "^4.3.3"
   }
 }

@@ -24,6 +24,14 @@
       try { localStorage.setItem('ts-guide-fs', String(fsIndex)); } catch (err) {}
       applyFontSize(); return;
     }
+    // ---- Condividi (pagine /radar/ e /termometro/): menu di condivisione del telefono, altrimenti copia il link
+    var sh = e.target.closest('[data-share]');
+    if (sh) {
+      var d = sh.dataset, toast = sh.parentNode.querySelector('[data-toast]'), say = function (m) { if (toast) { toast.textContent = m; setTimeout(function () { toast.textContent = ''; }, 2600); } };
+      if (navigator.share) { navigator.share({ title: d.shareTitle, text: d.shareText, url: d.shareUrl }).catch(function () {}); return; }
+      (navigator.clipboard ? navigator.clipboard.writeText(d.shareUrl) : Promise.reject()).then(function () { say('Link copiato: incollalo dove vuoi'); }, function () { say('Copia l\'indirizzo dalla barra del browser'); });
+      return;
+    }
     // ---- 2. Pulsante ☰ → indice delle guide
     var go = e.target.closest('[data-go]'); if (go) location.href = go.dataset.go;
   });

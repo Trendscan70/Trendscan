@@ -1,0 +1,48 @@
+<div class="tl" data-tool="impatto-ter">
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>I tuoi numeri</h2>
+      <div class="tl-field" data-key="initial" data-label="Capitale iniziale" data-unit="€" data-min="0" data-max="500000" data-step="500" data-value="10000"></div>
+      <div class="tl-field" data-key="monthly" data-label="Versamento mensile" data-unit="€" data-min="0" data-max="5000" data-step="10" data-value="200"></div>
+      <div class="tl-field" data-key="years" data-label="Per quanti anni" data-unit="anni" data-min="1" data-max="40" data-step="1" data-value="30"></div>
+      <div class="tl-field" data-key="gross" data-label="Rendimento annuo lordo ipotetico" data-unit="%" data-min="0" data-max="12" data-step="0.5" data-value="6" data-hint="Lo stesso per i due fondi, prima dei costi."></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">I due fondi a confronto</div>
+      <div class="tl-field" data-key="terA" data-label="TER del fondo economico" data-unit="%" data-min="0" data-max="3" data-step="0.01" data-value="0.07" data-hint="Esempio: un ETF a basso costo."></div>
+      <div class="tl-field" data-key="terB" data-label="TER del fondo costoso" data-unit="%" data-min="0" data-max="3" data-step="0.05" data-value="1.5" data-hint="Esempio: un fondo gestito attivamente."></div>
+    </div>
+
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi good"><span data-out="labA">Fondo economico</span><b data-out="a">–</b><small data-out="lostA"></small></div>
+        <div class="tl-kpi bad"><span data-out="labB">Fondo costoso</span><b data-out="b">–</b><small data-out="lostB"></small></div>
+        <div class="tl-kpi hot"><span>Differenza solo di costi</span><b data-out="diff">–</b><small data-out="diffPct"></small></div>
+      </div>
+      <div>
+        <h3 class="tl-h">Quanto ti resta</h3>
+        <div class="tl-wf" data-out-html="waterfall"></div>
+      </div>
+      <div class="tl-chart"><canvas aria-label="Crescita del patrimonio con due livelli di TER, e totale versato"></canvas></div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi il confronto</button>
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Esempio teorico a rendimento costante, a scopo educativo. Qui non consideriamo imposte, bollo e inflazione: per quelle usa il <a href="/strumenti/pac-realistico/">PAC realistico</a>. Non è una consulenza né una previsione.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Cos'è il TER e perché pesa tanto</h2>
+  <p>Il <strong>TER</strong> (Total Expense Ratio) è il costo annuo di un fondo o di un ETF, espresso in percentuale sul capitale investito. Non arriva mai come una fattura: viene sottratto ogni giorno dal valore delle quote, quindi lo "senti" solo come un rendimento un po' più basso.</p>
+  <p>Un punto di differenza può sembrare poco, ma si ripete ogni anno <strong>sul capitale accumulato</strong>, non solo su quello versato. Per questo su orizzonti lunghi la differenza tra un TER dello 0,07% e uno dell'1,5% diventa una frazione importante del risultato finale, come vedi qui sopra.</p>
+  <h2>Dove trovare il TER</h2>
+  <ul>
+    <li>Nel <strong>KID</strong> (il breve documento informativo che ogni prodotto deve avere) e nella scheda del prodotto sul sito dell'emittente.</li>
+    <li>Sui siti dei broker e sulle schede degli ETF quotati, di solito indicato come "TER" o "spese correnti".</li>
+  </ul>
+  <div class="tl-box"><strong>Attenzione.</strong> Un TER basso non rende un investimento "migliore" in assoluto: conta anche cosa contiene il fondo, il rischio e la liquidità. Il TER è un costo certo, il rendimento no: per questo è uno dei pochi elementi che puoi controllare in anticipo.</div>
+  <p>Per capire cos'è un ETF leggi la guida <a href="/guide/etf/">Cos'è un ETF</a>; per vedere l'effetto di costi, bollo e imposte insieme usa il <a href="/strumenti/pac-realistico/">PAC realistico</a>.</p>
+</div>

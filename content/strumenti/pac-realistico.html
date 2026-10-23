@@ -1,0 +1,55 @@
+<div class="tl" data-tool="pac-realistico">
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>I tuoi numeri</h2>
+      <div class="tl-field" data-key="initial" data-label="Capitale iniziale" data-unit="€" data-min="0" data-max="500000" data-step="500" data-value="1000"></div>
+      <div class="tl-field" data-key="monthly" data-label="Versamento mensile" data-unit="€" data-min="0" data-max="5000" data-step="10" data-value="200"></div>
+      <div class="tl-field" data-key="years" data-label="Per quanti anni" data-unit="anni" data-min="1" data-max="40" data-step="1" data-value="20"></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Rendimento e costi</div>
+      <div class="tl-field" data-key="gross" data-label="Rendimento annuo lordo ipotetico" data-unit="%" data-min="0" data-max="12" data-step="0.5" data-value="6" data-hint="Ipotesi a rendimento costante, <strong>prima</strong> di costi e tasse. Non è una previsione."></div>
+      <div class="tl-field" data-key="ter" data-label="Costo annuo del fondo (TER)" data-unit="%" data-min="0" data-max="3" data-step="0.05" data-value="0.2" data-hint="Di solito gli ETF a basso costo stanno sotto lo 0,3%, i fondi gestiti attivamente spesso sopra l'1,5%. Lo trovi nel KID."></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Tasse e inflazione</div>
+      <div class="tl-field" data-key="tax" data-type="select" data-label="Imposta sul guadagno (alla vendita)" data-value="26" data-options="26|Azioni, ETF azionari o misti (26%);12.5|Titoli di Stato italiani (12,5%)"></div>
+      <div class="tl-field" data-key="bollo" data-type="check" data-label="Considera il bollo dello 0,2% l'anno sul valore del dossier titoli" data-value="1"></div>
+      <div class="tl-field" data-key="inflation" data-label="Inflazione annua" data-unit="%" data-min="0" data-max="8" data-step="0.1" data-value="2" data-hint="Serve a mostrare quanto varrà quella cifra in euro di oggi."></div>
+    </div>
+
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Versato da te</span><b data-out="paid">–</b><small>capitale iniziale + versamenti</small></div>
+        <div class="tl-kpi hot"><span>Ti restano, dopo costi e tasse</span><b data-out="net">–</b><small data-out="netSub"></small></div>
+        <div class="tl-kpi bad"><span>Guadagno teorico che se ne va</span><b data-out="share">–</b><small>tra TER, bollo e imposta</small></div>
+        <div class="tl-kpi"><span>Rendimento: lordo → netto → reale</span><b data-out="rates" style="font-size:1.05rem">–</b><small>annuo, dopo costi, tasse e inflazione</small></div>
+      </div>
+      <div>
+        <h3 class="tl-h">Dove va a finire il guadagno</h3>
+        <div class="tl-wf" data-out-html="waterfall"></div>
+      </div>
+      <div class="tl-chart"><canvas aria-label="Crescita del patrimonio nel tempo: teorico lordo, netto, netto in euro di oggi e versato"></canvas></div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi il risultato</button>
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Esempio teorico a rendimento costante, a scopo educativo: non è una previsione né una consulenza. Si ipotizza un ETF ad accumulazione (con un ETF a distribuzione i dividendi sono tassati ogni anno). Non include commissioni di acquisto, la compensazione di eventuali minusvalenze né variazioni delle aliquote. I mercati reali oscillano e nessun rendimento è garantito.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Perché il "7% lordo" non è quello che ti resta</h2>
+  <p>I simulatori più semplici mostrano il rendimento <strong>lordo</strong>: il numero che si legge in un grafico, prima che il fondo, lo Stato e l'inflazione facciano la loro parte. Questo strumento li mette uno dopo l'altro, così vedi quanto pesa ciascuno:</p>
+  <ul>
+    <li><strong>TER</strong>: il costo annuo del fondo o dell'ETF, in percentuale sul capitale. Si preleva ogni anno e non lo vedi in nessun estratto conto.</li>
+    <li><strong>Bollo dello 0,2%</strong>: imposta annua sul valore dei prodotti finanziari in un dossier titoli, calcolata sul valore a fine anno (in Italia si applica anche a ETF e BTP).</li>
+    <li><strong>Imposta sul guadagno</strong>: 26% sulla plusvalenza di azioni ed ETF (12,5% sui titoli di Stato italiani), pagata quando vendi e solo sulla parte di guadagno, non sul capitale versato.</li>
+    <li><strong>Inflazione</strong>: non è un costo che paghi a qualcuno, ma riduce quanto compri con la stessa cifra. Per questo mostriamo anche il valore "in euro di oggi".</li>
+  </ul>
+  <h2>Come si legge il risultato</h2>
+  <p>Il rendimento "netto" è quello annuo equivalente: il tasso che, applicato ai tuoi versamenti, ti porterebbe alla stessa cifra finale che ti resta in tasca. Il rendimento "reale" toglie anche l'inflazione. Più l'orizzonte è lungo e più il TER pesa: <a href="/strumenti/impatto-ter/">confronta due fondi con un TER diverso</a>.</p>
+  <div class="tl-box"><strong>Come calcoliamo.</strong> Rendimento annuo effettivo (composto una volta l'anno) portato a mese; versamenti all'inizio di ogni mese; il TER riduce la crescita annua con la formula (1 + rendimento) × (1 − TER); il bollo è prelevato a fine anno sul valore; l'imposta si applica una sola volta, alla fine, sulla plusvalenza. Il simulatore semplice di <a href="/guide/simulatore-pac/">TrendScan</a> compone il rendimento mese per mese (rendimento ÷ 12) e non considera costi e tasse, quindi dà numeri leggermente diversi.</div>
+  <p>Vuoi capire cosa è un PAC prima di fare i conti? Leggi la guida <a href="/guide/pac/">Cos'è un PAC</a>. Se invece parti da un obiettivo preciso, usa il <a href="/strumenti/obiettivo-risparmio/">calcolatore al contrario</a>.</p>
+</div>

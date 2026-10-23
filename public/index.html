@@ -65,6 +65,7 @@
         <a href="/criptovalute/" class="nav-link">Criptovalute</a>
         <a href="#video" data-nav="video" class="nav-link" title="Video educativi">Video</a>
         <a href="/guide/" data-nav="guide" class="nav-link" title="Guide e simulatore PAC">Guide</a>
+        <a href="/strumenti/" class="nav-link">Strumenti</a>
         <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
       </nav>
 
@@ -85,6 +86,7 @@
         <a href="/criptovalute/" class="nav-link">Criptovalute</a>
         <a href="#video" data-nav="video" class="nav-link">Video</a>
         <a href="/guide/" data-nav="guide" class="nav-link">Guide</a>
+        <a href="/strumenti/" class="nav-link">Strumenti</a>
         <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
       </div>
     </nav>
@@ -101,8 +103,6 @@
     <!-- =========================== HOME =========================== -->
     <section id="view-home" class="view space-y-10">
 
-      <!-- Installa l'app (PWA): il banner viene creato da pwa-install.js, solo se il browser permette l'installazione -->
-      <div id="pwa-install-slot" hidden></div>
 
       <!-- Benvenuto: promessa chiara per chi parte da zero -->
       <section class="welcome" aria-labelledby="welcomeTitle">
@@ -112,6 +112,7 @@
         <div class="welcome-cta">
           <button type="button" data-jump="inizia" class="welcome-btn welcome-btn-main">Parti da zero ↓</button>
           <button type="button" data-jump="mini-sim" class="welcome-btn welcome-btn-alt">🧮 Calcola quanto puoi mettere da parte</button>
+          <button type="button" data-install class="welcome-btn welcome-btn-install" aria-label="Installa l'app TrendScan sul tuo dispositivo">📲 Installa l'app gratis</button>
         </div>
         <ul class="welcome-trust">
           <li>✓ Gratis, senza registrazione</li>
@@ -161,6 +162,19 @@
           <div class="text-sm text-emerald-50">Tieni sotto controllo entrate, spese e risparmio mese per mese: il primo passo per capire dove vanno i tuoi soldi.</div>
           <span class="gift-btn">Scaricalo ora →</span>
         </a>
+      </div>
+
+      <!-- Strumenti gratuiti -->
+      <div id="strumenti">
+        <div class="section-title"><h2>Strumenti gratuiti: fai i conti sul serio</h2><span class="section-bar"></span>
+          <a href="/strumenti/" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli strumenti →</a></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <a class="tool-card" href="/strumenti/pac-realistico/"><span class="ti" aria-hidden="true">📉</span><b>PAC realistico</b><span class="tx">Quanto ti resta dopo costi, bollo, tasse e inflazione</span></a>
+          <a class="tool-card" href="/strumenti/impatto-ter/"><span class="ti" aria-hidden="true">🏷️</span><b>Impatto del TER</b><span class="tx">0,07% contro 1,5%: quanto costa un fondo in 30 anni</span></a>
+          <a class="tool-card" href="/strumenti/obiettivo-risparmio/"><span class="ti" aria-hidden="true">🎯</span><b>Obiettivo di risparmio</b><span class="tx">«Voglio 100.000 € tra 15 anni»: quanto versare al mese</span></a>
+          <a class="tool-card" href="/strumenti/rendimento-netto-btp/"><span class="ti" aria-hidden="true">🏛️</span><b>BTP, deposito, ETF</b><span class="tx">BTP Valore a confronto, dopo imposte e bollo</span></a>
+          <a class="tool-card" href="/strumenti/budget-fondo-emergenza/"><span class="ti" aria-hidden="true">🛟</span><b>Budget e fondo di emergenza</b><span class="tx">La tua regola 50/30/20 e la riserva che ti serve</span></a>
+        </div>
       </div>
 
       <!-- Argomenti come domande -->
