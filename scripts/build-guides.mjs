@@ -19,8 +19,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SITE = 'https://trendscan26.netlify.app';
-const UPDATED = '2026-10-21';            // data di ultima revisione dei testi (ISO): compare in pagina, nei dati strutturati e nella sitemap
+const SITE = 'https://trendscan.it';
+const UPDATED = '2026-10-24';            // data di ultima revisione dei testi (ISO): compare in pagina, nei dati strutturati e nella sitemap
 const UPDATED_LABEL = 'ottobre 2026';
 const CHART_JS = 'https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js';
 
@@ -132,6 +132,7 @@ function head({ title, desc, canonical, ogType = 'article', ld, scripts, image =
   return `<!DOCTYPE html>
 <html lang="it">
 <head>
+  <script src="/consent.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${esc(title)} | TrendScan</title>

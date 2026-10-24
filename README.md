@@ -73,6 +73,17 @@ Nella home c'è un pulsante fisso (`data-install`, in `index.html`). `public/pwa
 - Le piattaforme social tengono in cache l'anteprima: dopo la prima pubblicazione puoi forzare l'aggiornamento dagli strumenti per sviluppatori di Facebook/LinkedIn.
 - **Prima volta:** le immagini esistono solo dopo il primo giro del workflow (parte da solo al push, perché cambiano `scripts/**` e `.github/workflows/**`). Fino ad allora `/og/*.png` risponde 404.
 
+## Statistiche (Google Analytics) e consenso ai cookie
+Google Analytics 4 (ID `G-K072WZXW0N`) è collegato al **consenso**: non viene caricato finché il visitatore non accetta dal banner, quindi prima della scelta non parte nessuna richiesta a Google e non si crea nessun cookie di statistica (Linee guida cookie del Garante, 10 giugno 2021).
+- **Un solo tag per pagina:** la riga `<script src="/consent.js" defer>` subito dopo `<head>` (nelle pagine scritte a mano e nel modello `head()` di `scripts/build-guides.mjs`). Il tag di Google **non** va incollato nelle pagine: lo carica `public/consent.js`, dove l'ID è la costante `GA_ID`.
+- **Banner:** «Rifiuta» e «Accetta» hanno lo stesso aspetto; lo scorrimento non è consenso; la scelta vale 182 giorni (poi il banner si ripropone) ed è salvata in `localStorage` (`ts-consent`). Da «Preferenze cookie» (footer di ogni pagina, attributo `data-consent-open`) si può cambiare idea: se si revoca, Analytics si disattiva e i cookie `_ga` vengono cancellati.
+- **Impostazioni del tag:** segnali Google e personalizzazione pubblicitaria disattivati; `ad_storage`, `ad_user_data`, `ad_personalization` negati.
+- **Testi:** `public/privacy/index.html` e `public/cookie/index.html` descrivono Analytics, i cookie (`_ga`, `_ga_K072WZXW0N`), la base giuridica (consenso) e la conservazione (non oltre 14 mesi). Se cambi ID o impostazioni, aggiorna anche quelle pagine.
+- **Da fare in Google Analytics (Admin):** URL del flusso dati `https://trendscan.it`; conservazione dei dati evento a 14 mesi (come scritto nella privacy); accettare le condizioni sul trattamento dei dati dell'account; segnali Google disattivati.
+- **Verifica:** il flusso dati risulterà «nessun dato ricevuto» finché qualcuno non accetta il banner. Prova con Tag Assistant o con DebugView dopo aver cliccato «Accetta». Le viste interne della home (`#articoli`, `#mercati`, `#video`) vanno controllate in DebugView.
+- **Limite noto:** la prova del consenso resta sul dispositivo dell'utente; se servisse un registro centralizzato dei consensi si può passare a un CMP certificato.
+- **Indirizzo principale:** tutto il sito (canonical, sitemap, `robots.txt`, anteprime social, dati strutturati) usa `https://trendscan.it`. La costante è `SITE` in `scripts/build-guides.mjs`.
+
 ## Guide: una pagina per ogni argomento
 Ogni guida ha un indirizzo proprio (utile per la SEO e per condividerla): `/guide/` è l'indice e poi `/guide/azioni/`, `/guide/risparmio-50-30-20/`, `/guide/etf/`, `/guide/pac/`, `/guide/pic-vs-pac/`, `/guide/interesse-composto/`, `/guide/simulatore-pac/`, `/guide/broker-pac/`, `/guide/bilancio-familiare-excel/`.
 Le pagine sono **generate**: non si modificano a mano.
@@ -138,7 +149,7 @@ Il sito è predisposto ma **non mostra annunci** finché non attivi `public/ads.
 
 
 ## SEO
-- **Indirizzo del sito**: `https://trendscan26.netlify.app` è scritto in `public/index.html` (canonical, Open Graph, JSON-LD), `public/robots.txt` e `public/sitemap.xml`. Se passi a un dominio proprio, sostituiscilo in questi tre file.
+- **Indirizzo del sito**: `https://trendscan.it` è scritto in `public/index.html` (canonical, Open Graph, JSON-LD), `public/robots.txt` e `public/sitemap.xml`. Se passi a un dominio proprio, sostituiscilo in questi tre file.
 - **Search Console**: aggiungi il sito su https://search.google.com/search-console (proprietà «Prefisso URL»), verifica la proprietà, invia `sitemap.xml` e usa «Controllo URL → Richiedi indicizzazione». Fai lo stesso su Bing Webmaster Tools.
 - **Plugin Netlify «Sitemap»**: rigenera `sitemap.xml` a ogni pubblicazione e può sovrascrivere questa versione; conviene disinstallarlo (Netlify → Integrations).
 - Quando le sezioni avranno indirizzi propri (`/guide/...`) vanno aggiunte alla sitemap.

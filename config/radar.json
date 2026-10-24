@@ -8,7 +8,7 @@
       "pageviewsApi": "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article",
       "actionApi": "https://it.wikipedia.org/w/api.php",
       "pageUrl": "https://it.wikipedia.org/",
-      "userAgent": "TrendScanHub/1.0 (https://trendscan26.netlify.app; info@trendscan.it) node-fetch",
+      "userAgent": "TrendScanHub/1.0 (https://trendscan.it; info@trendscan.it) node-fetch",
       "refreshHours": 12,
       "requestDelayMs": 450,
       "windowDays": 7,

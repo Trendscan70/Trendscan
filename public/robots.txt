@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /data/
 
-Sitemap: https://trendscan26.netlify.app/sitemap.xml
+Sitemap: https://trendscan.it/sitemap.xml

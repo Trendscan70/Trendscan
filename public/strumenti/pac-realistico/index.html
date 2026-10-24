@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+  <script src="/consent.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulatore PAC con tasse, TER, bollo e inflazione | TrendScan</title>
   <meta name="description" content="Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.">
-  <link rel="canonical" href="https://trendscan26.netlify.app/strumenti/pac-realistico/">
+  <link rel="canonical" href="https://trendscan.it/strumenti/pac-realistico/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <meta name="application-name" content="TrendScan">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -17,14 +18,14 @@
   <meta property="og:locale" content="it_IT">
   <meta property="og:title" content="Simulatore PAC con tasse, TER, bollo e inflazione | TrendScan">
   <meta property="og:description" content="Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.">
-  <meta property="og:url" content="https://trendscan26.netlify.app/strumenti/pac-realistico/">
-  <meta property="og:image" content="https://trendscan26.netlify.app/og-image.png">
+  <meta property="og:url" content="https://trendscan.it/strumenti/pac-realistico/">
+  <meta property="og:image" content="https://trendscan.it/og-image.png">
   <meta property="og:image:alt" content="Simulatore PAC con tasse, TER, bollo e inflazione">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Simulatore PAC con tasse, TER, bollo e inflazione | TrendScan">
   <meta name="twitter:description" content="Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.">
-  <meta name="twitter:image" content="https://trendscan26.netlify.app/og-image.png">
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Simulatore PAC realistico: TER, tasse, bollo e inflazione","description":"Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.","url":"https://trendscan26.netlify.app/strumenti/pac-realistico/","inLanguage":"it-IT","applicationCategory":"FinanceApplication","operatingSystem":"Qualsiasi (web)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"dateModified":"2026-10-21","publisher":{"@id":"https://trendscan26.netlify.app/#org"},"image":"https://trendscan26.netlify.app/og-image.png"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://trendscan26.netlify.app/"},{"@type":"ListItem","position":2,"name":"Strumenti","item":"https://trendscan26.netlify.app/strumenti/"},{"@type":"ListItem","position":3,"name":"PAC realistico","item":"https://trendscan26.netlify.app/strumenti/pac-realistico/"}]}]</script>
+  <meta name="twitter:image" content="https://trendscan.it/og-image.png">
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebApplication","name":"Simulatore PAC realistico: TER, tasse, bollo e inflazione","description":"Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.","url":"https://trendscan.it/strumenti/pac-realistico/","inLanguage":"it-IT","applicationCategory":"FinanceApplication","operatingSystem":"Qualsiasi (web)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"dateModified":"2026-10-24","publisher":{"@id":"https://trendscan.it/#org"},"image":"https://trendscan.it/og-image.png"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://trendscan.it/"},{"@type":"ListItem","position":2,"name":"Strumenti","item":"https://trendscan.it/strumenti/"},{"@type":"ListItem","position":3,"name":"PAC realistico","item":"https://trendscan.it/strumenti/pac-realistico/"}]}]</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -182,7 +183,7 @@
     </div>
     <div class="border-t border-gray-800">
       <div class="max-w-7xl mx-auto px-4 py-4 text-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <nav aria-label="Pagine informative" class="leading-relaxed"><a href="/guide/" class="hover:text-white underline-offset-2 hover:underline">Guida al risparmio</a> · <a href="/chi-siamo/" class="hover:text-white underline-offset-2 hover:underline">Chi siamo</a> · <a href="/contatti/" class="hover:text-white underline-offset-2 hover:underline">Contatti</a> · <a href="/metodo/" class="hover:text-white underline-offset-2 hover:underline">Metodo e fonti</a> · <a href="/privacy/" class="hover:text-white underline-offset-2 hover:underline">Privacy</a> · <a href="/cookie/" class="hover:text-white underline-offset-2 hover:underline">Cookie</a> · <a href="/avvertenze/" class="hover:text-white underline-offset-2 hover:underline">Avvertenze</a></nav>
+        <nav aria-label="Pagine informative" class="leading-relaxed"><a href="/guide/" class="hover:text-white underline-offset-2 hover:underline">Guida al risparmio</a> · <a href="/chi-siamo/" class="hover:text-white underline-offset-2 hover:underline">Chi siamo</a> · <a href="/contatti/" class="hover:text-white underline-offset-2 hover:underline">Contatti</a> · <a href="/metodo/" class="hover:text-white underline-offset-2 hover:underline">Metodo e fonti</a> · <a href="/privacy/" class="hover:text-white underline-offset-2 hover:underline">Privacy</a> · <a href="/cookie/" class="hover:text-white underline-offset-2 hover:underline">Cookie</a> · <a href="/avvertenze/" class="hover:text-white underline-offset-2 hover:underline">Avvertenze</a> · <button type="button" data-consent-open class="hover:text-white underline-offset-2 hover:underline" style="font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer">Preferenze cookie</button></nav>
         <a class="underline hover:text-white" href="mailto:info@trendscan.it">✉️ info@trendscan.it</a>
       </div>
     </div>

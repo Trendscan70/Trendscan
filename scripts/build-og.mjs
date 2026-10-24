@@ -17,7 +17,7 @@ const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'public/data');
 const OUT_DIR = process.env.OG_DIR || path.join(DATA_DIR, 'og');
 const W = 1200, H = 630;
 const FONTS = [400, 700, 800, 900].map(w => path.join(ROOT, `assets/fonts/Inter-${w}.ttf`));
-const SITE_HOST = 'trendscan26.netlify.app';
+const SITE_HOST = 'trendscan.it';
 
 // ---------------------------------------------------------------- utilità
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
