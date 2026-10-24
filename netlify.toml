@@ -2,8 +2,8 @@
 [build]
   publish = "public"
   command = ""
-  # Controlla se il ramo corrente è esattamente "data" ed esce interrompendo il build
-  ignore = "git rev-parse --abbrev-ref HEAD | grep -q '^data$'"
+  # Netlify espone il ramo in BRANCH; exit 0 salta il build del ramo dati.
+  ignore = "test \"$BRANCH\" = \"data\""
 
 [[headers]]
   for = "/*"

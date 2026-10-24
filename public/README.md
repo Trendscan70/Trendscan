@@ -13,7 +13,7 @@ netlify.toml       configurazione Netlify
 ## Come funzionano i dati (importante per Netlify)
 Su Netlify ogni pubblicazione in produzione consuma crediti (15 ciascuna; il piano gratuito ne ha 300 al mese). Per questo gli aggiornamenti orari **non** passano dal sito:
 1. GitHub Actions raccoglie articoli e video ogni ora.
-2. Li salva nel ramo **`data`** del repository (un solo commit, sempre sostituito). Netlify non pubblica quel ramo (`ignore` in `netlify.toml`).
+2. Li salva nel ramo **`data`** del repository (un solo commit, sempre sostituito). Netlify riceve il push, ma `ignore` in `netlify.toml` usa la variabile `BRANCH` per saltare il build di quel ramo.
 3. Il sito legge i file da lì (`DATA_BASE` in `public/index.html`). Se non sono raggiungibili usa `public/data/`.
 
 Il sito viene quindi pubblicato **una volta** e poi si aggiorna da solo.
