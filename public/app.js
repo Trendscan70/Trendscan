@@ -74,19 +74,27 @@ function cleanArticles(list) {
 
 // ------------------------------------------------------------------ caricamento dati
 async function loadJson(url) {
-  try { const r = await fetch(url); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.json(); }
+  try { const r = await fetch(url, { cache: 'no-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.json(); }
   catch (e) { return null; }
 }
 // I dati aggiornati ogni ora stanno nel ramo "data" di GitHub (DATA_BASE), cosi' non fanno ripubblicare il sito.
 // Se non raggiungibili si usano i file inclusi nel sito (public/data).
 const DATA_BASE = (window.TRENDSCAN_CONFIG && window.TRENDSCAN_CONFIG.DATA_BASE) || '';
 let DATA_DIAG = '';
+// Mirror di riserva (jsDelivr) ricavato dall'indirizzo raw.githubusercontent.com/UTENTE/REPO/RAMO/
+function mirrorBase() {
+  const m = DATA_BASE.match(/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\//);
+  return m ? `https://cdn.jsdelivr.net/gh/${m[1]}/${m[2]}@${m[3]}/` : '';
+}
 const okData = d => d && d.meta && d.meta.generatedAt;
 async function loadData(name, optional = false) {
   if (DATA_BASE) {
     const remote = await loadJson(DATA_BASE + name);
     if (okData(remote)) return remote;
-    if (!optional) DATA_DIAG = `Impossibile leggere i dati online. Verifica che il ramo <b>data</b> esista e che in Netlify sia configurata la variabile <code class="bg-gray-100 px-1 rounded">GITHUB_DATA_TOKEN</code> con accesso in lettura ai contenuti del repository.`;
+    const mb = mirrorBase();
+    const mirror = mb ? await loadJson(mb + name) : null;
+    if (okData(mirror)) return mirror;
+    if (!optional) DATA_DIAG = `Impossibile leggere i dati online da <code class="bg-gray-100 px-1 rounded">${esc(DATA_BASE)}</code>. Controlla che il repository sia pubblico, che il ramo <b>data</b> esista e che nessun blocco (adblock, rete aziendale, estensioni) impedisca l'accesso a raw.githubusercontent.com.`;
   }
   return loadJson('data/' + name);
 }
