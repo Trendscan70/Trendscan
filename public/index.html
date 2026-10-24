@@ -313,9 +313,8 @@
 
   <script defer src="ads.js"></script>
   <script>
-    // DATA_BASE: dove leggere gli articoli/video aggiornati ogni ora (ramo "data" del repository GitHub, repository PUBBLICO).
-    // Formato: https://raw.githubusercontent.com/UTENTE/REPOSITORY/data/   (con lo slash finale)
-    window.TRENDSCAN_CONFIG = { DATA_BASE: "https://raw.githubusercontent.com/Trendscan70/trendscan/data/" };
+    // I dati del ramo GitHub "data" vengono letti server-side da Netlify; il token non arriva mai al browser.
+    window.TRENDSCAN_CONFIG = { DATA_BASE: "/.netlify/functions/private-data?file=" };
   </script>
   <script defer src="app.js"></script>
   <script defer src="pwa-install.js"></script>

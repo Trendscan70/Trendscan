@@ -1,6 +1,7 @@
 # Configurazione Netlify per TrendScan (sito statico)
 [build]
   publish = "public"
+  functions = "netlify/functions"
   command = ""
   # Controlla se il ramo corrente è esattamente "data" ed esce interrompendo il build
   ignore = "git rev-parse --abbrev-ref HEAD | grep -q '^data$'"
@@ -41,9 +42,9 @@
   status = 200
   force = true
 
-# Le immagini social stanno nel ramo "data" (non in main): il sito le serve a /og/termometro.png e /og/radar.png
+# Le immagini social stanno nel ramo "data" (non in main): la Function le legge con autenticazione server-side.
 [[redirects]]
   from = "/og/*"
-  to = "https://raw.githubusercontent.com/Trendscan70/trendscan/data/og/:splat"
+  to = "/.netlify/functions/private-data?file=og/:splat"
   status = 200
   force = true
