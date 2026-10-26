@@ -49,7 +49,7 @@ jobs:
         run: node scripts/build-markets.mjs
         continue-on-error: true
 
-      # Trend Radar (dentro Mercati): interesse (Wikipedia) e notizie (menzioni e copertura). Gira dopo gli articoli (li legge), nello stesso job.
+      # Trend Radar: settori citati negli articoli e storie coperte da più testate. Gira dopo gli articoli (li legge), nello stesso job.
       - name: Calcola il Trend Radar
         run: node scripts/build-radar.mjs
         continue-on-error: true

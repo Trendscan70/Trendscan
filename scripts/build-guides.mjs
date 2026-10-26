@@ -422,11 +422,11 @@ ${tail}`;
 // e i meta Open Graph giusti. Non sono pensate per i motori di ricerca (noindex): la versione interattiva è nella home (#mercati).
 const SHARES = [
   { slug: 'radar', icon: '📡', short: 'Trend Radar', img: 'radar.png', file: 'trendscan-trend-radar.png',
-    h1: 'Trend Radar: cosa sta crescendo ora nella finanza personale',
-    desc: 'Gli argomenti di finanza che crescono di più su Wikipedia e le notizie che ricevono più attenzione dai giornali italiani. Aggiornato ogni ora.',
-    alt: 'Trend Radar di TrendScan: argomenti di finanza in più forte crescita e notizie che ricevono più attenzione',
-    body: `<p>Il Trend Radar mostra <strong>cosa sta crescendo ora</strong> nei temi di finanza personale. Descrive il presente: <strong>non prevede il futuro e non è un consiglio</strong>.</p>
-      <p>Usa tre misure diverse, mai mescolate: l'<strong>interesse</strong> (letture delle pagine su Wikipedia, che non sono ricerche), le <strong>notizie</strong> (attenzione dei giornali, non importanza né letture) e i <strong>prezzi</strong> (variazioni dei cambi).</p>`,
+    h1: 'Trend Radar: i settori economici più citati',
+    desc: 'I settori economici più citati nelle notizie delle testate seguite da TrendScan, con fonti originali e filtri Finviz. Aggiornato ogni ora.',
+    alt: 'Trend Radar di TrendScan: settori economici più citati nelle notizie delle testate seguite',
+    body: `<p>Il Trend Radar ordina i <strong>settori economici più citati</strong> nelle notizie delle testate che seguiamo. Descrive la copertura editoriale, non l’andamento dei mercati e non è un consiglio.</p>
+      <p>Ogni notizia rimanda alla sua fonte originale. I filtri Finviz aprono uno screener di azioni quotate negli Stati Uniti: non vengono usati per classificare le notizie. È mantenuta la sezione <strong>Notizie che ricevono più attenzione</strong>.</p>`,
     cta: 'Apri il Trend Radar interattivo' },
   { slug: 'termometro', icon: '🌡️', short: 'Termometro TrendScan', img: 'termometro.png', file: 'trendscan-termometro.png',
     h1: 'Termometro TrendScan: il tono delle notizie di finanza',

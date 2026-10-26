@@ -100,36 +100,36 @@ function termometroSvg(m) {
 }
 
 // ---------------------------------------------------------------- 2. Trend Radar
-const rdSort = (t, key, newsOk) => key === 'interest' ? (t.wiki && t.wiki.changePct != null ? t.wiki.changePct : null)
-  : (!newsOk || !t.news) ? null : (t.news.isNew ? 1000 : t.news.changePct != null ? t.news.changePct : null);
 function radarSvg(r) {
-  const topics = (r && r.topics) || [], newsOk = !!(r && r.news && r.news.ready);
-  const growing = topics.filter(t => t.kind === 'established' && (rdSort(t, 'interest', newsOk) ?? 0) > 0).sort((a, b) => rdSort(b, 'interest', newsOk) - rdSort(a, 'interest', newsOk)).slice(0, 3);
+  const cutoff = Date.parse(r && r.meta && r.meta.generatedAt || '') - 7 * 86400e3;
+  const sectors = ((r && r.sectors) || []).map(sector => ({
+    ...sector,
+    articles: (sector.articles || []).filter(a => Date.parse(a.publishedAt) >= cutoff)
+  })).filter(sector => sector.articles.length).sort((a, b) => b.articles.length - a.articles.length).slice(0, 4);
   const cover = ((r && r.coverage) || []).slice(0, 3);
-  const maxPct = Math.max(1, ...growing.map(t => t.wiki.changePct));
-  const rowsL = growing.length ? growing.map((t, i) => {
-    const y = 336 + i * 70, pct = t.wiki.changePct, bw = Math.max(18, 440 * pct / maxPct), txt = `${sign(pct)}${num(Math.abs(pct))}%`;
-    const tx = 530 - textW(txt, 30, 900) - 14;   // triangolo a sinistra della percentuale
-    return `<text x="90" y="${y}" font-size="28" font-weight="800" fill="#fff">${esc(wrap(t.label, 28, 300, 1, 800)[0])}</text>
-      <polygon points="${(tx - 26).toFixed(0)},${y - 4} ${(tx - 15).toFixed(0)},${y - 24} ${(tx - 4).toFixed(0)},${y - 4}" fill="#34d399"/>
-      <text x="530" y="${y}" font-size="30" font-weight="900" fill="#34d399" text-anchor="end">${txt}</text>
-      <rect x="90" y="${y + 14}" width="440" height="9" rx="4.5" fill="#fff" fill-opacity="0.1"/><rect x="90" y="${y + 14}" width="${bw.toFixed(0)}" height="9" rx="4.5" fill="#34d399"/>`;
-  }).join('') : `<text x="90" y="340" font-size="24" fill="#9ca3af">Dati in aggiornamento</text>`;
+  const maxCount = Math.max(1, ...sectors.map(s => s.articles.length));
+  const rowsL = sectors.length ? sectors.map((sector, i) => {
+    const y = 317 + i * 62, count = sector.articles.length, bw = Math.max(14, 390 * count / maxCount);
+    const sources = [...new Set(sector.articles.slice(0, 3).map(a => String(a.source || '').split(' – ')[0]))].filter(Boolean).join(' · ');
+    const color = /^#[0-9a-f]{6}$/i.test(sector.color || '') ? sector.color : '#e8412c';
+    return `<text x="90" y="${y}" font-size="23" font-weight="800" fill="#fff">${esc(wrap(`${sector.icon || ''} ${sector.label}`, 23, 340, 1, 800)[0])}</text>
+      <text x="530" y="${y}" font-size="25" font-weight="900" fill="${color}" text-anchor="end">${num(count)}</text>
+      <rect x="90" y="${y + 10}" width="390" height="7" rx="3.5" fill="#fff" fill-opacity="0.1"/><rect x="90" y="${y + 10}" width="${bw.toFixed(0)}" height="7" rx="3.5" fill="${color}"/>
+      <text x="90" y="${y + 37}" font-size="13" font-weight="600" fill="#9ca3af">${esc(wrap(sources || 'Fonti: testate seguite da TrendScan', 13, 420, 1, 600)[0])}</text>`;
+  }).join('') : `<text x="90" y="340" font-size="24" fill="#9ca3af">Notizie in aggiornamento</text>`;
   const rowsR = cover.length ? cover.map((a, i) => {
     const y = 318 + i * 86, ls = wrap(a.title, 21, 455, 2, 700);
     return `<text font-size="21" font-weight="700" fill="#fff">${ls.map((t, j) => `<tspan x="650" y="${y + j * 25}">${esc(t)}</tspan>`).join('')}</text>
-      <text x="650" y="${y + ls.length * 25 + 3}" font-size="16" font-weight="800" fill="#fbbf24">${a.n} ${a.n === 1 ? 'testata' : 'testate'}</text>`;
+      <text x="650" y="${y + ls.length * 25 + 3}" font-size="16" font-weight="800" fill="#fbbf24">${a.n} ${a.n === 1 ? 'testata' : 'testate'} · ${esc(wrap(a.source || 'fonte originale', 16, 360, 1, 800)[0])}</text>`;
   }).join('') : `<text x="650" y="340" font-size="24" fill="#9ca3af">Dati in aggiornamento</text>`;
-  const src = (r && r.wiki && r.wiki.source && r.wiki.source.attribution) || 'Dati: Wikimedia Foundation (CC0)';
   return frame(`${logo('TREND RADAR')}
-  <text font-size="44" font-weight="900" fill="#fff" letter-spacing="-1">${wrap('Cosa sta crescendo ora, non cosa succederà', 44, 1080, 2, 900).map((t, i) => `<tspan x="60" y="${166 + i * 52}">${esc(t)}</tspan>`).join('')}</text>
+  <text font-size="44" font-weight="900" fill="#fff" letter-spacing="-1">${wrap('I settori economici più citati', 44, 1080, 1, 900).map((t, i) => `<tspan x="60" y="${166 + i * 52}">${esc(t)}</tspan>`).join('')}</text>
   ${card(60, 196, 520, 364)}${card(620, 196, 520, 364)}
-  <text x="90" y="244" font-size="19" font-weight="800" fill="#ff9b8a" letter-spacing="1">ARGOMENTI IN PIÙ FORTE CRESCITA</text>
+  <text x="90" y="244" font-size="19" font-weight="800" fill="#ff9b8a" letter-spacing="1">SETTORI · ULTIMI 7 GIORNI</text>
   ${rowsL}
-  <text x="90" y="534" font-size="16" fill="#9ca3af">letture su Wikipedia, 7 giorni contro i 7 precedenti</text>
   <text x="650" y="244" font-size="19" font-weight="800" fill="#ff9b8a" letter-spacing="1">NOTIZIE CHE RICEVONO PIÙ ATTENZIONE</text>
   ${rowsR}
-  ${footer(`${src.replace(/, visualizzazioni di pagina/, '')} · elaborazione TrendScan${r && r.meta ? ' · ' + fmtDate(r.meta.generatedAt) : ''}`)}`);
+  ${footer(`Fonti citate per articolo · Finviz: screener azioni USA · ${r && r.meta ? fmtDate(r.meta.generatedAt) : 'aggiornamento orario'}`)}`);
 }
 
 // ---------------------------------------------------------------- rendering

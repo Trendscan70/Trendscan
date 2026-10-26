@@ -22,7 +22,7 @@ const state = {
   player: null, playerReady: false,
   scroll: {},
   markets: null,
-  radar: null, radarSort: 'interest'
+  radar: null, radarSort: 'interest', radarSectorDays: 7
 };
 
 // ------------------------------------------------------------------ utilita'
@@ -532,11 +532,8 @@ function renderMarketsView() {
 }
 
 // ------------------------------------------------------------------ Trend Radar (dentro Mercati)
-// Tre misure DIVERSE, mai sommate in un punteggio unico:
-//   Interesse = letture di pagine Wikipedia (non sono ricerche: Google Trends non ha un'API pubblica)
-//   Notizie   = menzioni nei titoli e testate diverse che coprono la stessa storia (non sono letture ne' importanza)
-//   Prezzi    = variazione di un prezzo (per ora solo i cambi BCE, mostrati nella stessa sezione)
-// Il Radar descrive cosa sta crescendo adesso: non e' una previsione e non e' un consiglio.
+// I settori sono classificati dalle notizie delle testate seguite; la copertura
+// editoriale non misura né anticipa i prezzi di mercato.
 const RD = {
   interest: { icon: '🔎', name: 'Interesse', cls: 'rd-m-interest' },
   news: { icon: '📰', name: 'Notizie', cls: 'rd-m-news' },
@@ -545,10 +542,71 @@ const RD = {
 const mBadge = k => `<span class="rd-badge ${RD[k].cls}">${RD[k].icon} ${RD[k].name}</span>`;
 const fmtInt = n => Number(n).toLocaleString('it-IT');
 const fmtPct0 = n => n == null ? '–' : (n > 0 ? '+' : n < 0 ? '−' : '') + (Math.abs(n) >= 999 ? '999+' : Math.round(Math.abs(n))) + '%';
-const rdReady = () => !!(state.radar && state.radar.meta && state.radar.meta.generatedAt && state.radar.topics && state.radar.topics.length);
+const rdReady = () => !!(state.radar && state.radar.meta && state.radar.meta.generatedAt && (Array.isArray(state.radar.sectors) || state.radar.topics && state.radar.topics.length));
 const rdNewsOk = () => !!(state.radar && state.radar.news && state.radar.news.ready);
 const rdArticle = id => state.articles.find(a => a.id === id);
 const rdBy = k => state.radar.topics.filter(t => t.kind === k);
+
+function rdSectorRows(days = state.radarSectorDays) {
+  const now = Date.now(), cutoff = now - days * 86400e3;
+  return (state.radar && state.radar.sectors || []).map(sector => {
+    const articles = (sector.articles || []).filter(article => {
+      const publishedAt = Date.parse(article.publishedAt);
+      return Number.isFinite(publishedAt) && publishedAt >= cutoff && publishedAt <= now + 3600e3;
+    });
+    const sourceByOutlet = new Map();
+    articles.forEach(article => {
+      const outlet = String(article.source || '').split(' – ')[0].trim();
+      if (outlet && (!sourceByOutlet.has(outlet) || Date.parse(article.publishedAt) > Date.parse(sourceByOutlet.get(outlet).publishedAt))) sourceByOutlet.set(outlet, article);
+    });
+    return { ...sector, articles, sources: [...sourceByOutlet.values()], count: articles.length, outlets: sourceByOutlet.size };
+  }).filter(sector => sector.count > 0).sort((a, b) => b.count - a.count || b.outlets - a.outlets);
+}
+
+function rdSectorDonut(rows) {
+  const total = rows.reduce((n, sector) => n + sector.count, 0);
+  if (!total) return '';
+  const circumference = 2 * Math.PI * 46;
+  let offset = 0;
+  const arcs = rows.map(sector => {
+    const length = circumference * sector.count / total;
+    const color = /^#[0-9a-f]{6}$/i.test(sector.color || '') ? sector.color : '#64748b';
+    const arc = `<circle cx="60" cy="60" r="46" fill="none" stroke="${color}" stroke-width="14" stroke-dasharray="${length.toFixed(2)} ${(circumference - length).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}"/>`;
+    offset += length;
+    return arc;
+  }).join('');
+  return `<svg class="rd-sector-donut" viewBox="0 0 120 120" role="img" aria-label="Ripartizione delle menzioni per settore">${arcs}</svg>`;
+}
+
+function rdSectorsHtml() {
+  const rows = rdSectorRows(), total = rows.reduce((n, sector) => n + sector.count, 0);
+  const filters = [2, 7, 30].map(days => `<button type="button" data-rd-period="${days}" class="${state.radarSectorDays === days ? 'on' : ''}" aria-pressed="${state.radarSectorDays === days}">${days === 2 ? '48 ore' : `${days} giorni`}</button>`).join('');
+  if (!total) return `<div class="rd-sector-dashboard"><div class="rd-sector-controls" role="group" aria-label="Periodo delle notizie">${filters}</div><p class="rd-empty">Nessuna notizia disponibile per questo periodo. Riprova più tardi.</p></div>`;
+  const max = rows[0].count;
+  const cards = rows.map((sector, index) => {
+    const share = Math.round(sector.count / total * 100);
+    const finviz = /^[a-z]+$/.test(sector.finvizFilter || '') ? `https://finviz.com/screener/stocks?v=111&f=sec_${sector.finvizFilter}` : '';
+    const citations = sector.articles.slice(0, 2).map(article => `<li><a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(article.title)}</a><span>${esc(article.source || 'Testata')} · ${esc(timeAgo(article.publishedAt))}</span></li>`).join('');
+    const sources = sector.sources.map(article => `<a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(String(article.source || 'Testata').split(' – ')[0])}</a>`).join('');
+    return `<article class="rd-sector-row">
+      <div class="rd-sector-rowhead"><span class="rd-sector-rank">${String(index + 1).padStart(2, '0')}</span><span class="rd-sector-icon" style="--sector-color:${esc(sector.color)}">${esc(sector.icon)}</span><div class="rd-sector-name"><h4>${esc(sector.label)}</h4><span>${sector.count} ${sector.count === 1 ? 'articolo' : 'articoli'} · ${sector.outlets} ${sector.outlets === 1 ? 'testata' : 'testate'}</span></div><b class="rd-sector-share">${share}%</b></div>
+      <div class="rd-sector-track" aria-label="${share}% delle menzioni classificate"><span style="--sector-color:${esc(sector.color)};width:${Math.max(2, Math.round(sector.count / max * 100))}%"></span></div>
+      <ul class="rd-sector-citations">${citations}</ul>
+      <div class="rd-sector-source-list"><span>Fonti:</span>${sources}</div>
+      ${finviz ? `<a class="rd-sector-finviz" href="${finviz}" target="_blank" rel="noopener noreferrer">Vedi le azioni ${esc(sector.label.toLowerCase())} su Finviz <span aria-hidden="true">↗</span></a>` : ''}
+    </article>`;
+  }).join('');
+  const legend = rows.slice(0, 6).map(sector => `<li><span style="--sector-color:${esc(sector.color)}"></span>${esc(sector.label)} <b>${sector.count}</b></li>`).join('');
+  return `<div class="rd-sector-dashboard">
+    <div class="rd-sector-toolbar"><div class="rd-sector-controls" role="group" aria-label="Periodo delle notizie">${filters}</div><span class="rd-sector-total"><b>${fmtInt(total)}</b> menzioni di settore</span></div>
+    <div class="rd-sector-visuals">
+      <div class="rd-sector-chart-card"><div><span class="rd-sector-kicker">PANORAMICA</span><h4>Voci più presenti nelle notizie</h4><p>Distribuzione degli articoli classificati nel periodo.</p></div><div class="rd-sector-donut-wrap">${rdSectorDonut(rows)}<span><b>${fmtInt(total)}</b><small>menzioni</small></span></div><ul class="rd-sector-legend">${legend}</ul></div>
+      <div class="rd-sector-ranking"><div class="rd-sector-ranking-head"><span class="rd-sector-kicker">CLASSIFICA EDITORIALE</span><span>articoli e testate</span></div>${cards}</div>
+    </div>
+    <p class="rd-sector-footnote">Classificazione automatica delle notizie raccolte da TrendScan in base a parole chiave nei titoli e nelle anteprime: un articolo può comparire in più settori. Le fonti sono citate accanto a ogni titolo. I filtri Finviz aprono uno screener di azioni quotate negli Stati Uniti: non sono dati usati per classificare le notizie.</p>
+    <p class="rd-sector-source">Fonti e metodo: <a href="https://finviz.com/help/screener" target="_blank" rel="noopener noreferrer">guida ufficiale ai filtri Finviz</a> · <a href="/metodo/#radar" class="underline">metodo TrendScan</a></p>
+  </div>`;
+}
 
 // valore con cui si ordina una classifica; null = nessun confronto disponibile
 function rdSortValue(t, key) {
@@ -605,16 +663,11 @@ function rdNotes() {
 // ---- Home: blocco compatto dentro la sezione Mercati
 function radarStripHtml() {
   const r = state.radar;
-  const li = (label, val, cls) => `<li><span>${esc(label)}</span><b class="${cls || ''}">${val}</b></li>`;
-  const grow = rdGrowing(rdBy('established'), 'interest').slice(0, 3);
-  const emerg = rdNewsOk() ? rdGrowing(rdBy('emerging'), 'news').slice(0, 3) : [];
+  const sectors = rdSectorRows(7).slice(0, 3);
   const stories = (r.coverage || []).filter(c => rdArticle(c.id)).slice(0, 3);
 
-  const c1 = grow.length ? `<ul>${grow.map(t => li(t.label, pctArrow(t.wiki.changePct) + fmtPct0(t.wiki.changePct), 'mk-up')).join('')}</ul><p class="rd-sub">letture su Wikipedia, 7 giorni contro i 7 precedenti</p>`
-    : `<p class="rd-mini-empty">Nessun argomento in crescita in questo momento.</p>`;
-  const c3 = !rdNewsOk() ? `<p class="rd-mini-empty">Confronto in costruzione: servono almeno 4 giorni di storico (ora ${state.radar.news ? state.radar.news.historyDays : 0}).</p>`
-    : emerg.length ? `<ul>${emerg.map(t => li(t.label, t.news.isNew ? '▲ nuovo' : pctArrow(t.news.changePct) + fmtPct0(t.news.changePct), 'mk-up')).join('')}</ul><p class="rd-sub">menzioni nei titoli delle testate che seguiamo</p>`
-    : `<p class="rd-mini-empty">Nessun tema emergente in questo momento.</p>`;
+  const c1 = sectors.length ? `<ul>${sectors.map(t => `<li><span>${esc(t.label)}<small class="rd-mini-sources">Fonti: ${t.sources.map(a => `<a href="${esc(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer">${esc(String(a.source || 'Testata').split(' – ')[0])}</a>`).join(', ')}</small></span><b>${t.count} ${t.count === 1 ? 'articolo' : 'articoli'}</b></li>`).join('')}</ul><p class="rd-sub">ultimi 7 giorni · apri i link per le fonti originali</p>`
+    : `<p class="rd-mini-empty">Non ci sono ancora notizie sufficienti per classificare i settori.</p>`;
   const c4 = stories.length ? `<ul class="rd-mini-stories">${stories.map(c => `<li><a href="#a/${encodeURIComponent(c.id)}">${esc(c.title)}</a><b>${c.n} testate</b></li>`).join('')}</ul><p class="rd-sub">attenzione dei giornali, non dei lettori</p>`
     : `<p class="rd-mini-empty">Al momento nessuna storia è coperta da più testate.</p>`;
 
@@ -626,13 +679,11 @@ function radarStripHtml() {
         <span class="rd-sub">Cosa sta crescendo ora, non cosa succederà</span>
         <a href="#mercati" data-goto-radar class="rd-strip-link">Classifiche complete →</a>
       </div>
-      ${grow.length ? `<p class="rd-plain">In breve: gli argomenti di finanza che crescono di più su Wikipedia in questa settimana sono <b>${grow.map(t => esc(t.label)).join(', ')}</b>.</p>` : ''}
       <div class="rd-mini-grid">
-        ${card('Argomenti finanziari in più forte crescita', mBadge('interest'), c1)}
-        ${card('Temi economici emergenti', mBadge('news'), c3)}
+        ${card('Settori economici più citati', mBadge('news'), c1)}
         ${card('Notizie che ricevono più attenzione', mBadge('news'), c4)}
       </div>
-      <p class="mk-credit">Tre misure diverse, mai sommate: ${mBadge('interest')} letture su Wikipedia (non sono ricerche) · ${mBadge('news')} attenzione dei giornali (non importanza né letture) · ${mBadge('price')} le variazioni dei cambi qui sopra. <a href="#mercati" data-goto-radar class="underline">Come leggerle</a>.</p>
+      <p class="mk-credit">Settori ricavati dalle notizie delle testate che seguiamo; le fonti sono citate nelle classifiche. <a href="#mercati" data-goto-radar class="underline">Apri grafici, fonti e metodo</a>.</p>
     </div>`;
 }
 
@@ -643,13 +694,14 @@ function shareRowHtml(slug, img, file, title, text) {
 }
 
 function radarSectionHtml() {
-  const r = state.radar, top = (r.meta && r.meta.top) || 8, w = r.wiki;
+  const r = state.radar;
   const cov = (r.coverage || []).map(c => {
     const a = rdArticle(c.id);
+    const sourceUrl = safeUrl(a && a.url || c.url);
     return `<li class="rd-story">
       <div class="rd-story-n"><b>${c.n}</b><span>testate</span></div>
-      <div class="rd-story-body">${a ? `<a href="#a/${encodeURIComponent(c.id)}" class="rd-story-title">${esc(c.title)}</a>` : `<span class="rd-story-title">${esc(c.title)}</span>`}
-        <div class="rd-sub">${(c.outlets || []).map(o => `<span class="rd-chip">${esc(o)}</span>`).join('')} · ${esc(timeAgo(c.publishedAt))}</div></div></li>`;
+      <div class="rd-story-body">${a ? `<a href="#a/${encodeURIComponent(c.id)}" class="rd-story-title">${esc(c.title)}</a>` : `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener noreferrer" class="rd-story-title">${esc(c.title)}</a>`}
+        <div class="rd-sub">Fonte: <a href="${esc(sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(c.source || a && a.source || 'testata originale')}</a> · ${(c.outlets || []).map(o => `<span class="rd-chip">${esc(o)}</span>`).join('')} · ${esc(timeAgo(c.publishedAt))}</div></div></li>`;
   }).join('');
   const fx = state.markets && state.markets.fx;
   const prices = fx && fx.pairs && fx.pairs.length ? [...fx.pairs].filter(p => p.change30dPct != null).sort((a, b) => Math.abs(b.change30dPct) - Math.abs(a.change30dPct)).map(p => `
@@ -658,51 +710,17 @@ function radarSectionHtml() {
 
   return `
     <section id="trendRadar" class="mk-card rd-section" aria-labelledby="rdTitle">
-      <h2 id="rdTitle" class="mk-h2">Trend Radar <span class="mk-badge">cosa cresce ora</span></h2>
-      <p class="mk-lead">Le classifiche di ciò che sta crescendo nei temi di finanza personale. Descrivono il presente: <b>non prevedono il futuro e non sono un consiglio</b>.</p>
-      ${shareRowHtml('radar', 'radar.png', 'trendscan-trend-radar.png', 'Trend Radar di TrendScan', 'Cosa sta crescendo ora nella finanza personale, aggiornato ogni ora.')}
-      ${rdNotes()}
-
-      <div class="rd-legend">
-        <h3 class="rd-h3">Tre misure diverse, mai mescolate</h3>
-        <p class="mk-lead">Un argomento può essere molto letto senza che il suo prezzo si muova, o far parlare molto i giornali senza interessare i lettori. Per questo non c’è un punteggio unico: ogni numero ha la sua etichetta.</p>
-        <div class="rd-legend-grid">
-          <div class="rd-legend-card ${RD.interest.cls}">${mBadge('interest')}<h4>Quanto interessa</h4>
-            <p>Quante volte viene letta ogni settimana la pagina di Wikipedia in italiano su un argomento, rispetto alla settimana prima.</p>
-            <p class="rd-sub"><b>Non sono ricerche:</b> i dati di ricerca di Google non sono disponibili pubblicamente. Fonte: Wikimedia (CC0), aggiornata ogni 12 ore.</p></div>
-          <div class="rd-legend-card ${RD.news.cls}">${mBadge('news')}<h4>Quanto se ne parla</h4>
-            <p>Quanti titoli delle testate che seguiamo citano un tema, e quante testate diverse raccontano la stessa storia.</p>
-            <p class="rd-sub"><b>Non misura quanto le notizie siano lette né quanto siano importanti:</b> una storia può essere molto coperta e contare poco. Aggiornata ogni ora.</p></div>
-          <div class="rd-legend-card ${RD.price.cls}">${mBadge('price')}<h4>Quanto si è mosso il prezzo</h4>
-            <p>Di quanto è cambiato un prezzo negli ultimi 30 giorni. Per ora solo i cambi dell’euro (BCE), qui sotto e nella tabella dei cambi.</p>
-            <p class="rd-sub">Gli altri prezzi (azioni, ETF, materie prime) non ci sono finché non verifichiamo le licenze delle fonti.</p></div>
-        </div>
-      </div>
-
+      <h2 id="rdTitle" class="mk-h2">Trend Radar <span class="mk-badge">settori economici nelle notizie</span></h2>
+      <p class="mk-lead">Quali settori compaiono più spesso nelle notizie economiche delle testate che seguiamo. È una misura della copertura editoriale, non dell’andamento dei mercati e non un consiglio d’investimento.</p>
+      ${shareRowHtml('radar', 'radar.png', 'trendscan-trend-radar.png', 'Trend Radar: i settori più citati dalle testate', 'I settori economici più presenti nelle notizie delle testate che seguiamo. Fonti citate, aggiornamento orario.')}
       <div class="rd-board" aria-labelledby="rdB1">
-        <h3 id="rdB1" class="rd-h3">Argomenti finanziari in più forte crescita</h3>
-        <p class="mk-lead">I temi classici della finanza personale che stanno crescendo, in ordine. Scegli quale misura usare per ordinare: le colonne restano separate.</p>
-        ${sortBar()}
-        ${rdRows(rdBy('established'), state.radarSort, top, true)}
+        <h3 id="rdB1" class="rd-h3">Settori economici più citati</h3>
+        <p class="mk-lead">Conteggio degli articoli raccolti, ordinati per settore. Seleziona il periodo e apri le fonti originali o lo screener Finviz corrispondente.</p>
+        <div class="rd-sector-mount">${rdSectorsHtml()}</div>
       </div>
 
       <div class="rd-board" aria-labelledby="rdB2">
-        <h3 id="rdB2" class="rd-h3">ETF più cercati</h3>
-        <div class="rd-unavail" role="note"><strong>Dato non disponibile</strong>
-          Una classifica degli ETF per ricerche richiede dati per singolo ETF, affidabili e riutilizzabili. Non li abbiamo trovati: Google Trends non ha un’API pubblica e i siti di confronto non consentono di riusare i loro dati. Preferiamo non inventare una classifica.</div>
-        <p class="mk-lead">Cosa possiamo misurare davvero: quanto si legge e quanto si parla degli ETF in generale e degli indici su cui si basano molti ETF. <b>Non è una classifica di ETF</b> e non dice quali comprare.</p>
-        ${rdRows([...r.topics.filter(t => t.id === 'etf'), ...rdBy('index')], state.radarSort, 20, false)}
-      </div>
-
-      <div class="rd-board" aria-labelledby="rdB3">
-        <h3 id="rdB3" class="rd-h3">Temi economici emergenti</h3>
-        <p class="mk-lead">Temi nuovi o in rapida ascesa, scelti dalla redazione e misurati in automatico. Un tema «nuovo» nelle notizie è comparso solo di recente: bastano pochi articoli a farlo salire, quindi guarda anche il numero di menzioni.</p>
-        ${sortBar()}
-        ${rdRows(rdBy('emerging'), state.radarSort, top, false)}
-      </div>
-
-      <div class="rd-board" aria-labelledby="rdB4">
-        <h3 id="rdB4" class="rd-h3">Notizie che stanno ricevendo maggiore attenzione</h3>
+        <h3 id="rdB2" class="rd-h3">Notizie che ricevono più attenzione</h3>
         <p class="mk-lead">Le storie raccontate da più testate diverse nelle ultime 48 ore. ${mBadge('news')} È attenzione dei giornali, non dei lettori: <b>molte testate non significano più importante</b>.</p>
         ${cov ? `<ol class="rd-stories">${cov}</ol>` : `<p class="rd-empty">Al momento nessuna storia risulta coperta da più testate. Compare qui appena ce ne sono.</p>`}
       </div>
@@ -717,11 +735,11 @@ function radarSectionHtml() {
       <details class="rd-method">
         <summary>Come si calcola e quali sono i limiti</summary>
         <ul>
-          <li><b>Interesse.</b> Letture degli ultimi 7 giorni contro i 7 precedenti, sulle pagine di Wikipedia in italiano (solo utenti, non robot). Se la settimana precedente ha meno di 150 letture non calcoliamo la percentuale: sarebbe poco affidabile.</li>
-          <li><b>Notizie.</b> Quota di articoli che citano l’argomento nei titoli e nelle anteprime, ultimi giorni contro i precedenti: usando la quota, il risultato non dipende da quanti articoli raccogliamo. «Nuovo» significa zero menzioni prima e almeno 3 ora.</li>
+          <li><b>Settori.</b> Gli articoli delle testate raccolte da TrendScan sono associati ai settori tramite parole chiave nei titoli e nelle anteprime. La stessa notizia può ricadere in più settori; i conteggi non sono quindi una quota del totale di articoli.</li>
+          <li><b>Fonti.</b> Titoli e collegamenti portano alla pagina originale della testata, indicata accanto a ciascun articolo. Raccogliamo le fonti elencate nella <a href="/metodo/#radar" class="underline font-bold brand-text">pagina del metodo</a>.</li>
+          <li><b>Finviz.</b> Il filtro di settore apre lo screener ufficiale Finviz. La guida Finviz descrive i filtri di settore e industria; lo screener include azioni quotate su Nasdaq, NYSE e AMEX, quindi i risultati non rappresentano necessariamente società italiane o europee e non sono la fonte delle notizie.</li>
           <li><b>Copertura.</b> Titoli molto simili in testate diverse entro 36 ore contano come la stessa storia. Il metodo può unire per errore storie vicine o non riconoscere la stessa storia scritta in modo molto diverso.</li>
-          <li><b>Limiti.</b> I temi sono scelti dalla redazione: il Radar non scopre temi che non abbiamo in elenco. Le notizie sono solo quelle delle testate che seguiamo. Wikipedia misura la lettura di un’enciclopedia, non l’interesse di tutti. Una crescita non è un segnale di acquisto e non anticipa quello che succederà.</li>
-          ${w ? `<li><b>Fonte dell’interesse.</b> ${esc(w.source && w.source.attribution || '')}. Dati fino al ${esc(dateIt(w.asOf))}.</li>` : ''}
+          <li><b>Limiti.</b> La classificazione automatica può non cogliere il contesto o associare male un titolo. Il Radar riflette solo le notizie raccolte e non misura né prevede l’andamento dei settori o dei titoli.</li>
         </ul>
         <p class="rd-sub"><a href="/metodo/#radar" class="underline font-bold brand-text">Leggi il metodo completo</a></p>
       </details>
@@ -943,7 +961,16 @@ function goArticles(cat) {
 function setupEvents() {
   window.addEventListener('hashchange', route);
   document.body.addEventListener('click', e => {
-    const rs = e.target.closest('[data-rd-sort]'); if (rs) { state.radarSort = rs.dataset.rdSort; renderMarketsView(); return; }
+    const rp = e.target.closest('[data-rd-period]');
+    if (rp) {
+      const days = Number(rp.dataset.rdPeriod);
+      if ([2, 7, 30].includes(days)) {
+        state.radarSectorDays = days;
+        const mount = document.querySelector('.rd-sector-mount');
+        if (mount) mount.innerHTML = rdSectorsHtml();
+      }
+      return;
+    }
     const rg = e.target.closest('[data-goto-radar]');
     if (rg) { e.preventDefault(); location.hash = '#mercati'; setTimeout(() => { const t = $('trendRadar'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150); return; }
     const cat = e.target.closest('[data-cat]'); if (cat) { goArticles(cat.dataset.cat); return; }

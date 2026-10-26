@@ -5,13 +5,9 @@
  *   node scripts/build-radar.mjs            aggiorna data/radar.json (+ data/radar-state.json)
  *   node scripts/build-radar.mjs --force    ignora l'intervallo minimo tra due richieste a Wikipedia
  *
- * Il Radar tiene SEPARATE tre misure diverse, che non vengono mai sommate in un punteggio unico:
- *   INTERESSE  visualizzazioni giornaliere delle pagine di Wikipedia in italiano (API ufficiale Wikimedia, dati CC0).
- *              Misura quanto si legge un argomento, NON quante ricerche riceve (Google Trends non ha un'API pubblica).
- *   NOTIZIE    menzioni degli argomenti nei titoli e nelle anteprime delle testate che seguiamo, e numero di testate
- *              diverse che coprono la stessa storia (campo covBy di articles.json, calcolato da build-feeds.mjs).
- *              Misura l'attenzione dei giornali, non quanto le notizie siano lette ne' quanto siano importanti.
- *   PREZZI     non si calcolano qui: il sito li legge dai cambi BCE gia' presenti in markets.json.
+ * Il Radar classifica per settore gli articoli recenti delle testate raccolte,
+ * conserva i riferimenti alle fonti originali e raggruppa le storie coperte da più testate.
+ * I prezzi dei cambi BCE sono mostrati separatamente dai dati delle notizie.
  *
  * Il Radar descrive cosa sta crescendo ADESSO. Non e' una previsione e non e' un consiglio.
  * Ogni fonte gira solo se enabled=true E license.verified=true (config/radar.json).
@@ -19,6 +15,7 @@
  * Variabili: DATA_DIR (default public/data), RADAR_CONFIG (percorso config)
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { buildSectorRows } from './radar-sectors.mjs';
 
 const CONFIG_URL = process.env.RADAR_CONFIG ? new URL('file://' + process.env.RADAR_CONFIG) : new URL('../config/radar.json', import.meta.url);
 const CFG = JSON.parse(await readFile(CONFIG_URL, 'utf8'));
@@ -219,7 +216,7 @@ function coverStories(articles) {
 async function main() {
   const prev = await readJson(`${DATA_DIR}/radar.json`);
   const log = [];
-  const out = { meta: { generatedAt: new Date(NOW).toISOString(), version: 1, top: CFG.top || 8 }, wiki: prev?.wiki ?? null, news: prev?.news ?? null, coverage: prev?.coverage ?? [], topics: [] };
+  const out = { meta: { generatedAt: new Date(NOW).toISOString(), version: 1, top: CFG.top || 8 }, wiki: prev?.wiki ?? null, news: prev?.news ?? null, coverage: prev?.coverage ?? [], sectors: prev?.sectors ?? [], topics: [] };
 
   // 1) Wikipedia
   let wiki = { byTopic: prev?.wiki?.topics ?? {} };
@@ -233,6 +230,7 @@ async function main() {
   try {
     const art = await readJson(`${DATA_DIR}/articles.json`);
     if (!art?.articles) throw new Error('articles.json non trovato');
+    out.sectors = buildSectorRows(art.articles, CFG.sectors || [], NOW);
     const state = (await readJson(`${DATA_DIR}/radar-state.json`)) || {};
     state.seen ||= {}; state.totals ||= {}; state.history ||= {};
     const added = updateNewsState(art.articles, state);
@@ -242,7 +240,8 @@ async function main() {
     await mkdir(DATA_DIR, { recursive: true });
     await writeFile(`${DATA_DIR}/radar-state.json`, JSON.stringify(state));
     const w = news.win;
-    log.push(`✓ notizie: ${added} nuove contate, storico ${w.historyDays} giorni (${w.ready ? `confronto ${w.days} giorni vs ${w.days} precedenti${w.partial ? ', parziale' : ''}` : 'confronto non ancora disponibile: servono almeno ' + CFG.news.minSpanDays + ' giorni'}); storie coperte da piu' testate: ${out.coverage.length}`);
+    const sectorCount = out.sectors.reduce((n, sector) => n + sector.articles.length, 0);
+    log.push(`✓ notizie: ${added} nuove contate, storico ${w.historyDays} giorni (${w.ready ? `confronto ${w.days} giorni vs ${w.days} precedenti${w.partial ? ', parziale' : ''}` : 'confronto non ancora disponibile: servono almeno ' + CFG.news.minSpanDays + ' giorni'}); articoli associati ai settori: ${sectorCount}; storie coperte da piu' testate: ${out.coverage.length}`);
   } catch (e) { log.push(`✗ notizie: ${e.message}`); }
 
   // 3) Riepilogo per argomento (le due misure restano in campi separati)

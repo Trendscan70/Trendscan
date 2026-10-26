@@ -1,5 +1,5 @@
 {
-  "_nota": "Trend Radar. Tre misure SEPARATE, mai sommate: interesse (visualizzazioni Wikipedia), notizie (menzioni e copertura nelle testate che seguiamo), prezzi (dai cambi BCE di markets.json). I temi sono scelti dalla redazione; la crescita e' calcolata in automatico. Le fonti girano solo se enabled=true E license.verified=true. Le espressioni regolari vanno scritte senza accenti (il testo viene normalizzato).",
+  "_nota": "Trend Radar: settori economici citati negli articoli delle testate configurate in sources.json; i pattern sono applicati a titoli e anteprime normalizzati. Ogni settore ha il filtro Finviz corrispondente, usato solo come link esterno (azioni USA). Le notizie sono sempre citate con testata e URL originali. Un articolo può essere associato a più settori.",
   "sources": {
     "wikipedia": {
       "enabled": true,
@@ -33,6 +33,19 @@
     "coverageSimilarity": 0.4,
     "coverageMinShared": 3
   },
+  "sectors": [
+    {"id": "technology", "label": "Tecnologia", "icon": "💻", "color": "#6366f1", "finvizFilter": "technology", "pattern": "intelligenza artificiale|\\bia\\b|\\bsoftware\\b|\\bchip\\w*|semiconduttor\\w*|\\bnvidia\\b|data center|cloud computing|cybersecurity|cybersicurezza|robot\\w*"},
+    {"id": "financial", "label": "Finanza", "icon": "🏦", "color": "#8b5cf6", "finvizFilter": "financial", "pattern": "\\bbanc\\w*|\\bbank\\w*|\\bbtp\\b|\\bbot\\b|\\bbund\\b|spread|obbligazion\\w*|tass[oi] di interesse|tass[oi] d.interesse|banca centrale|\\bbce\\b|\\bfed\\b|assicurazion\\w*|borsa|investiment\\w*|fintech|credito|prestiti|mutu\\w*|surrog\\w*|finanziament\\w*"},
+    {"id": "real-estate", "label": "Immobiliare", "icon": "🏠", "color": "#f97316", "finvizFilter": "realestate", "pattern": "immobil\\w*|mercato immobiliare|prezzi delle case|compravendit\\w*|affitt\\w*|mutu\\w*|surrog\\w*|edilizi\\w*|costruzion\\w*"},
+    {"id": "energy", "label": "Energia", "icon": "⚡", "color": "#eab308", "finvizFilter": "energy", "pattern": "\\bpetrol\\w*|\\bbrent\\b|\\bgreggio\\b|gas naturale|caro energia|energia rinnovabil\\w*|transizione energetica|fotovoltaic\\w*|eolic\\w*|idrogeno|pannelli solar\\w*|\\bopec\\b"},
+    {"id": "consumer-cyclical", "label": "Consumi ciclici", "icon": "🛍️", "color": "#ec4899", "finvizFilter": "consumercyclical", "pattern": "automobil\\w*|\\bauto\\b|\\bveicoli\\b|lusso|moda|e.?commerce|commercio elettronico|turism\\w*|viagg\\w*|hotel|ristorant\\w*|vendite al dettaglio|retail|consum\\w*"},
+    {"id": "consumer-defensive", "label": "Consumi essenziali", "icon": "🛒", "color": "#14b8a6", "finvizFilter": "consumerdefensive", "pattern": "aliment\\w*|spesa alimentare|supermercat\\w*|grande distribuzione|bevande|beni di prima necessita|beni essenziali|prodotti per la casa|beni di largo consumo|tabacc\\w*"},
+    {"id": "healthcare", "label": "Salute", "icon": "🩺", "color": "#ef4444", "finvizFilter": "healthcare", "pattern": "sanit\\w*|salute|farmac\\w*|medicin\\w*|ospedal\\w*|biotech|biotecnolog\\w*|dispositivi medici|vaccin\\w*|\\baifa\\b"},
+    {"id": "industrials", "label": "Industria", "icon": "🏭", "color": "#64748b", "finvizFilter": "industrials", "pattern": "industr\\w*|manifattur\\w*|produzion\\w*|logistic\\w*|trasport\\w*|infrastruttur\\w*|aerospaz\\w*|difesa|riarmo|\\bnato\\b|appalt\\w*|cantier\\w*"},
+    {"id": "basic-materials", "label": "Materie prime", "icon": "⛏️", "color": "#a16207", "finvizFilter": "basicmaterials", "pattern": "materie prime|metall\\w*|acciaio|alluminio|rame|litio|terre rare|minier\\w*|minerari\\w*|\\boro\\b|argento|commodit\\w*|fertilizzant\\w*|chimic\\w*"},
+    {"id": "communication-services", "label": "Comunicazioni e media", "icon": "📡", "color": "#0ea5e9", "finvizFilter": "communicationservices", "pattern": "telecom\\w*|telefon\\w*|banda larga|\\bmedia\\b|editor\\w*|streaming|social network|pubblicit\\w*|piattaform\\w* digital\\w*|\\b5g\\b"},
+    {"id": "utilities", "label": "Servizi pubblici", "icon": "🔌", "color": "#22c55e", "finvizFilter": "utilities", "pattern": "utility|utilities|servizi pubblici|rete elettrica|distribut\\w* di energia|bollett\\w*|tariffe luce|energia elettrica|acqua potabile|gestor\\w* idric\\w*"}
+  ],
   "top": 8,
   "topics": [
     {"id": "mutui", "label": "Mutui", "kind": "established", "wiki": "Mutuo", "pattern": "\\bmutu\\w*|surrog\\w*|tasso fisso|tasso variabile"},

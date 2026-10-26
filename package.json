@@ -12,7 +12,7 @@
     "build:css": "tailwindcss -i src/tailwind.input.css -o public/tailwind.css --minify",
     "build:guides": "node scripts/build-guides.mjs",
     "build:og": "node scripts/build-og.mjs",
-    "test": "node scripts/test-tools.mjs"
+    "test": "node scripts/test-tools.mjs && node scripts/test-radar-sectors.mjs"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
