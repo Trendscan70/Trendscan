@@ -14,7 +14,6 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="apple-mobile-web-app-title" content="TrendScan">
-  <!-- Anteprime sui social (Open Graph / Twitter) -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="TrendScan">
   <meta property="og:locale" content="it_IT">
@@ -29,8 +28,7 @@
   <meta name="twitter:title" content="TrendScan – Finanza personale spiegata semplice: guide, video e notizie">
   <meta name="twitter:description" content="Impara a gestire i tuoi soldi senza paroloni: guide semplici su risparmio, ETF e PAC, simulatore gratuito, video educativi e notizie dai giornali italiani.">
   <meta name="twitter:image" content="https://trendscan.it/og-image.png">
-  <!-- Dati strutturati (JSON-LD) -->
-  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebSite", "@id": "https://trendscan.it/#website", "url": "https://trendscan.it/", "name": "TrendScan", "description": "Impara a gestire i tuoi soldi senza paroloni: guide semplici su risparmio, ETF e PAC, simulatore gratuito, video educativi e notizie dai giornali italiani.", "inLanguage": "it-IT", "publisher": {"@id": "https://trendscan.it/#org"}}, {"@context": "https://schema.org", "@type": "Organization", "@id": "https://trendscan.it/#org", "name": "TrendScan", "url": "https://trendscan.it/", "logo": {"@type": "ImageObject", "url": "https://trendscan.it/apple-touch-icon.png", "width": 180, "height": 180}, "email": "info@trendscan.it", "contactPoint": {"@type": "ContactPoint", "contactType": "customer support", "email": "info@trendscan.it", "availableLanguage": "it", "url": "https://trendscan.it/contatti/"}}]</script>
+  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebSite", "@id": "https://trendscan.it/#website", "url": "https://trendscan.it/", "name": "TrendScan", "description": "Hub di finanza personale: guide, video educativi e notizie dai giornali italiani."}]</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -38,10 +36,9 @@
   <meta name="theme-color" content="#f4f5f7">
   <link rel="stylesheet" href="tailwind.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="radar-sectors.css">
 </head>
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
-
-  <!-- ===== TOP STRIP ===== -->
   <div class="bg-[#111] text-gray-300 text-[11px]">
     <div class="max-w-7xl mx-auto px-4 h-8 flex items-center justify-between">
       <span id="todayLabel" class="capitalize"></span>
@@ -49,7 +46,6 @@
     </div>
   </div>
 
-  <!-- ===== HEADER ===== -->
   <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
       <a href="#home" class="flex items-center gap-2 shrink-0" aria-label="TrendScan home">
@@ -71,14 +67,13 @@
       </nav>
 
       <div class="ml-auto flex items-center gap-2">
-        <button id="themeToggle" type="button" class="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-lg shrink-0" aria-label="Attiva modalità scura" aria-pressed="false" title="Modalità chiara/scura">🌙</button>
+        <button id="themeToggle" type="button" class="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-lg shrink-0" aria-label="Attiva modalità scura">🌙</button>
         <div class="relative">
-          <input id="searchInput" type="search" placeholder="Cerca negli articoli…" class="w-40 sm:w-64 pl-9 pr-3 py-2 rounded-full bg-gray-100 border border-transparent focus:border-[#e8412c] focus:bg-white outline-none text-sm">
-          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input id="searchInput" type="search" placeholder="Cerca negli articoli…" class="w-40 sm:w-64 pl-9 pr-3 py-2 rounded-full bg-gray-100 border border-transparent focus:border-[#e8412c] focus:outline-none text-sm" aria-label="Cerca negli articoli">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
       </div>
     </div>
-    <!-- nav mobile -->
     <nav class="lg:hidden border-t border-gray-100 overflow-x-auto no-scrollbar">
       <div class="flex gap-1 px-3 py-2 text-xs font-extrabold uppercase whitespace-nowrap">
         <a href="#home" data-nav="home" class="nav-link">Home</a>
@@ -86,12 +81,11 @@
         <a href="#mercati" data-nav="mercati" class="nav-link">Mercati</a>
         <a href="/criptovalute/" class="nav-link">Criptovalute</a>
         <a href="#video" data-nav="video" class="nav-link">Video</a>
-        <a href="/guide/" data-nav="guide" class="nav-link">Guide</a>
+        <a href="/guide/" class="nav-link">Guide</a>
         <a href="/strumenti/" class="nav-link">Strumenti</a>
         <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
       </div>
     </nav>
-    <!-- categorie -->
     <div class="border-t border-gray-100 bg-white">
       <div class="max-w-7xl mx-auto px-4 py-2 overflow-x-auto no-scrollbar">
         <div id="categoryBar" class="flex gap-2 whitespace-nowrap text-xs font-bold"></div>
@@ -100,16 +94,11 @@
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-6">
-
-    <!-- =========================== HOME =========================== -->
     <section id="view-home" class="view space-y-10">
-
-
-      <!-- Benvenuto: promessa chiara per chi parte da zero -->
       <section class="welcome" aria-labelledby="welcomeTitle">
         <span class="welcome-badge">Finanza personale per chi parte da zero</span>
         <h1 id="welcomeTitle">Capisci i tuoi soldi, un passo alla volta. <span>Senza paroloni.</span></h1>
-        <p class="welcome-sub" data-gl>Guide semplici su risparmio, ETF e PAC, un simulatore gratuito per fare i tuoi conti, video educativi e le notizie dei giornali italiani, tutto in un posto solo.</p>
+        <p class="welcome-sub" data-gl>Guide semplici su risparmio, ETF e PAC, un simulatore gratuito per fare i tuoi conti, video educativi e le notizie dei giornali italiani, tutto in un posto.</p>
         <div class="welcome-cta">
           <button type="button" data-jump="inizia" class="welcome-btn welcome-btn-main">Parti da zero ↓</button>
           <button type="button" data-jump="mini-sim" class="welcome-btn welcome-btn-alt">🧮 Calcola quanto puoi mettere da parte</button>
@@ -121,21 +110,15 @@
           <li>✓ Fonti dichiarate e link pubblicitari sempre segnalati · <a href="/metodo/">Come lavoriamo</a></li>
         </ul>
       </section>
-
-      <!-- Percorso: 5 passi (le carte sono generate da renderGuideTeasers in app.js) -->
       <div id="inizia">
         <div class="section-title"><h2>Inizia da qui: 5 passi, senza paroloni</h2><span class="section-bar"></span>
           <a href="/guide/" class="text-sm font-bold brand-text whitespace-nowrap">Tutte le guide →</a></div>
         <div id="guideTeasers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
       </div>
-
-      <!-- Mini-glossario (le voci sono generate da renderGlossary in app.js) -->
       <details id="glossario" class="glossary">
         <summary><span aria-hidden="true">📖</span> Parole difficili? Il mini-glossario in italiano semplice</summary>
         <dl id="glList" class="glossary-list"></dl>
       </details>
-
-      <!-- Mini-simulatore + regalo -->
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
         <section id="mini-sim" class="hsim lg:col-span-3" aria-labelledby="hsimTitle">
           <span class="hsim-badge">Prova subito</span>
@@ -152,10 +135,8 @@
             <div><span>Con un rendimento ipotetico del 3% l'anno</span><b id="hsLow">–</b></div>
             <div><span>Con un rendimento ipotetico del 7% l'anno</span><b id="hsHigh">–</b></div>
           </div>
-          <p class="hsim-note">Calcolo teorico a rendimento costante, senza costi, tasse e inflazione: i mercati reali oscillano e nessun rendimento è garantito. <a href="/guide/simulatore-pac/" class="underline font-bold">Apri il simulatore completo →</a></p>
+          <p class="hsim-note">Calcolo teorico a rendimento costante, senza costi, tasse e inflazione: i mercati reali oscillano e nessun rendimento è garantito. <a href="/guide/simulatore-pac/">Guarda la guida</a>.</p>
         </section>
-
-        <!-- Regalo: foglio Excel -->
         <a href="/guide/bilancio-familiare-excel/" class="gift lg:col-span-2">
           <div class="text-5xl" aria-hidden="true">🎁</div>
           <div class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-100">Regalo gratuito</div>
@@ -164,66 +145,52 @@
           <span class="gift-btn">Scaricalo ora →</span>
         </a>
       </div>
-
-      <!-- Strumenti gratuiti -->
       <div id="strumenti">
         <div class="section-title"><h2>Strumenti gratuiti: fai i conti sul serio</h2><span class="section-bar"></span>
           <a href="/strumenti/" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli strumenti →</a></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <a class="tool-card" href="/strumenti/pac-realistico/"><span class="ti" aria-hidden="true">📉</span><b>PAC realistico</b><span class="tx">Quanto ti resta dopo costi, bollo, tasse e inflazione</span></a>
-          <a class="tool-card" href="/strumenti/impatto-ter/"><span class="ti" aria-hidden="true">🏷️</span><b>Impatto del TER</b><span class="tx">0,07% contro 1,5%: quanto costa un fondo in 30 anni</span></a>
-          <a class="tool-card" href="/strumenti/obiettivo-risparmio/"><span class="ti" aria-hidden="true">🎯</span><b>Obiettivo di risparmio</b><span class="tx">«Voglio 100.000 € tra 15 anni»: quanto versare al mese</span></a>
-          <a class="tool-card" href="/strumenti/rendimento-netto-btp/"><span class="ti" aria-hidden="true">🏛️</span><b>BTP, deposito, ETF</b><span class="tx">BTP Valore a confronto, dopo imposte e bollo</span></a>
-          <a class="tool-card" href="/strumenti/budget-fondo-emergenza/"><span class="ti" aria-hidden="true">🛟</span><b>Budget e fondo di emergenza</b><span class="tx">La tua regola 50/30/20 e la riserva che ti serve</span></a>
+          <a class="tool-card" href="/strumenti/pac-realistico/"><span class="ti" aria-hidden="true">📉</span><b>PAC realistico</b><span class="tx">Quanto ti resta dopo costi, bollo, tasse e inflazione.</span></a>
+          <a class="tool-card" href="/strumenti/impatto-ter/"><span class="ti" aria-hidden="true">🏷️</span><b>Impatto del TER</b><span class="tx">0,07% contro 1,5%: quanto costa un fondo in più.</span></a>
+          <a class="tool-card" href="/strumenti/obiettivo-risparmio/"><span class="ti" aria-hidden="true">🎯</span><b>Obiettivo di risparmio</b><span class="tx">«Voglio 100.000 € tra 15 anni»: quanto devo mettere da parte?</span></a>
+          <a class="tool-card" href="/strumenti/rendimento-netto-btp/"><span class="ti" aria-hidden="true">🏛️</span><b>BTP, deposito, ETF</b><span class="tx">BTP Valore a confronto, dopo imposte e inflazione.</span></a>
+          <a class="tool-card" href="/strumenti/budget-fondo-emergenza/"><span class="ti" aria-hidden="true">🛟</span><b>Budget e fondo di emergenza</b><span class="tx">La tua regola 50/30/20 e la copertura degli imprevisti.</span></a>
         </div>
       </div>
-
-      <!-- Argomenti come domande -->
       <div>
         <div class="section-title"><h2>Parti da una domanda</h2><span class="section-bar"></span></div>
         <div id="topicTiles" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"></div>
       </div>
-
-      <!-- Notizie di oggi -->
       <div>
         <div class="section-title"><h2>Le notizie di oggi</h2><span class="section-bar"></span>
           <a href="#articoli" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli articoli →</a></div>
-        <p class="text-xs text-gray-500 -mt-2 mb-4 max-w-3xl">Una selezione dalle testate italiane: cliccando resti su TrendScan. L'articolo completo è sempre sul sito della fonte, che trovi citata su ogni notizia.</p>
+        <p class="text-xs text-gray-500 -mt-2 mb-4 max-w-3xl">Una selezione dalle testate italiane: cliccando resti su TrendScan. L'articolo completo è sempre sul sito della fonte, che trovi citato nella scheda.</p>
         <div id="heroGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-5"></div>
         <div id="homeLatest" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 home-latest"></div>
       </div>
-
       <div class="ad-slot hidden" data-ad-slot="home-1" aria-label="Pubblicità"></div>
-
-      <!-- Per argomento -->
       <div id="homeTopicsWrap" class="hidden">
         <div class="section-title"><h2>Per argomento</h2><span class="section-bar"></span>
           <a href="#articoli" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli articoli →</a></div>
         <div id="homeByTopic" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
       </div>
-
-      <!-- Video band -->
       <div class="rounded-3xl bg-[#111] text-white p-5 sm:p-8 relative overflow-hidden">
         <div class="absolute -right-24 -top-24 w-80 h-80 rounded-full brand-bg opacity-20 blur-3xl"></div>
         <div class="relative flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
           <div>
             <span class="text-[11px] font-extrabold uppercase tracking-widest brand-text">▶ Video educativi</span>
             <h2 class="text-2xl sm:text-3xl font-black mt-1">Guardali per capire meglio, spiegati dagli youtuber italiani</h2>
-            <p class="text-sm text-gray-400 mt-1 max-w-2xl">Gli ultimi video dei canali che spiegano risparmio, ETF, PAC e gestione del denaro. Qui in home nascondiamo quelli che promettono guadagni facili o parlano di strumenti molto rischiosi (come la leva); nella playlist completa trovi tutto. Si guardano qui, uno dopo l'altro.</p>
+            <p class="text-sm text-gray-400 mt-1 max-w-2xl">Gli ultimi video dei canali che spiegano risparmio, ETF, PAC e gestione del denaro.</p>
           </div>
           <a href="#video" class="shrink-0 px-5 py-2.5 rounded-full brand-bg text-white text-sm font-extrabold hover:opacity-90">Apri la playlist →</a>
         </div>
         <div id="homeVideos" class="relative grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
       </div>
-
-      <!-- Mercati: cambi BCE + Termometro TrendScan (si nasconde da solo se i dati non ci sono). Per chi parte da zero è un approfondimento: sta in fondo -->
       <section id="marketStrip" class="hidden" aria-label="Mercati e Termometro TrendScan"></section>
     </section>
 
-    <!-- ========================= ARTICOLI ========================= -->
     <section id="view-articoli" class="view hidden space-y-6">
       <div class="section-title"><h1 class="text-2xl sm:text-3xl">Articoli di finanza personale</h1><span class="section-bar"></span></div>
-      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Raccogliamo automaticamente gli articoli dei principali giornali e siti italiani che parlano di risparmio, investimenti, fisco, casa e pensione. Qui trovi titolo, breve anteprima e il link all'articolo originale sul sito della testata.</p>
+      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Raccogliamo automaticamente gli articoli dei principali giornali e siti italiani che parlano di risparmio, investimenti, fisco, casa e pensione.</p>
       <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
         <select id="sourceFilter" class="px-4 py-2 rounded-full bg-white border border-gray-200 text-sm font-semibold"><option value="ALL">Tutte le testate</option></select>
         <span id="articleCount" class="text-xs text-gray-500"></span>
@@ -236,29 +203,25 @@
       <div class="text-center"><button id="moreArticles" class="hidden px-6 py-3 rounded-full bg-white border border-gray-300 font-extrabold text-sm hover:border-[#e8412c] hover:text-[#e8412c]">Mostra altri articoli</button></div>
     </section>
 
-    <!-- =========================== MERCATI =========================== -->
     <section id="view-mercati" class="view hidden">
       <div id="marketsView" class="mk-page"></div>
     </section>
 
-    <!-- ========================= ARTICOLO (lettura interna) ========================= -->
     <section id="view-articolo" class="view hidden">
       <div id="articleView" class="reader"></div>
     </section>
 
-    <!-- =========================== VIDEO =========================== -->
     <section id="view-video" class="view hidden space-y-6">
       <div class="section-title"><h1 class="text-2xl sm:text-3xl">Video Educativi</h1><span class="section-bar"></span></div>
-      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Una playlist con i video più recenti dei principali canali YouTube italiani di finanza personale. Scegli un canale o guarda tutto di seguito. I video sono dei rispettivi autori e si riproducono dal loro canale YouTube.</p>
+      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Una playlist con i video più recenti dei principali canali YouTube italiani di finanza personale.</p>
       <div id="channelChips" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
-
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
         <div class="xl:col-span-2 space-y-3">
           <div class="rounded-2xl overflow-hidden bg-black aspect-video relative shadow-lg" id="playerBox">
             <div id="ytPlayer" class="absolute inset-0"></div>
             <button id="posterBtn" class="absolute inset-0 w-full h-full group" aria-label="Riproduci">
               <img id="posterImg" alt="" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" referrerpolicy="no-referrer">
-              <span class="absolute inset-0 flex items-center justify-center"><span class="w-20 h-20 rounded-full brand-bg flex items-center justify-center shadow-2xl group-hover:scale-110 transition"><svg class="w-9 h-9 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
+              <span class="absolute inset-0 flex items-center justify-center"><span class="w-20 h-20 rounded-full brand-bg flex items-center justify-center shadow-2xl group-hover:scale-110 transition"><svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
             </button>
           </div>
           <div>
@@ -279,16 +242,14 @@
         </aside>
       </div>
       <div id="videoStatus"></div>
-
       <div>
         <div class="section-title"><h2>I canali</h2><span class="section-bar"></span></div>
         <div id="channelGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-        <p class="text-[11px] text-gray-500 mt-4 leading-relaxed max-w-3xl">Gli youtuber di finanza fanno divulgazione e intrattenimento: non conoscono la tua situazione e non offrono consulenza personalizzata. Verifica sempre le informazioni e ricorda che i canali citati non sono affiliati a TrendScan.</p>
+        <p class="text-[11px] text-gray-500 mt-4 leading-relaxed max-w-3xl">Gli youtuber di finanza fanno divulgazione e intrattenimento: non conoscono la tua situazione e non offrono consulenza personalizzata.</p>
       </div>
     </section>
   </main>
 
-  <!-- ===== FOOTER ===== -->
   <footer class="bg-[#111] text-gray-400 mt-10">
     <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
       <div>
@@ -297,16 +258,16 @@
       </div>
       <div class="text-xs leading-relaxed space-y-2">
         <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Fonti e diritti</div>
-        <p>Gli articoli appartengono alle rispettive testate: qui sono riportati solo titolo, breve anteprima e link alla fonte. I video sono incorporati dal player ufficiale di YouTube e restano dei rispettivi autori.</p>
+        <p>Gli articoli appartengono alle rispettive testate: qui sono riportati solo titolo, breve anteprima e link alla fonte.</p>
       </div>
       <div class="text-xs leading-relaxed space-y-2">
         <div class="font-extrabold text-white uppercase tracking-wide text-[11px]">Avvertenza</div>
-        <p>I contenuti hanno scopo informativo ed educativo e non costituiscono consulenza finanziaria, fiscale o legale né sollecitazione all'investimento. Ogni investimento comporta rischi, compresa la perdita del capitale.</p>
+        <p>I contenuti hanno scopo informativo ed educativo e non costituiscono consulenza finanziaria, fiscale o legale né sollecitazione all'investimento.</p>
       </div>
     </div>
     <div class="border-t border-gray-800">
       <div class="max-w-7xl mx-auto px-4 py-4 text-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <nav aria-label="Pagine informative" class="leading-relaxed"><a href="/guide/" class="hover:text-white underline-offset-2 hover:underline">Guida al risparmio</a> · <a href="/chi-siamo/" class="hover:text-white underline-offset-2 hover:underline">Chi siamo</a> · <a href="/contatti/" class="hover:text-white underline-offset-2 hover:underline">Contatti</a> · <a href="/metodo/" class="hover:text-white underline-offset-2 hover:underline">Metodo e fonti</a> · <a href="/privacy/" class="hover:text-white underline-offset-2 hover:underline">Privacy</a> · <a href="/cookie/" class="hover:text-white underline-offset-2 hover:underline">Cookie</a> · <a href="/avvertenze/" class="hover:text-white underline-offset-2 hover:underline">Avvertenze</a> · <button type="button" data-consent-open class="hover:text-white underline-offset-2 hover:underline" style="font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer">Preferenze cookie</button></nav>
+        <nav aria-label="Pagine informative" class="leading-relaxed"><a href="/guide/" class="hover:text-white underline-offset-2 hover:underline">Guida al risparmio</a> · <a href="/chi-siamo/" class="hover:text-white underline-offset-2 hover:underline">Chi siamo</a></nav>
         <a class="underline hover:text-white" href="mailto:info@trendscan.it">✉️ info@trendscan.it</a>
       </div>
     </div>
@@ -314,11 +275,10 @@
 
   <script defer src="ads.js"></script>
   <script>
-    // DATA_BASE: dove leggere gli articoli/video aggiornati ogni ora (ramo "data" del repository GitHub, repository PUBBLICO).
-    // Formato: https://raw.githubusercontent.com/UTENTE/REPOSITORY/data/   (con lo slash finale)
     window.TRENDSCAN_CONFIG = { DATA_BASE: "https://raw.githubusercontent.com/Trendscan70/trendscan/data/" };
   </script>
   <script defer src="app.js"></script>
+  <script defer src="radar-sectors.js"></script>
   <script defer src="pwa-install.js"></script>
 </body>
 </html>
