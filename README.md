@@ -1,6 +1,6 @@
 # TrendScan – Hub di finanza personale
 
-Sito statico con articoli di finanza personale (da feed RSS dei giornali italiani), playlist di video educativi (canali YouTube italiani) e guide con simulatore PAC. Nessuna chiave API.
+Sito statico con articoli di finanza personale (da feed RSS dei giornali italiani), playlist di video educativi (canali YouTube italiani), guide con simulatore PAC e traduzione opzionale con DeepL. Le chiavi API non sono incluse nel codice.
 
 ```
 public/            <- il sito (è l'unica cartella pubblicata da Netlify)
@@ -32,6 +32,7 @@ In `public/index.html` imposta `DATA_BASE` con il tuo utente e repository:
 - *Add new project → Import an existing project* → scegli il repository.
 - Le impostazioni arrivano da `netlify.toml` (cartella `public`, nessun build command). **Deploy**.
 - In alternativa, per una prova veloce: *Deploy manually* e trascina la cartella `public`.
+- Per attivare la traduzione, usa il deploy collegato al repository (le funzioni Netlify non vengono pubblicate trascinando solo `public`) e imposta `DEEPL_API_KEY` in *Site configuration → Environment variables*. Non inserirla nei file del sito o in Git. Le chiavi API Free di DeepL usano automaticamente l'endpoint Free; per un account Pro puoi impostare anche `DEEPL_API_URL=https://api.deepl.com`.
 
 ## Personalizzare
 Tutto in `config/sources.json`: testate (feed RSS, con ricerca automatica se non funzionano), categorie e parole chiave, canali YouTube (lo script controlla che il nome del canale corrisponda prima di accettarlo).

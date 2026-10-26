@@ -29,9 +29,9 @@
       <button id="themeToggle" type="button" class="ml-auto w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-lg shrink-0" aria-label="Attiva modalità scura" aria-pressed="false">🌙</button>
     </div>
   </header>
-  <main class="max-w-3xl mx-auto px-4 py-8">
+  <main class="max-w-5xl mx-auto px-4 py-8">
     <nav class="text-xs text-gray-500 mb-4" aria-label="Percorso"><a href="/" class="underline">Home</a> › Criptovalute</nav>
-    <article class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-10 shadow-sm">
+    <article id="cryptoRoot" class="bg-white border border-gray-200 rounded-3xl p-4 sm:p-10 shadow-sm">
       <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-gray-900">Criptovalute: la guida per principianti</h1>
       <p class="cx-lead">Cosa sono, quante ce ne sono, quali sono le più consolidate, come si custodiscono e quali exchange sono autorizzati in Italia e in Europa. Spiegato senza tecnicismi.</p>
       <span class="cx-updated">Aggiornata il 17 ottobre 2026</span>
@@ -40,6 +40,7 @@
 
       <nav class="cx-toc" aria-label="Indice della pagina"><b>In questa pagina</b>
         <ol>
+          <li><a href="#classifica">Classifica live delle criptovalute</a></li>
           <li><a href="#cosa-sono">Cosa sono le criptovalute</a></li>
           <li><a href="#quante">Quante ce ne sono</a></li>
           <li><a href="#consolidate">Le più consolidate e meno volatili</a></li>
@@ -49,6 +50,26 @@
           <li><a href="#fonti">Fonti e aggiornamento</a></li>
         </ol>
       </nav>
+
+      <section id="classifica" aria-labelledby="classifica-title">
+        <h2 id="classifica-title" class="text-xl sm:text-2xl font-extrabold text-gray-900 mt-8 mb-2 scroll-mt-24">Classifica live delle principali criptovalute</h2>
+        <p class="text-gray-700 leading-relaxed mt-3">Dati, prezzi e posizioni sono forniti dai widget ufficiali di <a class="cx-link" href="https://coinmarketcap.com/" target="_blank" rel="noopener noreferrer">CoinMarketCap</a>. Per caricarli, il browser si collegherà direttamente al servizio esterno. Questa selezione di grandi criptovalute mostra il rank aggiornato da CoinMarketCap, ma non si aggiorna automaticamente per includere nuove monete che entrino nella top 10.</p>
+        <button id="loadCryptoMarket" type="button" class="btn-ghost mt-4">Carica classifica e prezzi</button>
+        <p id="cryptoMarketStatus" class="cx-small" role="status" aria-live="polite">I dati esterni non vengono caricati finché non premi il pulsante.</p>
+        <p id="cryptoMarketError" class="cx-market-error" role="alert" hidden>Alcuni dati CoinMarketCap non sono disponibili. Controlla la connessione o consulta la <a class="cx-link" href="https://coinmarketcap.com/" target="_blank" rel="noopener noreferrer">classifica direttamente su CoinMarketCap</a>.</p>
+        <div id="cryptoMarketWidgets" class="cx-market-grid" hidden>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="1" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="1027" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="825" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="1839" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="52" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="3408" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="5426" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="1958" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="74" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+          <div class="cx-market-card"><div class="coinmarketcap-currency-widget" data-currencyid="2010" data-base="EUR" data-secondary="" data-ticker="true" data-rank="true" data-marketcap="true" data-volume="true" data-statsticker="true" data-stats="EUR"></div></div>
+        </div>
+      </section>
 
       <h2 id="cosa-sono" class="text-xl sm:text-2xl font-extrabold text-gray-900 mt-10 mb-2 scroll-mt-24">1. Cosa sono le criptovalute</h2>
       <p class="text-gray-700 leading-relaxed mt-3">Una criptovaluta è una forma di denaro digitale che esiste solo su internet. A differenza dei soldi sul conto corrente, non è emessa e controllata da una banca o da uno Stato: la fa funzionare una rete di computer sparsi nel mondo.</p>
@@ -229,6 +250,12 @@
       <p>✉️ <a class="underline" href="mailto:info@trendscan.it">info@trendscan.it</a></p>
     </div>
   </footer>
+  <div id="guideTools" class="guide-tools" role="group" aria-label="Strumenti di lettura">
+    <button type="button" data-fs="-1" class="fs-btn" aria-label="Riduci il testo">A−</button>
+    <button type="button" data-fs="1" class="fs-btn" aria-label="Aumenta il testo">A+</button>
+  </div>
   <script src="/page.js" defer></script>
+  <script src="/guide.js" defer></script>
+  <script src="/crypto.js" defer></script>
 </body>
 </html>

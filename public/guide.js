@@ -6,9 +6,10 @@
   // ---- 1. Dimensione del testo (stessa chiave usata finora dal sito: ts-guide-fs)
   var FS_STEPS = [85, 100, 115, 130, 150], fsIndex = 1;
   function applyFontSize() {
-    var pct = FS_STEPS[fsIndex], root = document.getElementById('academyRoot');
+    var pct = FS_STEPS[fsIndex], root = document.getElementById('academyRoot'), cryptoRoot = document.getElementById('cryptoRoot');
     var zoomOk = window.CSS && CSS.supports && CSS.supports('zoom', '1.2');
-    if (zoomOk) { if (root) root.style.setProperty('--guide-zoom', String(pct / 100)); document.documentElement.style.fontSize = ''; }
+    if (cryptoRoot) document.documentElement.style.fontSize = pct + '%';
+    else if (zoomOk) { if (root) root.style.setProperty('--guide-zoom', String(pct / 100)); document.documentElement.style.fontSize = ''; }
     else document.documentElement.style.fontSize = pct + '%';
     document.querySelectorAll('[data-fs="-1"]').forEach(function (b) { b.disabled = fsIndex === 0; });
     document.querySelectorAll('[data-fs="1"]').forEach(function (b) { b.disabled = fsIndex === FS_STEPS.length - 1; });
@@ -51,8 +52,30 @@
   var elInit = document.getElementById('calcInitial');
   if (!elInit) return;
   var elMonthly = document.getElementById('calcMonthly'), elYears = document.getElementById('calcYears'), elReturn = document.getElementById('calcReturn');
-  var chart = null;
-  var it = function (n) { return n.toLocaleString('it-IT'); };
+  var chart = null, chartSourceLabels = [], chartSourceDatasetLabels = [];
+  var numberLocale = function () { return document.documentElement.lang || 'it-IT'; };
+  var it = function (n) { return n.toLocaleString(numberLocale()); };
+
+  function applyChartLanguage() {
+    var languageApi = window.TrendScanLanguage;
+    if (!chart || !languageApi) return;
+    var activeChart = chart, language = languageApi.getLanguage();
+    if (language === 'it') {
+      chart.data.labels = chartSourceLabels.slice();
+      chart.data.datasets.forEach(function (dataset, index) { dataset.label = chartSourceDatasetLabels[index]; });
+      chart.update();
+      return;
+    }
+    languageApi.translateTexts(chartSourceLabels.concat(chartSourceDatasetLabels), language).then(function (texts) {
+      if (chart !== activeChart || languageApi.getLanguage() !== language) return;
+      chart.data.labels = texts.slice(0, chartSourceLabels.length);
+      chart.data.datasets.forEach(function (dataset, index) { dataset.label = texts[chartSourceLabels.length + index]; });
+      chart.update();
+    }).catch(function () {
+      if (languageApi.getLanguage() === language) languageApi.reportError();
+    });
+  }
+  window.addEventListener('trendscan:languagechange', applyChartLanguage);
 
   function update() {
     var P = parseFloat(elInit.value), PMT = parseFloat(elMonthly.value), years = parseInt(elYears.value, 10), rate = parseFloat(elReturn.value) / 100;
@@ -77,6 +100,8 @@
     var canvas = document.getElementById('compoundChart');
     if (!canvas || !window.Chart) return;   // senza Chart.js (offline/bloccato) restano i numeri
     if (chart) chart.destroy();
+    chartSourceLabels = labels.slice();
+    chartSourceDatasetLabels = ['Patrimonio Totale (con Interesse Composto)', 'Capitale Versato (Tuo Risparmio Effettivo)'];
     chart = new Chart(canvas.getContext('2d'), {
       type: 'line',
       data: { labels: labels, datasets: [
@@ -86,13 +111,14 @@
       options: {
         responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
         plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } },
-          tooltip: { callbacks: { label: function (c) { return c.dataset.label + ': ' + c.raw.toLocaleString('it-IT') + ' €'; } } } },
+          tooltip: { callbacks: { label: function (c) { return c.dataset.label + ': ' + c.raw.toLocaleString(numberLocale()) + ' €'; } } } },
         scales: {
           x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', maxTicksLimit: 10 } },
           y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af', callback: function (v) { return v >= 1000 ? (v / 1000).toFixed(0) + 'k €' : v + ' €'; } } }
         }
       }
     });
+    applyChartLanguage();
   }
 
   [elInit, elMonthly, elYears, elReturn].forEach(function (el) { el.addEventListener('input', update); });

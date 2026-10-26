@@ -8,11 +8,12 @@
   var noParams = root.hasAttribute('data-noparams');   // il budget contiene dati personali: mai nel link
 
   // ---------------------------------------------------------------- utilità
-  var nf0 = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 0 });
+  var numberLocale = function () { return document.documentElement.lang || 'it-IT'; };
+  var nf0 = new Intl.NumberFormat(numberLocale(), { maximumFractionDigits: 0 });
   var q = function (sel) { return root.querySelector(sel); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var eur = function (n) { return isFinite(n) ? nf0.format(Math.round(n)) + ' €' : '–'; };
-  var pctF = function (x, d) { d = d == null ? 1 : d; return isFinite(x) ? (x * 100).toLocaleString('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d }) + '%' : '–'; };
+  var pctF = function (x, d) { d = d == null ? 1 : d; return isFinite(x) ? (x * 100).toLocaleString(numberLocale(), { minimumFractionDigits: d, maximumFractionDigits: d }) + '%' : '–'; };
   var pctN = function (v, d) { return pctF(v / 100, d); };
   var clamp = function (v, lo, hi) { return Math.min(hi, Math.max(lo, v)); };
   var out = function (key, text) { root.querySelectorAll('[data-out="' + key + '"]').forEach(function (e) { e.textContent = text; }); };
@@ -87,10 +88,35 @@
   function syncUrl(S) { try { history.replaceState(null, '', location.pathname + paramsString(S) + location.hash); } catch (e) {} }
 
   // ---------------------------------------------------------------- grafici (Chart.js, solo dove serve)
-  var chart = null;
+  var chart = null, chartSourceLabels = [], chartSourceDatasetLabels = [];
+  function applyChartLanguage() {
+    var languageApi = window.TrendScanLanguage;
+    if (!chart || !languageApi) return;
+    var activeChart = chart, language = languageApi.getLanguage();
+    if (language === 'it') {
+      chart.data.labels = chartSourceLabels.slice();
+      chart.data.datasets.forEach(function (dataset, index) { dataset.label = chartSourceDatasetLabels[index]; });
+      chart.update();
+      return;
+    }
+    languageApi.translateTexts(chartSourceLabels.concat(chartSourceDatasetLabels), language).then(function (texts) {
+      if (chart !== activeChart || languageApi.getLanguage() !== language) return;
+      chart.data.labels = texts.slice(0, chartSourceLabels.length);
+      chart.data.datasets.forEach(function (dataset, index) { dataset.label = texts[chartSourceLabels.length + index]; });
+      chart.update();
+    }).catch(function () {
+      if (languageApi.getLanguage() === language) languageApi.reportError();
+    });
+  }
+  window.addEventListener('trendscan:languagechange', function () {
+    nf0 = new Intl.NumberFormat(numberLocale(), { maximumFractionDigits: 0 });
+    applyChartLanguage();
+  });
   function drawChart(labels, sets) {
     var canvas = q('canvas'); if (!canvas || !window.Chart) return;
     if (chart) chart.destroy();
+    chartSourceLabels = labels.slice();
+    chartSourceDatasetLabels = sets.map(function (set) { return set.label; });
     chart = new Chart(canvas.getContext('2d'), {
       type: 'line',
       data: { labels: labels, datasets: sets.map(function (s) { return { label: s.label, data: s.data, borderColor: s.color, backgroundColor: s.fill || 'transparent', fill: !!s.fill, tension: 0.25, borderWidth: s.w || 2.5, borderDash: s.dash || [], pointRadius: 0, pointHoverRadius: 5 }; }) },
@@ -100,6 +126,7 @@
         scales: { x: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#9ca3af', maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#9ca3af', callback: function (v) { return v >= 1000 ? (v / 1000).toFixed(0) + 'k €' : v + ' €'; } } } }
       }
     });
+    applyChartLanguage();
   }
 
   // ---------------------------------------------------------------- componenti di visualizzazione
@@ -234,7 +261,7 @@
     outHtml('message', msg);
     out('fundRange', eur(b.fundMin) + ' – ' + eur(b.fundMax));
     out('fundMonths', b.profile.min + '–' + b.profile.max + ' mesi di spese essenziali (' + eur(b.essentials) + ' al mese)');
-    out('cover', b.coverMonths == null ? '–' : b.coverMonths.toLocaleString('it-IT', { maximumFractionDigits: 1 }) + ' mesi');
+    out('cover', b.coverMonths == null ? '–' : b.coverMonths.toLocaleString(numberLocale(), { maximumFractionDigits: 1 }) + ' mesi');
     out('coverSub', b.saved > 0 ? 'con ' + eur(b.saved) + ' già accantonati' : 'nessun fondo ancora accantonato');
     var prog = q('[data-out-html="progress"]'); if (prog) prog.innerHTML = '<div class="tl-prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(b.progressMin * 100) + '" aria-label="Avanzamento verso il fondo minimo"><i style="width:' + (b.progressMin * 100).toFixed(0) + '%"></i></div><p class="tl-hint">' + pctF(b.progressMin, 0) + ' del fondo minimo</p>';
     var t = function (o) { return months(o); };

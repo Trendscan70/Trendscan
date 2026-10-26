@@ -73,16 +73,18 @@
         </div>
       </div>
     </div>
-    <nav class="lg:hidden border-t border-gray-100 overflow-x-auto no-scrollbar">
-      <div class="flex gap-1 px-3 py-2 text-xs font-extrabold uppercase whitespace-nowrap">
-        <a href="#home" data-nav="home" class="nav-link">Home</a>
-        <a href="#articoli" data-nav="articoli" class="nav-link">Articoli</a>
-        <a href="#mercati" data-nav="mercati" class="nav-link">Mercati</a>
-        <a href="/criptovalute/" class="nav-link">Criptovalute</a>
-        <a href="#video" data-nav="video" class="nav-link">Video</a>
-        <a href="/guide/" class="nav-link">Guide</a>
-        <a href="/strumenti/" class="nav-link">Strumenti</a>
-        <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
+    <nav id="mobileNav" class="lg:hidden border-t border-gray-100 flex items-center">
+      <div class="min-w-0 flex-1 overflow-x-auto no-scrollbar">
+        <div class="flex gap-1 px-3 py-2 text-xs font-extrabold uppercase whitespace-nowrap">
+          <a href="#home" data-nav="home" class="nav-link">Home</a>
+          <a href="#articoli" data-nav="articoli" class="nav-link">Articoli</a>
+          <a href="#mercati" data-nav="mercati" class="nav-link">Mercati</a>
+          <a href="/criptovalute/" class="nav-link">Criptovalute</a>
+          <a href="#video" data-nav="video" class="nav-link">Video</a>
+          <a href="/guide/" class="nav-link">Guide</a>
+          <a href="/strumenti/" class="nav-link">Strumenti</a>
+          <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
+        </div>
       </div>
     </nav>
     <div class="border-t border-gray-100 bg-white">
@@ -276,6 +278,7 @@
   <script>
     window.TRENDSCAN_CONFIG = { DATA_BASE: "https://raw.githubusercontent.com/Trendscan70/trendscan/data/" };
   </script>
+  <script defer src="/language.js"></script>
   <script defer src="app.js"></script>
   <script defer src="pwa-install.js"></script>
 </body>
