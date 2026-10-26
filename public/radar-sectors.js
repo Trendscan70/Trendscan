@@ -80,11 +80,18 @@
     const items = filtered.slice(0, 5);
     const max = Math.max(...items.map(item => item.mentions), 1);
     const buttonLabels = ['Tutti', ...Object.keys(FINVIZ_STYLE_SECTORS).filter(sector => sector !== 'Altro')];
+    const top = items[0];
+    const summaryText = top ? `${top.sector} è il settore più citato questa settimana con ${top.mentions} menzioni, soprattutto nelle testate che seguiremo e citeremo sempre in modo esplicito.` : 'Nessun settore rilevabile al momento con i dati disponibili.';
+    const sourcePills = [...new Set((data || []).flatMap(item => item.sources || []))].slice(0, 6);
 
     return `
       <div class="rd-board" aria-labelledby="rdSectorTitle">
-        <h3 id="rdSectorTitle" class="rd-h3">Settori economici più discussi</h3>
-        <p class="mk-lead">Classificazione ispirata ai filtri di <a href="https://finviz.com/" target="_blank" rel="noopener noreferrer" class="underline font-bold brand-text">Finviz.com</a>, ma le notizie sono sempre quelle pubblicate dalle testate citate. I settori servono come filtro di lettura del contesto, non come consiglio di investimento.</p>
+        <div class="rd-board-head">
+          <h3 id="rdSectorTitle" class="rd-h3">Settori economici più discussi</h3>
+          <span class="rd-source-tag">Fonte: testate citate</span>
+        </div>
+        <p class="rd-sector-summary">${summaryText}</p>
+        <p class="mk-lead">Classificazione ispirata ai filtri di <a href="https://finviz.com/" target="_blank" rel="noopener noreferrer" class="underline font-bold brand-text">Finviz.com</a>, ma le notizie sono sempre quelle pubblicate dalle testate citate. I settori aiutano a leggere il contesto di mercato, non a consigliarti un investimento.</p>
         <div class="rd-sector-controls" role="group" aria-label="Filtra settori">
           ${buttonLabels.map(label => `<button type="button" class="rd-sector-btn ${selected === label ? 'on' : ''}" data-rd-sector="${label}">${label}</button>`).join('')}
         </div>
@@ -95,11 +102,12 @@
               const delta = Number(item.delta || 0);
               const deltaClass = delta >= 0 ? 'mk-up' : 'mk-down';
               const text = `${delta >= 0 ? '+' : ''}${Math.round(delta)}%`;
+              const sources = (item.sources || []).map(source => `<span class="rd-sector-source-pill">${source}</span>`).join('');
               return `
                 <div class="rd-sector-row">
                   <div class="rd-sector-meta">
                     <div class="rd-sector-name">${item.sector}</div>
-                    <div class="rd-sector-sources">${item.sources.join(', ')}</div>
+                    <div class="rd-sector-sources">${sources}</div>
                   </div>
                   <div class="rd-sector-bar-wrap"><div class="rd-sector-bar ${delta >= 0 ? 'up' : 'down'}" style="width:${width}%"></div></div>
                   <div class="rd-sector-value ${deltaClass}">${text}</div>
@@ -108,6 +116,10 @@
             }).join('')}
           </div>
           <div class="rd-sector-footnote">Dati aggregati dalle notizie raccolte da TrendScan. Il grafico mostra quante volte un settore viene citato nei titoli e nelle anteprime delle testate che seguiamo, sempre attribuendo la fonte originale.</div>
+          <div class="rd-sector-footer">
+            <span class="rd-source-label">Testate principali</span>
+            <div class="rd-source-pills">${sourcePills.map(source => `<span class="rd-sector-source-pill">${source}</span>`).join('')}</div>
+          </div>
         ` : `<p class="rd-empty">Nessun settore rilevabile al momento con i dati disponibili.</p>`}
       </div>
     `;
