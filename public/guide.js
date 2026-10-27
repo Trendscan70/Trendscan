@@ -52,30 +52,9 @@
   var elInit = document.getElementById('calcInitial');
   if (!elInit) return;
   var elMonthly = document.getElementById('calcMonthly'), elYears = document.getElementById('calcYears'), elReturn = document.getElementById('calcReturn');
-  var chart = null, chartSourceLabels = [], chartSourceDatasetLabels = [];
+  var chart = null;
   var numberLocale = function () { return document.documentElement.lang || 'it-IT'; };
   var it = function (n) { return n.toLocaleString(numberLocale()); };
-
-  function applyChartLanguage() {
-    var languageApi = window.TrendScanLanguage;
-    if (!chart || !languageApi) return;
-    var activeChart = chart, language = languageApi.getLanguage();
-    if (language === 'it') {
-      chart.data.labels = chartSourceLabels.slice();
-      chart.data.datasets.forEach(function (dataset, index) { dataset.label = chartSourceDatasetLabels[index]; });
-      chart.update();
-      return;
-    }
-    languageApi.translateTexts(chartSourceLabels.concat(chartSourceDatasetLabels), language).then(function (texts) {
-      if (chart !== activeChart || languageApi.getLanguage() !== language) return;
-      chart.data.labels = texts.slice(0, chartSourceLabels.length);
-      chart.data.datasets.forEach(function (dataset, index) { dataset.label = texts[chartSourceLabels.length + index]; });
-      chart.update();
-    }).catch(function () {
-      if (languageApi.getLanguage() === language) languageApi.reportError();
-    });
-  }
-  window.addEventListener('trendscan:languagechange', applyChartLanguage);
 
   function update() {
     var P = parseFloat(elInit.value), PMT = parseFloat(elMonthly.value), years = parseInt(elYears.value, 10), rate = parseFloat(elReturn.value) / 100;
@@ -100,8 +79,6 @@
     var canvas = document.getElementById('compoundChart');
     if (!canvas || !window.Chart) return;   // senza Chart.js (offline/bloccato) restano i numeri
     if (chart) chart.destroy();
-    chartSourceLabels = labels.slice();
-    chartSourceDatasetLabels = ['Patrimonio Totale (con Interesse Composto)', 'Capitale Versato (Tuo Risparmio Effettivo)'];
     chart = new Chart(canvas.getContext('2d'), {
       type: 'line',
       data: { labels: labels, datasets: [
@@ -118,7 +95,6 @@
         }
       }
     });
-    applyChartLanguage();
   }
 
   [elInit, elMonthly, elYears, elReturn].forEach(function (el) { el.addEventListener('input', update); });

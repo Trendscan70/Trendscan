@@ -88,35 +88,10 @@
   function syncUrl(S) { try { history.replaceState(null, '', location.pathname + paramsString(S) + location.hash); } catch (e) {} }
 
   // ---------------------------------------------------------------- grafici (Chart.js, solo dove serve)
-  var chart = null, chartSourceLabels = [], chartSourceDatasetLabels = [];
-  function applyChartLanguage() {
-    var languageApi = window.TrendScanLanguage;
-    if (!chart || !languageApi) return;
-    var activeChart = chart, language = languageApi.getLanguage();
-    if (language === 'it') {
-      chart.data.labels = chartSourceLabels.slice();
-      chart.data.datasets.forEach(function (dataset, index) { dataset.label = chartSourceDatasetLabels[index]; });
-      chart.update();
-      return;
-    }
-    languageApi.translateTexts(chartSourceLabels.concat(chartSourceDatasetLabels), language).then(function (texts) {
-      if (chart !== activeChart || languageApi.getLanguage() !== language) return;
-      chart.data.labels = texts.slice(0, chartSourceLabels.length);
-      chart.data.datasets.forEach(function (dataset, index) { dataset.label = texts[chartSourceLabels.length + index]; });
-      chart.update();
-    }).catch(function () {
-      if (languageApi.getLanguage() === language) languageApi.reportError();
-    });
-  }
-  window.addEventListener('trendscan:languagechange', function () {
-    nf0 = new Intl.NumberFormat(numberLocale(), { maximumFractionDigits: 0 });
-    applyChartLanguage();
-  });
+  var chart = null;
   function drawChart(labels, sets) {
     var canvas = q('canvas'); if (!canvas || !window.Chart) return;
     if (chart) chart.destroy();
-    chartSourceLabels = labels.slice();
-    chartSourceDatasetLabels = sets.map(function (set) { return set.label; });
     chart = new Chart(canvas.getContext('2d'), {
       type: 'line',
       data: { labels: labels, datasets: sets.map(function (s) { return { label: s.label, data: s.data, borderColor: s.color, backgroundColor: s.fill || 'transparent', fill: !!s.fill, tension: 0.25, borderWidth: s.w || 2.5, borderDash: s.dash || [], pointRadius: 0, pointHoverRadius: 5 }; }) },
@@ -126,7 +101,6 @@
         scales: { x: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#9ca3af', maxTicksLimit: 8 } }, y: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#9ca3af', callback: function (v) { return v >= 1000 ? (v / 1000).toFixed(0) + 'k €' : v + ' €'; } } } }
       }
     });
-    applyChartLanguage();
   }
 
   // ---------------------------------------------------------------- componenti di visualizzazione

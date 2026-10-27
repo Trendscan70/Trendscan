@@ -1,7 +1,6 @@
 # Configurazione Netlify per TrendScan (sito statico)
 [build]
   publish = "public"
-  functions = "netlify/functions"
   command = ""
   # Netlify espone il ramo in BRANCH; exit 0 salta il build del ramo dati.
   ignore = "test \"$BRANCH\" = \"data\""
