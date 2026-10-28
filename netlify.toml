@@ -49,13 +49,6 @@
   from = "/chi-siamo.html"
   to = "/chi-siamo/"
   status = 301
-  force = true
-
-[[redirects]]
-  from = "/chi-siamo"
-  to = "/chi-siamo/"
-  status = 301
-  force = true
 
 # Le immagini social stanno nel ramo "data" (non in main): il sito le serve a /og/termometro.png e /og/radar.png
 [[redirects]]
