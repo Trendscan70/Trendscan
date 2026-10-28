@@ -10,6 +10,8 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
 [[headers]]
   for = "/data/*"
@@ -33,12 +35,26 @@
   for = "/sitemap.xml"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+    Content-Type = "application/xml"
 
-# Pagina "Chi siamo": /chi-siamo (e /chi-siamo/) mostrano chi-siamo.html
+# Dominio canonico: evita che Google indicizzi sia www sia il dominio principale.
+[[redirects]]
+  from = "https://www.trendscan.it/*"
+  to = "https://trendscan.it/:splat"
+  status = 301
+  force = true
+
+# Pagina "Chi siamo": mantiene un solo URL indicizzabile con slash finale.
+[[redirects]]
+  from = "/chi-siamo.html"
+  to = "/chi-siamo/"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/chi-siamo"
-  to = "/chi-siamo.html"
-  status = 200
+  to = "/chi-siamo/"
+  status = 301
   force = true
 
 # Le immagini social stanno nel ramo "data" (non in main): il sito le serve a /og/termometro.png e /og/radar.png

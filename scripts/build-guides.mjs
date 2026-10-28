@@ -139,6 +139,7 @@ function head({ title, desc, canonical, ogType = 'article', ld, scripts, image =
   <meta name="description" content="${esc(desc)}">
   <link rel="canonical" href="${canonical}">
   <meta name="robots" content="${robots}">
+  <meta name="author" content="Redazione TrendScan">
   <meta name="application-name" content="TrendScan">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -151,11 +152,13 @@ function head({ title, desc, canonical, ogType = 'article', ld, scripts, image =
   <meta property="og:description" content="${esc(desc)}">
   <meta property="og:url" content="${canonical}">
   <meta property="og:image" content="${image}">
+  <meta property="og:image:type" content="image/png">
   ${image.includes('/og/') ? '<meta property="og:image:width" content="1200">\n  <meta property="og:image:height" content="630">\n  ' : ''}<meta property="og:image:alt" content="${esc(title)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${esc(title)} | TrendScan">
   <meta name="twitter:description" content="${esc(desc)}">
   <meta name="twitter:image" content="${image}">
+  <meta name="twitter:image:alt" content="${esc(title)}">
   ${jsonLd(ld)}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -489,7 +492,7 @@ function renderHub(P) {
           <p class="text-sm text-gray-300 leading-relaxed">${esc(g.slug === 'simulatore-pac' ? 'Prova tu i numeri del tuo PAC: capitale iniziale, versamento mensile, anni e rendimento ipotetico.' : g.sub)}</p>
           <span class="mt-auto text-xs font-bold text-indigo-300">Leggi la guida →</span>
         </a>`).join('\n        ');
-  return `${head({ title, desc, canonical: `${SITE}/guide/`, ld })}
+  return `${head({ title, desc, canonical: `${SITE}/guide/`, ld, ogType: 'website' })}
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
 
 ${hdr(P, 'guide')}
