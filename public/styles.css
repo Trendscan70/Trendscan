@@ -750,6 +750,9 @@ html.dark #glTip { background: #f3f4f6; color: #111827; }
 .tl-prose { display: flex; flex-direction: column; gap: .9rem; font-size: .85rem; line-height: 1.65; color: #d1d5db; }
 .tl-prose h2 { font-size: 1.1rem; font-weight: 800; color: #fff; margin-top: .4rem; }
 .tl-prose h3 { font-size: .95rem; font-weight: 800; color: #fff; }
+.tl-prose details { border: 1px solid #374151; border-radius: .75rem; padding: .8rem 1rem; background: rgba(17, 24, 39, .55); }
+.tl-prose summary { cursor: pointer; color: #fff; font-weight: 700; }
+.tl-prose details p { margin-top: .55rem; }
 .tl-prose ul { list-style: disc; padding-left: 1.2rem; display: flex; flex-direction: column; gap: .3rem; }
 .tl-prose strong { color: #fff; }
 .tl-prose .tl-box { background: rgba(79, 70, 229, .12); border: 1px solid rgba(99, 102, 241, .35); border-radius: .9rem; padding: .9rem 1rem; }

@@ -149,7 +149,13 @@ Il sito è predisposto ma **non mostra annunci** finché non attivi `public/ads.
 - **Indirizzo del sito**: `https://trendscan.it` è scritto in `public/index.html` (canonical, Open Graph, JSON-LD), `public/robots.txt` e `public/sitemap.xml`. Se passi a un dominio proprio, sostituiscilo in questi tre file.
 - **Search Console**: aggiungi il sito su https://search.google.com/search-console (proprietà «Prefisso URL»), verifica la proprietà, invia `sitemap.xml` e usa «Controllo URL → Richiedi indicizzazione». Fai lo stesso su Bing Webmaster Tools.
 - **Plugin Netlify «Sitemap»**: rigenera `sitemap.xml` a ogni pubblicazione e può sovrascrivere questa versione; conviene disinstallarlo (Netlify → Integrations).
-- Quando le sezioni avranno indirizzi propri (`/guide/...`) vanno aggiunte alla sitemap.
+- Ogni nuova pagina pubblica con un URL autonomo va aggiunta alla sitemap; `npm run build:guides` aggiorna automaticamente guide e strumenti.
+
+## Guide, strumenti e attribuzione editoriale
+- Aggiungi le nuove guide in `GUIDES` in `scripts/build-guides.mjs` e il testo in `content/guide/<slug>.html`; collega i contenuti pertinenti tramite `tools` e `guides`. Le guide extra usano `kind: 'guide'` e non alterano la numerazione dei capitoli.
+- Le FAQ degli strumenti sono HTML visibile in `content/strumenti/<slug>.html`; mantienile coerenti con le ipotesi e i limiti descritti dal motore di calcolo.
+- Le pagine generate offrono un link stabile copiabile per condividere o citare la risorsa. I download dovrebbero essere raggiungibili anche da una pagina descrittiva, non solo come file diretto.
+- La firma collettiva «Redazione TrendScan» è descritta in `/chi-siamo/#redazione`; non attribuirle qualifiche o revisori individuali non verificati. Dopo modifiche editoriali lancia `npm run build:guides` e pubblica anche tutte le pagine generate e `public/sitemap.xml`.
 
 ## Pagine di fiducia
 `/chi-siamo/`, `/contatti/` (email info@trendscan.it), `/metodo/`, `/privacy/`, `/cookie/`, `/avvertenze/` sono pagine HTML statiche (cartelle in `public/`), collegate dal footer e presenti in `sitemap.xml`. Prima dell'attivazione di pubblicità o statistiche vanno aggiornate privacy e cookie policy. Nella privacy c'è un commento HTML «TODO» per inserire nome e recapito del titolare del trattamento.

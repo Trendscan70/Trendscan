@@ -20,8 +20,8 @@ import path from 'node:path';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://trendscan.it';
-const UPDATED = '2026-10-24';            // data di ultima revisione dei testi (ISO): compare in pagina, nei dati strutturati e nella sitemap
-const UPDATED_LABEL = 'ottobre 2026';
+const UPDATED = '2026-11-02';            // data di ultima revisione dei testi (ISO): compare in pagina, nei dati strutturati e nella sitemap
+const UPDATED_LABEL = 'novembre 2026';
 const CHART_JS = 'https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js';
 
 // Ordine = ordine di lettura. n = numero del capitolo (null = strumento extra).
@@ -70,7 +70,22 @@ const GUIDES = [
     h1: 'Foglio Excel gratuito per il bilancio familiare',
     seoTitle: 'Foglio Excel gratuito per il bilancio familiare',
     desc: 'Scarica gratis il foglio Excel per il bilancio familiare: 12 fogli mensili, spese per categoria, risparmio e grafico. Per Excel, LibreOffice e Google Fogli.',
-    sub: 'Il primo passo prima di iniziare un PAC: scopri dove vanno i tuoi soldi' }
+    sub: 'Il primo passo prima di iniziare un PAC: scopri dove vanno i tuoi soldi' },
+  { slug: 'scegliere-un-etf', tools: ['impatto-ter', 'pac-realistico'], label: 'Come scegliere un ETF', n: null, icon: '🔎', short: 'Scegliere un ETF', kind: 'guide',
+    h1: 'Come scegliere un ETF: checklist per principianti',
+    seoTitle: 'Come scegliere un ETF: checklist per principianti',
+    desc: 'Una checklist per leggere indice, KID, costi, replica e rischi di un ETF senza trasformare il confronto in una raccomandazione di acquisto.',
+    sub: 'Le domande da farsi prima di confrontare due ETF, senza classifiche né consigli personalizzati' },
+  { slug: 'etf-accumulazione-distribuzione', tools: ['pac-realistico'], label: 'ETF ad accumulazione o distribuzione?', n: null, icon: '↗️', short: 'Accumulo o distribuzione', kind: 'guide',
+    h1: 'ETF ad accumulazione o distribuzione: differenze e criteri',
+    seoTitle: 'ETF ad accumulazione o distribuzione: differenze',
+    desc: 'Come funzionano le classi ad accumulazione e distribuzione, cosa cambia nei flussi di cassa e quali aspetti verificare nel KID e nella documentazione del fondo.',
+    sub: 'Dividendi reinvestiti o pagati: caratteristiche diverse, non rendimenti garantiti' },
+  { slug: 'impostare-un-pac', tools: ['pac-realistico', 'obiettivo-risparmio'], label: 'Come impostare un PAC', n: null, icon: '🗓️', short: 'Impostare un PAC', kind: 'guide',
+    h1: 'Come impostare un PAC: importo, frequenza e controlli',
+    seoTitle: 'Come impostare un PAC: importo e frequenza',
+    desc: 'Una guida pratica per definire un piano di versamenti sostenibile, controllare costi e condizioni del broker e rivedere le ipotesi senza inseguire il mercato.',
+    sub: 'Un piano verificabile, con ipotesi esplicite e spazio per gli imprevisti' }
 ];
 
 // Strumenti (calcolatori): ogni voce ha una pagina /strumenti/<slug>/ e un testo in content/strumenti/<slug>.html
@@ -80,19 +95,19 @@ const TOOLS = [
     seoTitle: 'Simulatore PAC con tasse, TER, bollo e inflazione',
     desc: 'Simulatore PAC realistico: calcola quanto ti resta dopo TER, bollo 0,2%, imposta del 26% e inflazione, e quanta parte del rendimento teorico se ne va.',
     sub: 'Il rendimento lordo non è quello che ti resta: guarda quanto se ne vanno costi, tasse e inflazione.',
-    tx: 'Quanto ti resta davvero dopo costi, tasse e inflazione', guides: ['pac', 'simulatore-pac', 'interesse-composto'] },
+    tx: 'Quanto ti resta davvero dopo costi, tasse e inflazione', guides: ['pac', 'simulatore-pac', 'interesse-composto', 'impostare-un-pac', 'etf-accumulazione-distribuzione'] },
   { slug: 'impatto-ter', icon: '🏷️', chart: true, label: 'Impatto del TER: 0,07% contro 1,5%', short: 'Impatto del TER',
     h1: "L'impatto del TER: quanto costa un fondo in 30 anni",
     seoTitle: 'Calcolatore TER: quanto costa un fondo in 30 anni',
     desc: 'Confronta due fondi con TER diverso (per esempio 0,07% e 1,5%): scopri quanto capitale perdi in costi nel tempo, con grafico e risultato da condividere.',
     sub: 'Stesso investimento, due costi diversi: la differenza dopo 30 anni.',
-    tx: 'Due fondi con costi diversi a confronto', guides: ['etf', 'pac'] },
+    tx: 'Due fondi con costi diversi a confronto', guides: ['etf', 'pac', 'scegliere-un-etf'] },
   { slug: 'obiettivo-risparmio', icon: '🎯', label: 'Obiettivo: quanto versare al mese', short: 'Obiettivo di risparmio',
     h1: 'Quanto devo risparmiare al mese per raggiungere il mio obiettivo?',
     seoTitle: 'Quanto risparmiare al mese per raggiungere un obiettivo',
     desc: 'Calcolatore obiettivo: vuoi 100.000 € tra 15 anni? Scopri il versamento mensile necessario, al netto di costi e tasse, con più scenari di rendimento.',
     sub: "Parti dal traguardo, non dal versamento: «voglio 100.000 € tra 15 anni».",
-    tx: 'Da «voglio X tra N anni» al versamento mensile', guides: ['pac', 'interesse-composto'] },
+    tx: 'Da «voglio X tra N anni» al versamento mensile', guides: ['pac', 'interesse-composto', 'impostare-un-pac'] },
   { slug: 'rendimento-netto-btp', icon: '🏛️', label: 'BTP Valore, conto deposito, ETF: netto', short: 'BTP, conto deposito ed ETF',
     h1: 'BTP Valore, conto deposito ed ETF obbligazionario: rendimento netto',
     seoTitle: 'BTP Valore, conto deposito, ETF: rendimento netto',
@@ -190,15 +205,26 @@ const crumbs = items => ({
   itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item }))
 });
 
-const updatedLine = `<p class="text-xs text-gray-300 mt-3">Aggiornato a ${UPDATED_LABEL} · A cura della redazione di TrendScan · <a href="/metodo/" class="underline font-semibold text-white">Come lavoriamo</a> · <a href="/avvertenze/" class="underline font-semibold text-white">Avvertenze</a></p>`;
+const updatedLine = `<p class="text-xs text-gray-300 mt-3">Aggiornato a ${UPDATED_LABEL} · A cura della <a href="/chi-siamo/#redazione" class="underline font-semibold text-white">Redazione TrendScan</a> · <a href="/metodo/" class="underline font-semibold text-white">Come lavoriamo</a> · <a href="/avvertenze/" class="underline font-semibold text-white">Avvertenze</a></p>`;
 
 // ---------------------------------------------------------------- blocchi
 function guideCard(g, current) {
   const cur = current && current.slug === g.slug;
+  const type = g.n ? `Capitolo ${g.n}` : g.kind === 'tool' ? 'Strumento gratuito' : 'Approfondimento';
   return `<a href="${href(g)}"${cur ? ' aria-current="page"' : ''} class="flex items-start gap-3 p-3 rounded-xl border transition ${cur ? 'bg-indigo-900/40 border-indigo-500' : 'bg-gray-900/70 border-gray-800 hover:border-indigo-400'}">
           <span class="shrink-0 w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-200 font-black flex items-center justify-center">${g.n ?? g.icon}</span>
-          <span><span class="block font-bold text-white text-sm">${esc(g.label)}</span><span class="block text-xs text-gray-400">${esc(g.slug === 'simulatore-pac' ? 'Prova tu i numeri del tuo PAC' : g.sub)}</span></span></span>
+          <span><span class="block text-[9px] uppercase tracking-wide text-indigo-300">${type}</span><span class="block font-bold text-white text-sm">${esc(g.label)}</span><span class="block text-xs text-gray-400">${esc(g.slug === 'simulatore-pac' ? 'Prova tu i numeri del tuo PAC' : g.sub)}</span></span></span>
         </a>`;
+}
+
+function citationBox(canonical, label) {
+  return `<section aria-labelledby="citaRisorsa" class="glass-panel p-5 sm:p-6 rounded-3xl border border-gray-800 space-y-3">
+        <h2 id="citaRisorsa" class="text-xl font-extrabold text-white">🔗 Condividi o cita questa risorsa</h2>
+        <p class="text-sm text-gray-300 leading-relaxed">Se questo ${label} ti è utile, puoi condividerlo o citarlo in un articolo, forum o descrizione video linkando la pagina originale. I risultati restano indicativi e non sono una raccomandazione finanziaria.</p>
+        <p class="text-xs text-gray-400 break-all"><a class="underline hover:text-white" href="${canonical}">${canonical}</a></p>
+        <button type="button" class="tl-btn alt" data-copy-link="${canonical}">Copia il link stabile</button>
+        <span class="text-xs text-gray-400" role="status" data-copy-status></span>
+      </section>`;
 }
 
 function prevNext(g) {
@@ -252,7 +278,7 @@ async function renderGuide(g, P) {
   const wrapped = g.kind === 'tool' ? body : `<section class="glass-panel p-6 sm:p-8 rounded-3xl border border-gray-800 space-y-5">
         ${body}
       </section>`;
-  const kicker = g.n ? `🎓 Guida ${g.n} di ${numbered.length}` : '🎁 Strumento gratuito';
+  const kicker = g.n ? `🎓 Guida ${g.n} di ${numbered.length}` : g.kind === 'tool' ? '🎁 Strumento gratuito' : '📚 Approfondimento';
   const ld = [
     { '@context': 'https://schema.org', '@type': 'Article', headline: g.h1, description: g.desc, inLanguage: 'it-IT',
       dateModified: UPDATED, mainEntityOfPage: url(g), author: { '@id': `${SITE}/#org` }, publisher: { '@id': `${SITE}/#org` },
@@ -282,6 +308,7 @@ ${hdr(P, 'guide')}
       ${note ? `\n      ${note}\n` : ''}
       ${prevNext(g)}
 ${relatedTools(g)}
+      ${citationBox(url(g), 'contenuto')}
 
       <section aria-labelledby="altreGuide" class="glass-panel p-5 sm:p-6 rounded-3xl border border-gray-800 space-y-4">
         <h2 id="altreGuide" class="text-xl font-extrabold text-white">📑 Tutte le guide</h2>
@@ -349,6 +376,8 @@ ${hdr(P, 'strumenti')}
         ${guides.map(g => `<a href="${href(g)}"><b>${g.icon} ${esc(g.label)}</b><span>${esc(g.sub)}</span></a>`).join('\n        ')}
         </div>
       </section>` : ''}
+
+      ${citationBox(toolUrl(t), 'strumento')}
 
       <section aria-labelledby="altriStrumenti" class="glass-panel p-5 sm:p-6 rounded-3xl border border-gray-800 space-y-3">
         <h2 id="altriStrumenti" class="text-xl font-extrabold text-white">🧰 Altri strumenti</h2>
@@ -487,7 +516,7 @@ function renderHub(P) {
     crumbs([['Home', `${SITE}/`], ['Guide', `${SITE}/guide/`]])
   ];
   const cards = GUIDES.map(g => `<a href="${href(g)}" class="flex flex-col gap-2 p-5 rounded-2xl bg-gray-900/80 border border-gray-800 hover:border-indigo-400 transition">
-          <span class="flex items-center justify-between"><span class="text-[11px] font-extrabold uppercase tracking-widest text-indigo-300">${g.n ? 'Capitolo ' + g.n : 'Strumento gratuito'}</span><span class="text-2xl" aria-hidden="true">${g.icon}</span></span>
+          <span class="flex items-center justify-between"><span class="text-[11px] font-extrabold uppercase tracking-widest text-indigo-300">${g.n ? 'Capitolo ' + g.n : g.kind === 'tool' ? 'Strumento gratuito' : 'Approfondimento'}</span><span class="text-2xl" aria-hidden="true">${g.icon}</span></span>
           <h2 class="text-lg font-extrabold text-white leading-snug">${esc(g.h1)}</h2>
           <p class="text-sm text-gray-300 leading-relaxed">${esc(g.slug === 'simulatore-pac' ? 'Prova tu i numeri del tuo PAC: capitale iniziale, versamento mensile, anni e rendimento ipotetico.' : g.sub)}</p>
           <span class="mt-auto text-xs font-bold text-indigo-300">Leggi la guida →</span>
