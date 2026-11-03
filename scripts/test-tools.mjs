@@ -126,4 +126,31 @@ const near = (a, b, tol, msg) => { n++; assert.ok(Math.abs(a - b) <= tol, `${msg
   assert.ok(d.deficit && d.monthsToMin.full === null); n++;
   assert.equal(T.budgetPlan({ income: 0, essentials: 0, wants: 0 }).fundMin, 0); n++;
 }
+// ---- 14. Affitto vs acquisto: capitale iniziale e differenza mensile investiti
+{
+  const r = T.houseVsRent({
+    price: 200000, rent: 500, downPct: 20, years: 10, mortgageRate: 0, mortgageYears: 10,
+    feePct: 8, maintenance: 0, appreciation: 0, rentGrowth: 0, investReturn: 0, salePct: 0
+  });
+  near(r.monthlyMortgage, 160000 / 120, 1e-8, 'rata a tasso zero');
+  near(r.ownerEquity, 200000, 1e-6, 'patrimonio netto casa a mutuo estinto');
+  near(r.renterPortfolio, 156000, 1e-6, 'investimento anticipo e differenza mensile');
+  near(r.mortgageBalance, 0, 1e-6, 'mutuo estinto a scadenza');
+}
+// ---- 15. Spesa ricorrente: conversione giornaliera e composizione mensile
+{
+  const r = T.recurringSpend({ amount: 5, frequency: 'daily', rate: 0, years: 20 });
+  near(r.monthly, 5 * 365 / 12, 1e-9, 'spesa giornaliera convertita in media mensile');
+  near(r.paid, 36500, 1e-8, 'totale versato in 20 anni');
+  near(r.value, r.paid, 1e-8, 'a rendimento zero il valore coincide con i versamenti');
+}
+// ---- 16. Gap pensionistico: stime, accumulo e deducibilità
+{
+  const r = T.pensionGap({ age: 47, income: 30000 });
+  near(r.years, 20, 0, 'anni fino alla pensione ipotizzata');
+  near(r.monthlyGap, 500, 1e-9, 'gap mensile tra ipotesi 60% e obiettivo 80%');
+  near(r.monthlyContribution, 125, 1e-9, 'versamento mensile pari al 5% del reddito');
+  near(r.taxSaving, 525, 1e-9, 'deducibilità stimata con aliquota marginale ipotizzata');
+  assert.ok(r.fundBalance > r.monthlyContribution * r.years * 12 && r.fundMonthly > 0 && r.requiredMonthly > 0); n++;
+}
 console.log(`✓ ${n} controlli numerici superati`);

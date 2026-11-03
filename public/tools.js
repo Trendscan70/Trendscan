@@ -250,6 +250,58 @@
     lastShare = 'Ho calcolato il mio fondo di emergenza e il budget 50/30/20 con lo strumento gratuito di TrendScan.';
   };
 
+  // ================================================================ 6. Affitto o acquisto
+  TOOLS['affitto-vs-comprare'] = function (S) {
+    var r = C.houseVsRent({
+      price: S.price, rent: S.rent, downPct: S.downPct, years: S.years,
+      mortgageRate: S.mortgageRate, mortgageYears: S.mortgageYears, feePct: S.feePct,
+      maintenance: S.maintenance, appreciation: S.appreciation, rentGrowth: S.rentGrowth,
+      investReturn: S.investReturn, salePct: S.salePct
+    });
+    out('houseValue', eur(r.homeValue));
+    out('mortgageBalance', eur(r.mortgageBalance));
+    out('ownerEquity', eur(r.ownerEquity));
+    out('rentPortfolio', eur(r.renterPortfolio));
+    out('monthlyMortgage', eur(r.monthlyMortgage) + ' / mese');
+    var advantage = r.difference >= 0 ? 'vantaggio stimato dell’affitto' : 'vantaggio stimato dell’acquisto';
+    outHtml('message', 'Dopo <b>' + r.years + ' anni</b>, il patrimonio immobiliare netto stimato è <b>' + eur(r.ownerEquity) +
+      '</b>; investendo anticipo e costi iniziali, più la differenza mensile fra rata/manutenzione e affitto, il portafoglio dell’affittuario arriverebbe a <b>' +
+      eur(r.renterPortfolio) + '</b>. Il ' + advantage + ' è di <b>' + eur(Math.abs(r.difference)) + '</b>. Non è un verdetto: cambiano il risultato i prezzi, i tassi, la durata e i rendimenti ipotizzati.');
+    lastShare = 'Affitto vs acquisto in ' + r.years + ' anni: patrimonio netto proprietario ' + eur(r.ownerEquity) + ', portafoglio ipotetico in affitto ' + eur(r.renterPortfolio) + '.';
+  };
+
+  // ================================================================ 7. Costo-opportunità delle piccole spese
+  TOOLS['costo-vizi'] = function (S) {
+    var r = C.recurringSpend({ amount: S.amount, frequency: S.frequency, rate: S.rate / 100, years: 20 });
+    out('monthlySpend', eur(r.monthly));
+    out('paidSpend', eur(r.paid));
+    out('habitValue', eur(r.value));
+    out('habitGrowth', eur(r.growth));
+    outHtml('message', 'Una spesa di <b>' + eur(S.amount) + (S.frequency === 'daily' ? ' al giorno' : ' a settimana') +
+      '</b> equivale a circa <b>' + eur(r.monthly) + ' al mese</b>. Se invece la versassi ogni mese per 20 anni, con un rendimento ipotetico del ' +
+      pctN(S.rate, 1) + ' avresti circa <b>' + eur(r.value) + '</b>, di cui ' + eur(r.growth) + ' di crescita teorica.');
+    lastShare = 'Una spesa ricorrente da ' + eur(S.amount) + (S.frequency === 'daily' ? ' al giorno' : ' a settimana') + ' investita per 20 anni al ' + pctN(S.rate, 1) + ' potrebbe valere circa ' + eur(r.value) + ' (ipotesi, non previsione).';
+  };
+
+  // ================================================================ 8. Gap pensionistico
+  TOOLS['gap-pensionistico'] = function (S) {
+    var r = C.pensionGap({ age: S.age, income: S.income });
+    out('retireIn', r.years + (r.years === 1 ? ' anno' : ' anni'));
+    out('publicIncome', eur(r.publicMonthly) + ' / mese');
+    out('targetIncome', eur(r.targetMonthly) + ' / mese');
+    out('monthlyGap', eur(r.monthlyGap) + ' / mese');
+    out('fundContribution', eur(r.monthlyContribution) + ' / mese');
+    out('fundBalance', eur(r.fundBalance));
+    out('fundMonthly', eur(r.fundMonthly) + ' / mese');
+    out('neededContribution', eur(r.requiredMonthly) + ' / mese');
+    out('taxSaving', eur(r.taxSaving) + ' / anno');
+    outHtml('message', 'Con le ipotesi semplificate, la pensione pubblica sarebbe circa il <b>60%</b> del reddito attuale, contro un obiettivo dell’<b>80%</b>: il divario stimato è <b>' +
+      eur(r.monthlyGap) + ' al mese</b>. Versando il 5% del reddito annuo in un fondo pensione, entro il limite deducibile, accumuleresti circa <b>' + eur(r.fundBalance) +
+      '</b> in ' + r.years + ' anni e potresti integrare la rendita di circa <b>' + eur(r.fundMonthly) + ' al mese</b>. Risparmio fiscale stimato: <b>' +
+      eur(r.taxSaving) + ' l’anno</b>.');
+    lastShare = 'Stima didattica del gap pensionistico: circa ' + eur(r.monthlyGap) + '/mese; deducibilità ipotetica del fondo pensione ' + eur(r.taxSaving) + '/anno.';
+  };
+
   // ---------------------------------------------------------------- ciclo di calcolo
   var timer = null;
   function update() {

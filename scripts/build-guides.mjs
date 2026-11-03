@@ -114,6 +114,24 @@ const TOOLS = [
     desc: 'Confronta il rendimento netto di BTP Valore, Valore Insieme, conto deposito ed ETF obbligazionario dopo imposte (12,5%, 26%) e bollo. Strumento educativo.',
     sub: 'Dopo imposte e bollo, quanto rende davvero ciascuna alternativa?',
     tx: 'Rendimento netto di titoli di Stato e alternative', guides: ['etf', 'broker-pac'] },
+  { slug: 'affitto-vs-comprare', icon: '🏠', label: 'Affitto o comprare casa?', short: 'Affitto o acquisto',
+    h1: 'Affitto o comprare casa: confronto dei costi e del patrimonio',
+    seoTitle: 'Simulatore affitto o acquisto casa: confronta i costi',
+    desc: 'Confronta rata, costi iniziali, manutenzione e valore della casa con l’affitto e l’investimento della differenza. Simulatore educativo, non una previsione.',
+    sub: 'L’affitto non è per forza uno spreco: conta il confronto completo, comprese le alternative.',
+    tx: 'Confronta casa di proprietà e affitto investendo la differenza', guides: ['risparmio-50-30-20', 'pac'] },
+  { slug: 'costo-vizi', icon: '☕', label: 'Il costo delle piccole spese', short: 'Costo delle spese ricorrenti',
+    h1: 'Quanto può valere nel tempo una piccola spesa ricorrente?',
+    seoTitle: 'Calcolatore costo delle spese quotidiane in 20 anni',
+    desc: 'Trasforma una piccola spesa giornaliera o settimanale in un versamento mensile ipotetico e osserva quanto potrebbe accumularsi in 20 anni.',
+    sub: 'Un esempio di interesse composto: il risultato dipende dal rendimento ipotetico, che non è garantito.',
+    tx: 'Scopri il costo-opportunità di una spesa ricorrente', guides: ['interesse-composto', 'simulatore-pac'] },
+  { slug: 'gap-pensionistico', icon: '🧓', label: 'Gap pensionistico e fondo pensione', short: 'Gap pensionistico',
+    h1: 'Gap pensionistico: stima il divario e il possibile recupero',
+    seoTitle: 'Simulatore gap pensionistico e deducibilità del fondo',
+    desc: 'Una stima didattica del divario pensionistico in base a età e reddito, con un esempio di contribuzione al fondo pensione e deducibilità fiscale.',
+    sub: 'Ipotesi semplificate per orientarsi: non è una simulazione INPS o una consulenza previdenziale.',
+    tx: 'Stima il divario pensionistico e l’effetto ipotetico dei contributi', guides: ['risparmio-50-30-20', 'pac'] },
   { slug: 'budget-fondo-emergenza', icon: '🛟', label: 'Budget 50/30/20 e fondo di emergenza', short: 'Budget e fondo di emergenza',
     h1: 'Budget 50/30/20 e fondo di emergenza: il tuo piano personalizzato',
     seoTitle: 'Budget 50/30/20 e fondo di emergenza: calcolo personale',
@@ -271,7 +289,7 @@ async function renderGuide(g, P) {
     const b = await budgetBits();
     body = body.replace('<!--BUDGET_META-->', b.meta).replace('<!--BUDGET_DOWNLOAD-->', b.button);
   }
-  const wrapped = g.kind === 'tool' ? body : `<section class="glass-panel p-6 sm:p-8 rounded-3xl border border-gray-800 space-y-5">
+  const wrapped = g.kind === 'tool' ? body : `<section data-glossary class="glass-panel p-6 sm:p-8 rounded-3xl border border-gray-800 space-y-5">
         ${body}
       </section>`;
   const kicker = g.n ? `🎓 Guida ${g.n} di ${numbered.length}` : g.kind === 'tool' ? '🎁 Strumento gratuito' : '📚 Approfondimento';
@@ -318,7 +336,7 @@ ${relatedTools(g)}
   </main>
 
 ${P.footer}
-${tools}${tail}`;
+${tools}${tailFor('<script src="/glossary.js" defer></script>')}`;
 }
 
 
@@ -387,12 +405,12 @@ ${hdr(P, 'strumenti')}
   </main>
 
 ${P.footer}
-${tools}${tailFor(toolScripts)}`;
+${tools}${tailFor(toolScripts + '\n  <script src="/glossary.js" defer></script>')}`;
 }
 
 function renderToolsHub(P) {
   const title = 'Strumenti gratuiti per risparmiare e investire';
-  const desc = 'Calcolatori gratuiti: PAC con tasse e inflazione, impatto del TER, obiettivo di risparmio, BTP e conto deposito a confronto, budget 50/30/20 e fondo di emergenza.';
+  const desc = 'Calcolatori gratuiti: PAC con tasse e inflazione, affitto o acquisto, spese ricorrenti, gap pensionistico, obiettivo di risparmio, BTP e budget 50/30/20.';
   const ld = [
     { '@context': 'https://schema.org', '@type': 'CollectionPage', name: title, description: desc, inLanguage: 'it-IT', url: `${SITE}/strumenti/`, dateModified: UPDATED,
       publisher: { '@id': `${SITE}/#org` }, image: `${SITE}/og-image.png`,
@@ -542,7 +560,7 @@ ${hdr(P, 'guide')}
         ${cards}
       </section>
 
-      <div class="tl-cta"><p><strong>🧰 Dalla teoria ai numeri.</strong> Calcolatori gratuiti per PAC con tasse e inflazione, impatto del TER, obiettivo di risparmio, BTP Valore e budget 50/30/20.</p><a class="tl-btn" href="/strumenti/">Vai agli strumenti →</a></div>
+      <div class="tl-cta"><p><strong>🧰 Dalla teoria ai numeri.</strong> Calcolatori gratuiti per PAC, affitto o acquisto, spese ricorrenti, pensione, BTP Valore, obiettivi e budget.</p><a class="tl-btn" href="/strumenti/">Vai agli strumenti →</a></div>
 
       <p class="text-xs text-gray-400 leading-relaxed">I contenuti hanno scopo informativo ed educativo e non costituiscono consulenza finanziaria, fiscale o legale né sollecitazione all'investimento. Ogni investimento comporta rischi, compresa la perdita del capitale. <a class="underline hover:text-white" href="/avvertenze/">Avvertenze</a>.</p>
     </div>

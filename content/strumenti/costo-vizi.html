@@ -1,0 +1,31 @@
+<div class="tl" data-tool="costo-vizi">
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>Una spesa che si ripete</h2>
+      <div class="tl-field" data-key="amount" data-label="Quanto spendi ogni volta" data-unit="€" data-min="0" data-max="500" data-step="0.5" data-value="5"></div>
+      <div class="tl-field" data-key="frequency" data-type="select" data-label="Quanto spesso" data-value="daily" data-options="daily|Ogni giorno;weekly|Ogni settimana"></div>
+      <div class="tl-field" data-key="rate" data-label="Rendimento annuo ipotetico" data-unit="%" data-min="0" data-max="12" data-step="0.5" data-value="6" data-hint="È un esempio didattico, non un rendimento atteso o garantito."></div>
+    </div>
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Equivalente mensile</span><b data-out="monthlySpend">–</b></div>
+        <div class="tl-kpi"><span>Totale versato in 20 anni</span><b data-out="paidSpend">–</b></div>
+        <div class="tl-kpi good"><span>Valore teorico dopo 20 anni</span><b data-out="habitValue">–</b><small data-out="habitGrowth"></small></div>
+      </div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi il calcolo</button>
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Calcolo teorico su 20 anni: spesa costante convertita in versamenti mensili e rendimento composto costante, senza costi, imposte e inflazione. Un ETF globale può perdere valore e non offre rendimenti garantiti. Non è un invito a investire né un giudizio sulle tue abitudini.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>La spesa piccola, vista su un orizzonte lungo</h2>
+  <p>Una colazione, uno snack o un acquisto ricorrente sembrano importi modesti. Il calcolatore converte la cifra giornaliera o settimanale in una media mensile e mostra due numeri distinti: quanto avresti versato e il valore ipotetico accumulato se quei versamenti fossero investiti per 20 anni.</p>
+  <p>Il rendimento è un'ipotesi semplificata ispirata a un investimento diversificato, non una previsione per un ETF globale. I rendimenti reali sono irregolari, possono essere negativi e dipendono anche da costi, tasse e inflazione.</p>
+  <div class="tl-box"><strong>Non è una gara di rinunce.</strong> Lo scopo è rendere visibile il costo-opportunità di una spesa, non dire che debba essere eliminata. Puoi provare importi diversi e confrontarli con i tuoi obiettivi e il tuo benessere.</div>
+</div>

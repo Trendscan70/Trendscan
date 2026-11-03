@@ -294,6 +294,7 @@ const GLOSSARY = [
   { k: 'PAC', t: 'PAC', d: 'Piano di accumulo del capitale: investi la stessa cifra ogni mese, in automatico, invece di una somma sola.' },
   { k: 'PIC', t: 'PIC', d: 'Piano di investimento del capitale: investi tutta la somma in una volta sola.' },
   { k: 'TER', t: 'TER', d: 'Il costo annuo di un fondo o ETF, in percentuale sul capitale investito. Più è basso, meno paghi.' },
+  { k: 'Bollo', t: 'Bollo', d: 'Un’imposta su alcuni prodotti finanziari o conti. Quanto e come si paga dipende dal prodotto.' },
   { k: 'KID', t: 'KID', d: 'Documento breve e standard che ogni prodotto finanziario deve avere: riassume costi, rischi e scenari possibili.' },
   { k: 'BTP', t: 'BTP', d: 'Titolo di Stato italiano: presti soldi allo Stato, che ti paga interessi (le cedole) e a scadenza ti restituisce il capitale.' },
   { k: 'spread', t: 'Spread BTP-Bund', d: 'La differenza di rendimento tra i titoli di Stato italiani e quelli tedeschi a 10 anni. Più è alta, più il mercato considera rischioso prestare soldi all\'Italia.' },
@@ -309,7 +310,7 @@ function renderGlossary() {
 // Sottolinea (una volta per blocco) le sigle nei testi scritti da noi, marcati con data-gl. Su tocco/tastiera il tooltip si apre col focus.
 function applyGlossary(root = document) {
   const terms = GLOSSARY.filter(g => g.k);
-  const re = new RegExp('\\b(' + terms.map(g => g.k).join('|') + ')\\b', 'g');
+  const re = new RegExp('\\b(' + terms.map(g => g.k).join('|') + ')\\b', 'gi');
   root.querySelectorAll('[data-gl]').forEach(el => {
     if (el.dataset.glDone) return; el.dataset.glDone = '1';
     const used = new Set();
@@ -319,7 +320,7 @@ function applyGlossary(root = document) {
       const txt = node.nodeValue; if (!re.test(txt)) { re.lastIndex = 0; return; } re.lastIndex = 0;
       const frag = document.createDocumentFragment(); let last = 0, m;
       while ((m = re.exec(txt))) {
-        const g = terms.find(x => x.k === m[1]);
+        const g = terms.find(x => x.k.toLowerCase() === m[1].toLowerCase());
         frag.append(txt.slice(last, m.index));
         if (used.has(g.k)) frag.append(m[1]);
         else { used.add(g.k); const a = document.createElement('abbr'); a.className = 'gl'; a.tabIndex = 0; a.dataset.def = g.d; a.textContent = m[1]; frag.append(a); }

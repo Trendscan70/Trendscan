@@ -112,6 +112,26 @@
           <li>✓ Fonti dichiarate e link pubblicitari sempre segnalati · <a href="/metodo/">Come lavoriamo</a></li>
         </ul>
       </section>
+      <section id="profilazione" class="onboarding" aria-labelledby="pathQuizTitle">
+        <div>
+          <span class="onboarding-badge">Percorso su misura</span>
+          <h2 id="pathQuizTitle">Da dove vuoi cominciare?</h2>
+          <p>Rispondi a una domanda: ti suggeriamo tre contenuti in ordine, dal primo passo a uno strumento pratico.</p>
+        </div>
+        <form id="pathQuiz">
+          <fieldset>
+            <legend>Qual è il tuo obiettivo finanziario più importante adesso?</legend>
+            <div class="onboarding-options">
+              <label><input type="radio" name="goal" value="budget" required><span>💶 Fare ordine nel budget e iniziare a risparmiare</span></label>
+              <label><input type="radio" name="goal" value="invest" required><span>🌱 Capire come iniziare a investire</span></label>
+              <label><input type="radio" name="goal" value="home" required><span>🏠 Valutare affitto e acquisto di una casa</span></label>
+              <label><input type="radio" name="goal" value="pension" required><span>🧓 Prepararmi alla pensione</span></label>
+            </div>
+            <button type="submit" class="welcome-btn welcome-btn-main">Mostrami il mio percorso →</button>
+          </fieldset>
+        </form>
+        <div id="pathResult" class="onboarding-result" aria-live="polite" tabindex="-1" hidden></div>
+      </section>
       <a href="/guide/pac/" class="gift block" aria-label="Leggi e scarica la guida gratuita sul Piano di Accumulo PAC">
         <div class="text-5xl" aria-hidden="true">📘</div>
         <div class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-100">Nuova guida gratuita</div>
@@ -159,7 +179,9 @@
           <a href="/strumenti/" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli strumenti →</a></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <a class="tool-card" href="/strumenti/pac-realistico/"><span class="ti" aria-hidden="true">📉</span><b>PAC realistico</b><span class="tx">Quanto ti resta dopo costi, bollo, tasse e inflazione.</span></a>
-          <a class="tool-card" href="/strumenti/impatto-ter/"><span class="ti" aria-hidden="true">🏷️</span><b>Impatto del TER</b><span class="tx">0,07% contro 1,5%: quanto costa un fondo in più.</span></a>
+          <a class="tool-card" href="/strumenti/affitto-vs-comprare/"><span class="ti" aria-hidden="true">🏠</span><b>Affitto o comprare casa?</b><span class="tx">Costi iniziali, mutuo e manutenzione contro affitto e investimento.</span></a>
+          <a class="tool-card" href="/strumenti/costo-vizi/"><span class="ti" aria-hidden="true">☕</span><b>Il costo delle piccole spese</b><span class="tx">Quanto potrebbe valere una spesa ricorrente in 20 anni.</span></a>
+          <a class="tool-card" href="/strumenti/gap-pensionistico/"><span class="ti" aria-hidden="true">🧓</span><b>Gap pensionistico</b><span class="tx">Una stima del divario e del possibile beneficio fiscale.</span></a>
           <a class="tool-card" href="/strumenti/obiettivo-risparmio/"><span class="ti" aria-hidden="true">🎯</span><b>Obiettivo di risparmio</b><span class="tx">«Voglio 100.000 € tra 15 anni»: quanto devo mettere da parte?</span></a>
           <a class="tool-card" href="/strumenti/rendimento-netto-btp/"><span class="ti" aria-hidden="true">🏛️</span><b>BTP, deposito, ETF</b><span class="tx">BTP Valore a confronto, dopo imposte e inflazione.</span></a>
           <a class="tool-card" href="/strumenti/budget-fondo-emergenza/"><span class="ti" aria-hidden="true">🛟</span><b>Budget e fondo di emergenza</b><span class="tx">La tua regola 50/30/20 e la copertura degli imprevisti.</span></a>
@@ -308,6 +330,7 @@
     window.TRENDSCAN_CONFIG = { DATA_BASE: "https://raw.githubusercontent.com/Trendscan70/trendscan/data/" };
   </script>
   <script defer src="app.js"></script>
+  <script defer src="onboarding.js"></script>
   <script defer src="pwa-install.js"></script>
 </body>
 </html>

@@ -242,5 +242,6 @@
   <script>
     (function(){var b=document.getElementById('themeToggle');function set(t){document.documentElement.classList.toggle('dark',t==='dark');b.textContent=t==='dark'?'☀️':'🌙';b.setAttribute('aria-label',t==='dark'?'Attiva modalità chiara':'Attiva modalità scura');var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==='dark'?'#0a0d14':'#f4f5f7';}set(document.documentElement.classList.contains('dark')?'dark':'light');b.addEventListener('click',function(){var t=document.documentElement.classList.contains('dark')?'light':'dark';set(t);try{localStorage.setItem('ts-theme',t);}catch(e){}});})();
   </script>
+  <script src="/glossary.js" defer></script>
 </body>
 </html>

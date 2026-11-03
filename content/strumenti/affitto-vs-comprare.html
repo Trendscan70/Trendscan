@@ -1,0 +1,60 @@
+<div class="tl" data-tool="affitto-vs-comprare" data-noparams>
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>Casa, mutuo e affitto</h2>
+      <div class="tl-field" data-key="price" data-label="Prezzo della casa" data-unit="€" data-min="30000" data-max="1000000" data-step="5000" data-value="250000"></div>
+      <div class="tl-field" data-key="rent" data-label="Affitto mensile comparabile" data-unit="€" data-min="0" data-max="10000" data-step="50" data-value="900"></div>
+      <div class="tl-field" data-key="downPct" data-label="Anticipo sul prezzo" data-unit="%" data-min="0" data-max="90" data-step="5" data-value="20"></div>
+      <div class="tl-field" data-key="years" data-label="Orizzonte del confronto" data-unit="anni" data-min="1" data-max="40" data-step="1" data-value="20"></div>
+      <div class="tl-field" data-key="mortgageRate" data-label="Tasso annuo del mutuo" data-unit="%" data-min="0" data-max="12" data-step="0.1" data-value="3.5"></div>
+      <div class="tl-field" data-key="mortgageYears" data-label="Durata del mutuo" data-unit="anni" data-min="1" data-max="40" data-step="1" data-value="25"></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Costi e ipotesi</div>
+      <div class="tl-field" data-key="feePct" data-label="Spese iniziali di acquisto (notaio, agenzia, imposte)" data-unit="%" data-min="0" data-max="20" data-step="1" data-value="8"></div>
+      <div class="tl-field" data-key="maintenance" data-label="Manutenzione annua sul valore casa" data-unit="%" data-min="0" data-max="5" data-step="0.25" data-value="1"></div>
+      <div class="tl-field" data-key="appreciation" data-label="Variazione annua ipotetica del valore casa" data-unit="%" data-min="-5" data-max="8" data-step="0.5" data-value="1"></div>
+      <div class="tl-field" data-key="rentGrowth" data-label="Aumento annuo ipotetico dell'affitto" data-unit="%" data-min="0" data-max="8" data-step="0.5" data-value="2"></div>
+      <div class="tl-field" data-key="investReturn" data-label="Rendimento annuo ipotetico dell'investimento" data-unit="%" data-min="-5" data-max="12" data-step="0.5" data-value="4"></div>
+      <div class="tl-field" data-key="salePct" data-label="Costo di vendita a fine periodo" data-unit="%" data-min="0" data-max="10" data-step="0.5" data-value="2"></div>
+      <p class="tl-hint">I dati inseriti restano nel browser e non vengono aggiunti al link.</p>
+    </div>
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Rata iniziale del mutuo</span><b data-out="monthlyMortgage">–</b><small>Capitale e interessi; la rata può variare in un mutuo variabile.</small></div>
+        <div class="tl-kpi good"><span>Patrimonio netto con la casa</span><b data-out="ownerEquity">–</b><small>Valore stimato meno mutuo residuo e costo di vendita.</small></div>
+        <div class="tl-kpi hot"><span>Investimenti ipotetici da affittuario</span><b data-out="rentPortfolio">–</b><small>Include anticipo e spese iniziali investiti, più/minus la differenza mensile.</small></div>
+      </div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Valore stimato dell'immobile</span><b data-out="houseValue">–</b></div>
+        <div class="tl-kpi"><span>Mutuo residuo</span><b data-out="mortgageBalance">–</b></div>
+      </div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi il confronto</button>
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Modello didattico, non consulenza immobiliare o finanziaria. Non include tutte le imposte, agevolazioni, spese condominiali, assicurazioni, caparre o costi di trasloco. Si ipotizzano tassi e rendimenti costanti, una crescita annua dell'affitto e della casa, e l'investimento della differenza. Le case possono perdere valore e gli investimenti possono perdere capitale.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Affitto: uno spreco o il costo di un servizio?</h2>
+  <p>L'affitto paga l'uso di una casa e offre flessibilità, ma non crea proprietà. Comprare, invece, non significa trasformare automaticamente ogni rata in patrimonio: la rata comprende interessi, mentre l'acquisto richiede spese iniziali e comporta manutenzione, imposte e costi di vendita.</p>
+  <p>Il confronto qui sopra mette a confronto il patrimonio netto residuo dell'acquisto con un'ipotesi alternativa: investire anticipo e spese iniziali che non vengono usate per comprare, poi investire ogni mese la differenza tra rata più manutenzione e affitto. Se l'affitto è più alto, quella differenza riduce il portafoglio ipotetico.</p>
+  <div class="tl-box"><strong>Il risultato dipende dalle ipotesi.</strong> Cambiando durata, tasso del mutuo, prezzo, affitto, manutenzione, andamento dei prezzi e rendimento dell'investimento, può cambiare anche quale opzione risulta in vantaggio. Un portafoglio teorico negativo indica che i maggiori costi dell'affitto superano il capitale investito: non rappresenta un debito modellato. Non è una previsione né una risposta valida per tutti.</div>
+  <h2>Quali costi abbiamo incluso</h2>
+  <ul>
+    <li>Interessi e rimborso del mutuo attraverso la rata mensile calcolata.</li>
+    <li>Spese iniziali percentuali, modificabili: una stima aggregata per notaio, agenzia e imposte di acquisto.</li>
+    <li>Manutenzione annua, variazione ipotetica del valore dell'immobile e costo di vendita.</li>
+    <li>Affitto mensile e suo aumento annuo ipotetico; rendimento dell'investimento della liquidità alternativa.</li>
+  </ul>
+</div>
+<section class="tl-prose" aria-labelledby="faqAffittoCasa">
+  <h2 id="faqAffittoCasa">Domande frequenti</h2>
+  <details><summary>Il calcolo dice se mi conviene comprare?</summary><p>No: mostra solo il risultato delle ipotesi inserite. Stabilità lavorativa, mobilità, dimensioni della famiglia, disponibilità di liquidità e preferenze personali non si riducono a un numero.</p></details>
+  <details><summary>Perché l'affitto può essere una scelta sensata?</summary><p>Può offrire flessibilità e lasciare liquidità disponibile. Per un confronto equo, però, bisogna considerare cosa si fa con la liquidità non spesa e quanto costa la casa in totale.</p></details>
+  <details><summary>Il rendimento dell'investimento è garantito?</summary><p>No. È un'ipotesi modificabile usata solo per illustrare l'interesse composto. Il valore degli investimenti può oscillare e il capitale può diminuire.</p></details>
+</section>

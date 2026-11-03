@@ -1,0 +1,48 @@
+<div class="tl" data-tool="gap-pensionistico" data-noparams>
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>Età e reddito lordo</h2>
+      <div class="tl-field" data-key="age" data-label="La tua età" data-unit="anni" data-min="18" data-max="66" data-step="1" data-value="35"></div>
+      <div class="tl-field" data-key="income" data-label="Reddito lordo annuo" data-unit="€" data-min="0" data-max="200000" data-step="1000" data-value="30000"></div>
+      <p class="tl-hint">I dati restano nel browser e non vengono aggiunti al link condiviso.</p>
+    </div>
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Pensione pubblica ipotizzata (60%)</span><b data-out="publicIncome">–</b></div>
+        <div class="tl-kpi"><span>Obiettivo di reddito (80%)</span><b data-out="targetIncome">–</b></div>
+        <div class="tl-kpi hot"><span>Divario mensile ipotizzato</span><b data-out="monthlyGap">–</b></div>
+      </div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Tempo alla pensione (ipotesi a 67 anni)</span><b data-out="retireIn">–</b></div>
+        <div class="tl-kpi good"><span>Versamento simulato nel fondo</span><b data-out="fundContribution">–</b></div>
+        <div class="tl-kpi good"><span>Capitale teorico accumulato</span><b data-out="fundBalance">–</b></div>
+      </div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Integrazione mensile teorica per 20 anni</span><b data-out="fundMonthly">–</b></div>
+        <div class="tl-kpi"><span>Versamento mensile per colmare il divario</span><b data-out="neededContribution">–</b><small>Con rendimento ipotetico del 3% annuo.</small></div>
+        <div class="tl-kpi hot"><span>Deducibilità fiscale stimata</span><b data-out="taxSaving">–</b><small>Risparmio fiscale indicativo annuo.</small></div>
+      </div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn" data-act="share">📤 Condividi lo strumento</button>
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+        <span class="tl-toast" data-out="toast" role="status"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Stima puramente didattica: non è una previsione INPS, un calcolo individuale o una consulenza previdenziale/fiscale. Usa una pensione pubblica pari al 60% del reddito, un obiettivo dell'80%, pensionamento a 67 anni, rendimento del fondo del 3% e 20 anni di erogazione. Non considera inflazione, carriera, contributi già versati, costi, rendimenti variabili o normativa futura.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Che cos'è il gap pensionistico</h2>
+  <p>È la differenza indicativa tra il reddito mensile desiderato dopo il lavoro e la pensione pubblica che si riceverà. Il calcolatore usa percentuali convenzionali solo per rendere il concetto comprensibile: l'importo effettivo dipende da storia contributiva, retribuzioni, età di uscita e regole previdenziali.</p>
+  <h2>Come leggere la stima del fondo pensione</h2>
+  <p>Per mostrare un esempio, ipotizziamo un versamento pari al 5% del reddito lordo annuo, entro il limite di deducibilità di 5.164,57 euro, e un rendimento costante del 3%. La rendita è distribuita su 20 anni. Il risparmio fiscale applica un'aliquota marginale indicativa (23%, 35% o 43%) scelta in base al reddito, ma il trattamento effettivo dipende dalla situazione fiscale personale e dalla legge vigente.</p>
+  <div class="tl-box"><strong>Prima di decidere, verifica i dati reali.</strong> Consulta l'estratto contributivo e il simulatore ufficiale dell'INPS; per un fondo pensione verifica costi, comparto, rischi, modalità di erogazione e regole fiscali aggiornate. La deducibilità è soggetta a condizioni e limiti.</div>
+</div>
+<section class="tl-prose" aria-labelledby="faqPensione">
+  <h2 id="faqPensione">Domande frequenti</h2>
+  <details><summary>La pensione pubblica sarà davvero il 60% del reddito?</summary><p>Non è possibile dedurlo da questa stima. Il 60% è solo un'ipotesi didattica uniforme; la pensione reale si calcola sulla posizione contributiva e sulle norme applicabili.</p></details>
+  <details><summary>Quanto si può dedurre versando a un fondo pensione?</summary><p>La normativa prevede in generale un limite annuo di deducibilità, ma la situazione individuale può cambiare il beneficio effettivo. Controlla le regole aggiornate e chiedi un parere fiscale qualificato.</p></details>
+  <details><summary>Il rendimento del fondo è garantito?</summary><p>No. Il risultato dipende dal comparto scelto, dai mercati, dai costi e dall'orizzonte. Puoi perdere parte del capitale e i rendimenti passati non garantiscono quelli futuri.</p></details>
+</section>

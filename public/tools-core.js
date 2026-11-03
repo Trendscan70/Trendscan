@@ -205,9 +205,84 @@
     };
   }
 
+  // ---------------------------------------------------------------- affitto o acquisto della casa
+  function houseVsRent(o) {
+    var price = Math.max(0, num(o.price)), rent = Math.max(0, num(o.rent));
+    var years = Math.max(1, Math.round(num(o.years, 20))), mortgageYears = Math.max(1, Math.round(num(o.mortgageYears, 25)));
+    var downPct = Math.min(0.9, Math.max(0, num(o.downPct) / 100));
+    var feePct = Math.max(0, num(o.feePct) / 100), maintenance = Math.max(0, num(o.maintenance) / 100);
+    var appreciation = num(o.appreciation) / 100, rentGrowth = num(o.rentGrowth) / 100;
+    var investReturn = num(o.investReturn) / 100, salePct = Math.max(0, num(o.salePct) / 100);
+    var principal = price * (1 - downPct), mortgageRate = Math.max(-0.99, num(o.mortgageRate) / 100);
+    var mortgageMonths = mortgageYears * 12;
+    var monthlyRate = Math.pow(1 + mortgageRate, 1 / 12) - 1;
+    var payment = principal === 0 ? 0 : monthlyRate === 0 ? principal / mortgageMonths :
+      principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -mortgageMonths));
+    var balance = principal, renterPortfolio = price * (downPct + feePct), contributed = renterPortfolio;
+    var investedStart = renterPortfolio, ownedRunning = 0, rentPaid = 0, monthlyInvestRate = Math.pow(1 + investReturn, 1 / 12) - 1;
+
+    for (var m = 1; m <= years * 12; m++) {
+      var year = Math.floor((m - 1) / 12);
+      var homeValue = price * Math.pow(1 + appreciation, year);
+      var ownerHousing = (m <= mortgageMonths ? payment : 0) + homeValue * maintenance / 12;
+      var monthlyRent = rent * Math.pow(1 + rentGrowth, year);
+      ownedRunning += ownerHousing;
+      rentPaid += monthlyRent;
+      renterPortfolio = renterPortfolio * (1 + monthlyInvestRate) + ownerHousing - monthlyRent;
+      contributed += ownerHousing - monthlyRent;
+      if (m <= mortgageMonths) {
+        var interest = balance * monthlyRate;
+        balance = Math.max(0, balance + interest - payment);
+      }
+    }
+
+    var finalHomeValue = price * Math.pow(1 + appreciation, years);
+    var ownerEquity = finalHomeValue * (1 - salePct) - balance;
+    return {
+      years: years, monthlyMortgage: payment, initialCash: investedStart,
+      mortgageBalance: balance, homeValue: finalHomeValue, ownerEquity: ownerEquity,
+      renterPortfolio: renterPortfolio, difference: renterPortfolio - ownerEquity,
+      rentPaid: rentPaid, ownerRunning: ownedRunning, renterContributions: contributed
+    };
+  }
+
+  // ---------------------------------------------------------------- costo-opportunità di una spesa ricorrente
+  function recurringSpend(o) {
+    var amount = Math.max(0, num(o.amount)), monthly = o.frequency === 'weekly' ? amount * 52 / 12 : amount * 365 / 12;
+    var years = Math.max(1, Math.round(num(o.years, 20))), rate = num(o.rate);
+    var monthlyRate = Math.pow(1 + rate, 1 / 12) - 1, balance = 0;
+    for (var m = 0; m < years * 12; m++) balance = (balance + monthly) * (1 + monthlyRate);
+    return { monthly: monthly, paid: monthly * years * 12, value: balance, growth: balance - monthly * years * 12, years: years };
+  }
+
+  // ---------------------------------------------------------------- stima didattica del gap pensionistico
+  function pensionGap(o) {
+    var age = Math.min(66, Math.max(18, Math.round(num(o.age, 35))));
+    var income = Math.max(0, num(o.income)), years = Math.max(1, 67 - age), months = years * 12;
+    var replacement = 0.6, target = 0.8, annualContribution = Math.min(income * 0.05, 5164.57);
+    var taxRate = income <= 28000 ? 0.23 : income <= 50000 ? 0.35 : 0.43;
+    var monthlyContribution = annualContribution / 12, monthlyGap = income * (target - replacement) / 12;
+    var growth = 0.03, f = Math.pow(1 + growth, 1 / 12), fundBalance = 0;
+    for (var m = 0; m < months; m++) fundBalance = (fundBalance + monthlyContribution) * f;
+    var payoutMonths = 20 * 12, payoutRate = f - 1;
+    var fundMonthly = payoutRate === 0 ? fundBalance / payoutMonths :
+      fundBalance * payoutRate / (1 - Math.pow(1 + payoutRate, -payoutMonths));
+    var targetCapital = payoutRate === 0 ? monthlyGap * payoutMonths :
+      monthlyGap * (1 - Math.pow(1 + payoutRate, -payoutMonths)) / payoutRate;
+    var annuityFactor = f * (Math.pow(f, months) - 1) / (f - 1);
+    return {
+      age: age, years: years, income: income, publicMonthly: income * replacement / 12,
+      targetMonthly: income * target / 12, monthlyGap: monthlyGap,
+      annualContribution: annualContribution, monthlyContribution: monthlyContribution,
+      taxSaving: annualContribution * taxRate, fundBalance: fundBalance, fundMonthly: fundMonthly,
+      targetCapital: targetCapital, requiredMonthly: annuityFactor ? targetCapital / annuityFactor : 0
+    };
+  }
+
   return {
     BOLLO: BOLLO, TAX_STD: TAX_STD, TAX_GOV: TAX_GOV, BOLLO_FIXED: BOLLO_FIXED, PROFILES: PROFILES,
     pacPath: pacPath, fvPlain: fvPlain, pacRealistic: pacRealistic, solveMonthly: solveMonthly,
-    terImpact: terImpact, irr: irr, compareBonds: compareBonds, budgetPlan: budgetPlan
+    terImpact: terImpact, irr: irr, compareBonds: compareBonds, budgetPlan: budgetPlan,
+    houseVsRent: houseVsRent, recurringSpend: recurringSpend, pensionGap: pensionGap
   };
 });
