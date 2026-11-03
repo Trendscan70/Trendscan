@@ -201,7 +201,28 @@
 
     <section id="view-articoli" class="view hidden space-y-6">
       <div class="section-title"><h1 class="text-2xl sm:text-3xl">Articoli di finanza personale</h1><span class="section-bar"></span></div>
-      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Raccogliamo automaticamente gli articoli dei principali giornali e siti italiani che parlano di risparmio, investimenti, fisco, casa e pensione.</p>
+      <section class="rounded-2xl border border-orange-200 bg-white p-5 sm:p-7 space-y-4" aria-labelledby="editorialHeading">
+        <div>
+          <div class="text-xs font-extrabold uppercase tracking-widest brand-text">A cura della Redazione TrendScan</div>
+          <h2 id="editorialHeading" class="text-xl sm:text-2xl font-black mt-1">Articoli della redazione</h2>
+          <p class="text-sm text-gray-600 mt-2 max-w-3xl">Approfondimenti originali, guide pratiche e analisi di finanza personale scritti dalla nostra redazione.</p>
+        </div>
+        <a href="/articoli/redazione/individuare-trend-rialzista/" class="block rounded-xl border border-gray-200 p-4 sm:p-5 hover:border-[#e8412c] transition-colors">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider brand-text">Mercati · Analisi tecnica</span>
+          <h3 class="font-extrabold text-lg sm:text-xl leading-snug mt-1">Come individuare un trend rialzista prima degli altri: segnali, grafici e conferme</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mt-2 max-w-3xl">Una guida pratica per riconoscere massimi e minimi crescenti, leggere una rottura di resistenza, usare medie mobili e volumi senza confondere un segnale con una certezza.</p>
+          <span class="inline-flex mt-3 text-sm font-extrabold brand-text">Leggi l’articolo →</span>
+        </a>
+        <a href="/articoli/redazione/azioni-ai-2027/" class="block rounded-xl border border-gray-200 p-4 sm:p-5 hover:border-[#e8412c] transition-colors">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider brand-text">Intelligenza artificiale · Mercati</span>
+          <h3 class="font-extrabold text-lg sm:text-xl leading-snug mt-1">Le 10 azioni AI da monitorare nel 2027</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mt-2 max-w-3xl">Una watchlist ragionata di dieci società lungo la filiera dell’intelligenza artificiale: chip, cloud, reti e software. Tesi long, indicatori da seguire e rischi, senza target price.</p>
+          <span class="inline-flex mt-3 text-sm font-extrabold brand-text">Leggi l’articolo →</span>
+        </a>
+        <a href="/articoli/redazione/" class="text-sm font-bold underline underline-offset-4">Vai a tutti gli articoli della redazione</a>
+      </section>
+      <div class="section-title pt-2"><h2 class="text-xl sm:text-2xl">Articoli dai giornali</h2><span class="section-bar"></span></div>
+      <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Raccogliamo automaticamente le notizie dei principali giornali e siti italiani su risparmio, investimenti, fisco, casa e pensione.</p>
       <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
         <select id="sourceFilter" class="px-4 py-2 rounded-full bg-white border border-gray-200 text-sm font-semibold"><option value="ALL">Tutte le testate</option></select>
         <span id="articleCount" class="text-xs text-gray-500"></span>
