@@ -147,7 +147,6 @@ function head({ title, desc, canonical, ogType = 'article', ld, scripts, image =
   return `<!DOCTYPE html>
 <html lang="it">
 <head>
-  <script src="/consent.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${esc(title)} | TrendScan</title>
@@ -175,9 +174,6 @@ function head({ title, desc, canonical, ogType = 'article', ld, scripts, image =
   <meta name="twitter:image" content="${image}">
   <meta name="twitter:image:alt" content="${esc(title)}">
   ${jsonLd(ld)}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>(function(){try{var t=localStorage.getItem('ts-theme');if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();</script>
   <meta name="theme-color" content="#f4f5f7">
   <link rel="stylesheet" href="/tailwind.css">
@@ -289,6 +285,7 @@ async function renderGuide(g, P) {
     ? `<p class="text-[11px] text-gray-400 leading-relaxed">Esempio teorico a rendimento costante, senza costi, tasse e inflazione: i mercati reali oscillano e nessun rendimento è garantito. Non è una previsione né una consulenza. «L'interesse composto è l'ottava meraviglia del mondo» è una frase molto citata e spesso attribuita a Einstein, ma senza prove che l'abbia detta. Per capire come si fa il calcolo, leggi <a class="underline text-indigo-300 hover:text-white" href="/guide/interesse-composto/">la guida all'interesse composto</a>.</p>` : '';
   return `${head({ title: g.seoTitle, desc: g.desc, canonical: url(g), ld, scripts: g.scripts })}
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
+  <script src="/consent.js"></script>
 
 ${hdr(P, 'guide')}
 
@@ -351,7 +348,7 @@ async function renderTool(t, P) {
   ];
   return `${head({ title: t.seoTitle, desc: t.desc, canonical: toolUrl(t), ld, scripts: t.chart, ogType: 'website' })}
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
-
+  <script src="/consent.js"></script>
 ${hdr(P, 'strumenti')}
 
   <main class="max-w-7xl mx-auto px-4 py-6">
@@ -410,7 +407,7 @@ function renderToolsHub(P) {
         </a>`).join('\n        ');
   return `${head({ title, desc, canonical: `${SITE}/strumenti/`, ld, ogType: 'website' })}
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
-
+  <script src="/consent.js"></script>
 ${hdr(P, 'strumenti')}
 
   <main class="max-w-7xl mx-auto px-4 py-6">
@@ -474,7 +471,7 @@ function renderShare(x, P) {
   const ld = [{ '@context': 'https://schema.org', '@type': 'WebPage', name: x.h1, description: x.desc, url: shareUrl(x), inLanguage: 'it-IT', image: `${SITE}/og/${x.img}`, publisher: { '@id': `${SITE}/#org` } }];
   return `${head({ title: x.h1.replace(/: .*/, ''), desc: x.desc, canonical: shareUrl(x), ld, ogType: 'website', image: `${SITE}/og/${x.img}`, robots: 'noindex, follow' })}
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
-
+  <script src="/consent.js"></script>
 ${P.header.replace(/ active"/g, '"')}
 
   <main class="max-w-7xl mx-auto px-4 py-6">
@@ -523,7 +520,7 @@ function renderHub(P) {
         </a>`).join('\n        ');
   return `${head({ title, desc, canonical: `${SITE}/guide/`, ld, ogType: 'website' })}
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
-
+  <script src="/consent.js"></script>
 ${hdr(P, 'guide')}
 
   <main class="max-w-7xl mx-auto px-4 py-6">

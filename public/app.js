@@ -926,7 +926,7 @@ function showView(name, restoreY) {
   $('view-' + name).classList.remove('hidden');
   const navKey = name === 'articolo' ? 'articoli' : name;
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === navKey));
-  window.scrollTo(restoreY != null ? { top: restoreY, behavior: 'instant' } : { top: 0 });
+  requestAnimationFrame(() => window.scrollTo(restoreY != null ? { top: restoreY, behavior: 'instant' } : { top: 0 }));
   setPageMeta(name);
 }
 const PAGE_META = {

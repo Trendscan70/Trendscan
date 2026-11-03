@@ -58,8 +58,8 @@
   }
 
   // ------------------------------------------------------------ banner
-  var CSS = '#ts-cc{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;padding:.75rem;display:flex;justify-content:center;pointer-events:none;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}' +
-    '#ts-cc .cc-box{pointer-events:auto;max-width:58rem;width:100%;background:#fff;color:#111827;border:1px solid #d1d5db;border-radius:1rem;box-shadow:0 20px 60px -15px rgba(0,0,0,.45);padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.85rem;animation:ts-cc-in .25s ease-out}' +
+  var CSS = '#ts-cc{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;padding:.75rem;display:flex;justify-content:center;pointer-events:none;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}' +
+    '#ts-cc .cc-box{pointer-events:auto;max-width:58rem;width:100%;background:#fff;color:#111827;border:1px solid #d1d5db;border-radius:1rem;box-shadow:0 20px 60px -15px rgba(0,0,0,.45);padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.85rem}' +
     '@media(min-width:720px){#ts-cc .cc-box{flex-direction:row;align-items:center;gap:1.4rem}}' +
     '#ts-cc h2{font-size:.95rem;font-weight:800;margin:0 0 .3rem;line-height:1.25;color:inherit}' +
     '#ts-cc p{font-size:.8rem;line-height:1.5;margin:0;color:inherit}#ts-cc .cc-text{flex:1}' +
@@ -69,8 +69,7 @@
     '#ts-cc button{flex:1;min-width:7.5rem;padding:.75rem 1.3rem;border-radius:.75rem;font-family:inherit;font-weight:800;font-size:.9rem;line-height:1.1;border:2px solid #111827;background:#111827;color:#fff;cursor:pointer}' +
     '#ts-cc button:hover{background:#374151;border-color:#374151}#ts-cc button:focus-visible{outline:3px solid #e8412c;outline-offset:2px}' +
     'html.dark #ts-cc .cc-box{background:#121826;color:#f3f4f6;border-color:#2b3347}html.dark #ts-cc a{color:#ff9b8a}' +
-    'html.dark #ts-cc button{background:#f3f4f6;color:#111827;border-color:#f3f4f6}html.dark #ts-cc button:hover{background:#d1d5db;border-color:#d1d5db}' +
-    '@keyframes ts-cc-in{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}@media(prefers-reduced-motion:reduce){#ts-cc .cc-box{animation:none}}';
+    'html.dark #ts-cc button{background:#f3f4f6;color:#111827;border-color:#f3f4f6}html.dark #ts-cc button:hover{background:#d1d5db;border-color:#d1d5db}';
 
   var box = null, openedByUser = false, lastFocus = null;
 
@@ -106,5 +105,5 @@
     if (!r) open(false);
     else if (r.analytics) loadGA();
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start, { once: true });
 })();
