@@ -1,30 +1,9 @@
 // TrendScan – script delle pagine delle guide (/guide/ e /guide/<guida>/).
-// Fa quattro cose: dimensione del testo (A−/A+), pulsante ☰, vecchi indirizzi /guide/#guide-xxx e simulatore PAC.
+// Gestisce il pulsante ☰, i vecchi indirizzi /guide/#guide-xxx e il simulatore PAC.
 (function () {
   'use strict';
 
-  // ---- 1. Dimensione del testo (stessa chiave usata finora dal sito: ts-guide-fs)
-  var FS_STEPS = [85, 100, 115, 130, 150], fsIndex = 1;
-  function applyFontSize() {
-    var pct = FS_STEPS[fsIndex], root = document.getElementById('academyRoot'), cryptoRoot = document.getElementById('cryptoRoot');
-    var zoomOk = window.CSS && CSS.supports && CSS.supports('zoom', '1.2');
-    if (cryptoRoot) document.documentElement.style.fontSize = pct + '%';
-    else if (zoomOk) { if (root) root.style.setProperty('--guide-zoom', String(pct / 100)); document.documentElement.style.fontSize = ''; }
-    else document.documentElement.style.fontSize = pct + '%';
-    document.querySelectorAll('[data-fs="-1"]').forEach(function (b) { b.disabled = fsIndex === 0; });
-    document.querySelectorAll('[data-fs="1"]').forEach(function (b) { b.disabled = fsIndex === FS_STEPS.length - 1; });
-  }
-  try { var v = parseInt(localStorage.getItem('ts-guide-fs'), 10); if (v >= 0 && v < FS_STEPS.length) fsIndex = v; } catch (e) {}
-  applyFontSize();
-
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-fs]');
-    if (b && !b.disabled) {
-      var d = parseInt(b.dataset.fs, 10);
-      fsIndex = d === 0 ? 1 : Math.min(FS_STEPS.length - 1, Math.max(0, fsIndex + d));
-      try { localStorage.setItem('ts-guide-fs', String(fsIndex)); } catch (err) {}
-      applyFontSize(); return;
-    }
     // ---- Condividi (pagine /radar/ e /termometro/): menu di condivisione del telefono, altrimenti copia il link
     var sh = e.target.closest('[data-share]');
     if (sh) {

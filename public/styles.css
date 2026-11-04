@@ -1,7 +1,16 @@
 /* TrendScan Hub – stile "rivista" (ispirato ai magazine tech: card con immagini grandi, titoli forti, accento arancio-rosso) */
 :root { --brand: #c23422; --brand-dark: #9e2b1d; }
 html { scroll-behavior: smooth; font-size: 100%; }
+html.ts-homepage { font-size: 105%; }
 body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+
+.ts-font-controls { position: fixed; right: 1rem; bottom: 1rem; z-index: 1000; display: flex; align-items: center; gap: .3rem; padding: .35rem .5rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; color: #111827; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+.ts-font-controls-label { margin: 0 .25rem; font-size: .75rem; font-weight: 700; }
+.ts-font-controls button { min-width: 2.4rem; height: 2.4rem; padding: 0 .5rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; color: inherit; font: inherit; font-weight: 800; cursor: pointer; }
+.ts-font-controls button:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+.ts-font-controls button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.ts-font-controls button:disabled { opacity: .45; cursor: not-allowed; }
+html.dark .ts-font-controls, html.dark .ts-font-controls button { border-color: #2b3347; background: #121826; color: #e5e7eb; }
 
 .ts-language-control { position: relative; display: inline-flex; flex: 0 0 auto; align-items: center; gap: .35rem; }
 .ts-language-control select { max-width: 9rem; min-height: 2.5rem; padding: .4rem .7rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; color: #111827; font: inherit; font-size: .75rem; font-weight: 800; cursor: pointer; }
@@ -129,13 +138,12 @@ html.dark code.bg-gray-100 { background: #1c2335 !important; }
 .ad-slot.hidden { display: none; }
 
 
-/* ==== Guide: capitoli, sommario e dimensione del testo ==== */
-#academyRoot, #cryptoRoot { zoom: var(--guide-zoom, 1); }
+/* ==== Guide: capitoli e sommario ==== */
 [id^="guide-"] { scroll-margin-top: 84px; }
-.guide-tools { position: fixed; right: 12px; bottom: 16px; z-index: 30; display: flex; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(17,24,39,.92); border: 1px solid #374151; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.guide-tools { position: fixed; right: 12px; bottom: 4.25rem; z-index: 30; display: flex; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(17,24,39,.92); border: 1px solid #374151; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
 .guide-tools button { min-width: 38px; height: 38px; padding: 0 10px; border-radius: 999px; color: #fff; font-weight: 900; font-size: 14px; background: #1f2937; }
 .guide-tools button:hover { background: #4f46e5; }
-.guide-tools button[disabled], .fs-btn[disabled] { opacity: .35; cursor: not-allowed; }
+.guide-tools button[disabled] { opacity: .35; cursor: not-allowed; }
 .view.hidden .guide-tools { display: none; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

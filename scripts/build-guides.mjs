@@ -201,8 +201,6 @@ ${scripts ? `  <script defer src="${CHART_JS}"></script>\n` : ''}</head>`;
 
 const tools = `
   <div id="guideTools" class="guide-tools" role="group" aria-label="Strumenti di lettura">
-    <button type="button" data-fs="-1" class="fs-btn" aria-label="Riduci il testo">A−</button>
-    <button type="button" data-fs="1" class="fs-btn" aria-label="Aumenta il testo">A+</button>
     <button type="button" data-go="/guide/" aria-label="Tutte le guide">☰</button>
   </div>`;
 const tailFor = (extra = '') => `
