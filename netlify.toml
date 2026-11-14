@@ -1,0 +1,58 @@
+# Configurazione Netlify per TrendScan (sito statico)
+[build]
+  publish = "public"
+  command = ""
+  # Netlify espone il ramo in BRANCH; exit 0 salta il build del ramo dati.
+  ignore = "test \"$BRANCH\" = \"data\""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# Immagini social (Termometro, Trend Radar): rigenerate ogni ora dal workflow e salvate nel ramo "data".
+# Cache breve, cosi' chi condivide vede dati freschi (le piattaforme social tengono comunque una copia per un po').
+[[headers]]
+  for = "/og/*"
+  [headers.values]
+    Cache-Control = "public, max-age=900"
+    Content-Type = "image/png"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "application/xml"
+
+# Dominio canonico: evita che Google indicizzi sia www sia il dominio principale.
+[[redirects]]
+  from = "https://www.trendscan.it/*"
+  to = "https://trendscan.it/:splat"
+  status = 301
+  force = true
+
+# Pagina "Chi siamo": mantiene un solo URL indicizzabile con slash finale.
+[[redirects]]
+  from = "/chi-siamo.html"
+  to = "/chi-siamo/"
+  status = 301
+
+# Le immagini social stanno nel ramo "data" (non in main): il sito le serve a /og/termometro.png e /og/radar.png
+[[redirects]]
+  from = "/og/*"
+  to = "https://raw.githubusercontent.com/Trendscan70/trendscan/data/og/:splat"
+  status = 200
+  force = true
