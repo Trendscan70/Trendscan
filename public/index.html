@@ -101,10 +101,10 @@
       <section class="welcome" aria-labelledby="welcomeTitle">
         <span class="welcome-badge">Finanza personale per chi parte da zero</span>
         <h1 id="welcomeTitle">Capisci i tuoi soldi, un passo alla volta. <span>Senza paroloni.</span></h1>
-        <p class="welcome-sub" data-gl>Guide semplici su risparmio, ETF e PAC, un simulatore gratuito per fare i tuoi conti, video educativi e le notizie dei giornali italiani, tutto in un posto.</p>
+        <p class="welcome-sub" data-gl>Guide gratuite da leggere e scaricare, strumenti pratici, video educativi e le notizie dei giornali italiani, tutto in un posto.</p>
         <div class="welcome-cta">
-          <button type="button" data-jump="inizia" class="welcome-btn welcome-btn-main">Parti da zero ↓</button>
-          <button type="button" data-jump="mini-sim" class="welcome-btn welcome-btn-alt">🧮 Calcola quanto puoi mettere da parte</button>
+          <button type="button" data-jump="inizia" class="welcome-btn welcome-btn-main">Scopri le guide gratuite ↓</button>
+          <button type="button" data-jump="strumenti" class="welcome-btn welcome-btn-alt">🧰 Scopri gli strumenti gratuiti</button>
           <button type="button" data-install class="welcome-btn welcome-btn-install" aria-label="Installa l'app TrendScan sul tuo dispositivo">📲 Installa l'app gratis</button>
         </div>
         <ul class="welcome-trust">
@@ -113,71 +113,43 @@
           <li>✓ Fonti dichiarate e link pubblicitari sempre segnalati · <a href="/metodo/">Come lavoriamo</a></li>
         </ul>
       </section>
-      <section id="profilazione" class="onboarding" aria-labelledby="pathQuizTitle">
-        <div>
-          <span class="onboarding-badge">Percorso su misura</span>
-          <h2 id="pathQuizTitle">Da dove vuoi cominciare?</h2>
-          <p>Rispondi a una domanda: ti suggeriamo tre contenuti in ordine, dal primo passo a uno strumento pratico.</p>
+      <section id="inizia" class="guide-showcase" aria-labelledby="guideShowcaseTitle">
+        <div class="guide-showcase-visual">
+          <img src="/guide-gratuite.svg" alt="Illustrazione di guide TrendScan gratuite su risparmio, ETF e investimenti" loading="lazy">
+          <span class="guide-showcase-sticker">Guide pratiche · gratuite</span>
         </div>
-        <form id="pathQuiz">
-          <fieldset>
-            <legend>Qual è il tuo obiettivo finanziario più importante adesso?</legend>
-            <div class="onboarding-options">
-              <label><input type="radio" name="goal" value="budget" required><span>💶 Fare ordine nel budget e iniziare a risparmiare</span></label>
-              <label><input type="radio" name="goal" value="invest" required><span>🌱 Capire come iniziare a investire</span></label>
-              <label><input type="radio" name="goal" value="home" required><span>🏠 Valutare affitto e acquisto di una casa</span></label>
-              <label><input type="radio" name="goal" value="pension" required><span>🧓 Prepararmi alla pensione</span></label>
-            </div>
-            <button type="submit" class="welcome-btn welcome-btn-main">Mostrami il mio percorso →</button>
-          </fieldset>
-        </form>
-        <div id="pathResult" class="onboarding-result" aria-live="polite" tabindex="-1" hidden></div>
+        <div class="guide-showcase-copy">
+          <span class="guide-showcase-kicker">La biblioteca TrendScan</span>
+          <h2 id="guideShowcaseTitle">Guide gratuite, da leggere e scaricare</h2>
+          <p>Impara un argomento alla volta con guide semplici e pratiche. Puoi leggerle online e scaricare le risorse disponibili, come il PDF sul PAC e il foglio Excel per il bilancio familiare.</p>
+          <ul class="guide-showcase-links">
+            <li><a href="/guide/risparmio-50-30-20/">Budget e regola 50/30/20 <span>Organizza entrate e spese</span></a></li>
+            <li><a href="/guide/etf/">Cos'è un ETF <span>La guida semplice per iniziare</span></a></li>
+            <li><a href="/guide/pac/">Cos'è un PAC <span>Leggi la guida e trova il PDF</span></a></li>
+            <li><a href="/guide/interesse-composto/">Interesse composto <span>Scopri l'effetto del tempo</span></a></li>
+            <li><a href="/guide/bilancio-familiare-excel/">Bilancio familiare <span>Scarica il foglio Excel gratuito</span></a></li>
+          </ul>
+          <div class="guide-showcase-actions">
+            <a class="guide-showcase-primary" href="/guide/">Esplora tutte le guide →</a>
+            <a class="guide-showcase-download" href="/downloads/Il%20Piano%20di%20Accumulo%20(PAC).pdf" download>⬇ Scarica il PDF sul PAC</a>
+          </div>
+        </div>
       </section>
-      <a href="/guide/pac/" class="gift block" aria-label="Leggi e scarica la guida gratuita sul Piano di Accumulo PAC">
-        <div class="text-5xl" aria-hidden="true">📘</div>
-        <div class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-100">Nuova guida gratuita</div>
-        <div class="text-xl sm:text-2xl font-black leading-tight">Il Piano di Accumulo (PAC)</div>
-        <div class="text-sm text-emerald-50">Scopri come funziona un PAC e come muovere i primi passi. Nei prossimi mesi arriveranno altre guide interessanti firmate TrendScan.</div>
-        <span class="gift-btn">Leggi la guida e scarica il PDF →</span>
-      </a>
-      <div id="inizia">
-        <div class="section-title"><h2>Inizia da qui: 5 passi, senza paroloni</h2><span class="section-bar"></span>
-          <a href="/guide/" class="text-sm font-bold brand-text whitespace-nowrap">Tutte le guide →</a></div>
-        <div id="guideTeasers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
-      </div>
       <details id="glossario" class="glossary">
         <summary><span aria-hidden="true">📖</span> Parole difficili? Il mini-glossario in italiano semplice</summary>
         <dl id="glList" class="glossary-list"></dl>
       </details>
-      <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
-        <section id="mini-sim" class="hsim lg:col-span-3" aria-labelledby="hsimTitle">
-          <span class="hsim-badge">Prova subito</span>
-          <h2 id="hsimTitle">Quanto potresti mettere da parte?</h2>
-          <p class="hsim-sub">Muovi i cursori: è un esempio teorico per capire quanto conta il tempo, non una previsione.</p>
-          <div class="hsim-inputs">
-            <label for="hsMonthly"><span>Ogni mese metto da parte</span> <b id="hsMonthlyVal">100 €</b></label>
-            <input type="range" id="hsMonthly" min="20" max="1000" step="10" value="100">
-            <label for="hsYears"><span>Per quanti anni</span> <b id="hsYearsVal">20 anni</b></label>
-            <input type="range" id="hsYears" min="1" max="40" step="1" value="20">
-          </div>
-          <div class="hsim-res" aria-live="polite">
-            <div><span>Versati da te</span><b id="hsPaid">24.000 €</b></div>
-            <div><span>Con un rendimento ipotetico del 3% l'anno</span><b id="hsLow">–</b></div>
-            <div><span>Con un rendimento ipotetico del 7% l'anno</span><b id="hsHigh">–</b></div>
-          </div>
-          <p class="hsim-note">Calcolo teorico a rendimento costante, senza costi, tasse e inflazione: i mercati reali oscillano e nessun rendimento è garantito. <a href="/guide/simulatore-pac/">Guarda la guida</a>.</p>
-        </section>
-        <a href="/guide/bilancio-familiare-excel/" class="gift lg:col-span-2">
-          <div class="text-5xl" aria-hidden="true">🎁</div>
-          <div class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-100">Regalo gratuito</div>
-          <div class="text-xl sm:text-2xl font-black leading-tight">Il foglio Excel per il tuo bilancio familiare</div>
-          <div class="text-sm text-emerald-50">Tieni sotto controllo entrate, spese e risparmio mese per mese: il primo passo per capire dove vanno i tuoi soldi.</div>
-          <span class="gift-btn">Scaricalo ora →</span>
-        </a>
-      </div>
       <div id="strumenti">
-        <div class="section-title"><h2>Strumenti gratuiti: fai i conti sul serio</h2><span class="section-bar"></span>
+        <div class="section-title"><h2>La Cassetta degli Attrezzi: strumenti finanziari pratici</h2><span class="section-bar"></span>
           <a href="/strumenti/" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli strumenti →</a></div>
+        <p class="text-sm text-gray-600 -mt-2 mb-4 max-w-3xl">Calcolatori gratuiti e fogli pronti da scaricare: parti dai tuoi numeri, senza registrazione.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          <a class="tool-card border-indigo-300 shadow-sm" href="/strumenti/costo-reale-debito/"><span class="ti" aria-hidden="true">💳</span><b>Costo reale del debito</b><span class="tx">Interessi della rata contro montante ipotetico di un PAC con lo stesso versamento.</span></a>
+          <a class="tool-card border-indigo-300 shadow-sm" href="/guide/bilancio-familiare-excel/"><span class="ti" aria-hidden="true">📊</span><b>Template budget 50/30/20</b><span class="tx">Scarica il foglio Excel/Google Fogli e organizza il budget mensile.</span></a>
+          <a class="tool-card border-indigo-300 shadow-sm" href="/strumenti/quoziente-sopravvivenza/"><span class="ti" aria-hidden="true">🛟</span><b>Quoziente di Sopravvivenza</b><span class="tx">Quanti mesi coprono le tue spese fisse con la liquidità disponibile?</span></a>
+          <a class="tool-card" href="/strumenti/budget-fondo-emergenza/"><span class="ti" aria-hidden="true">🧭</span><b>Budget e fondo di emergenza</b><span class="tx">Confronta le tue spese con la regola 50/30/20 e pianifica la riserva.</span></a>
+        </div>
+        <h3 class="text-sm font-extrabold uppercase tracking-wide text-gray-500 mb-3">Altri strumenti gratuiti</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <a class="tool-card" href="/strumenti/pac-realistico/"><span class="ti" aria-hidden="true">📉</span><b>PAC realistico</b><span class="tx">Quanto ti resta dopo costi, bollo, tasse e inflazione.</span></a>
           <a class="tool-card" href="/strumenti/affitto-vs-comprare/"><span class="ti" aria-hidden="true">🏠</span><b>Affitto o comprare casa?</b><span class="tx">Costi iniziali, mutuo e manutenzione contro affitto e investimento.</span></a>
@@ -185,12 +157,7 @@
           <a class="tool-card" href="/strumenti/gap-pensionistico/"><span class="ti" aria-hidden="true">🧓</span><b>Gap pensionistico</b><span class="tx">Una stima del divario e del possibile beneficio fiscale.</span></a>
           <a class="tool-card" href="/strumenti/obiettivo-risparmio/"><span class="ti" aria-hidden="true">🎯</span><b>Obiettivo di risparmio</b><span class="tx">«Voglio 100.000 € tra 15 anni»: quanto devo mettere da parte?</span></a>
           <a class="tool-card" href="/strumenti/rendimento-netto-btp/"><span class="ti" aria-hidden="true">🏛️</span><b>BTP, deposito, ETF</b><span class="tx">BTP Valore a confronto, dopo imposte e inflazione.</span></a>
-          <a class="tool-card" href="/strumenti/budget-fondo-emergenza/"><span class="ti" aria-hidden="true">🛟</span><b>Budget e fondo di emergenza</b><span class="tx">La tua regola 50/30/20 e la copertura degli imprevisti.</span></a>
         </div>
-      </div>
-      <div>
-        <div class="section-title"><h2>Parti da una domanda</h2><span class="section-bar"></span></div>
-        <div id="topicTiles" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"></div>
       </div>
       <div>
         <div class="section-title"><h2>Le notizie di oggi</h2><span class="section-bar"></span>
@@ -200,11 +167,6 @@
         <div id="homeLatest" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 home-latest"></div>
       </div>
       <div class="ad-slot hidden" data-ad-slot="home-1" aria-label="Pubblicità"></div>
-      <div id="homeTopicsWrap" class="hidden">
-        <div class="section-title"><h2>Per argomento</h2><span class="section-bar"></span>
-          <a href="#articoli" class="text-sm font-bold brand-text whitespace-nowrap">Tutti gli articoli →</a></div>
-        <div id="homeByTopic" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-      </div>
       <div class="rounded-3xl bg-[#111] text-white p-5 sm:p-8 relative overflow-hidden">
         <div class="absolute -right-24 -top-24 w-80 h-80 rounded-full brand-bg opacity-20 blur-3xl"></div>
         <div class="relative flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
@@ -217,7 +179,7 @@
         </div>
         <div id="homeVideos" class="relative grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
       </div>
-      <section id="marketStrip" class="hidden" aria-label="Mercati e Termometro TrendScan"></section>
+      <section id="marketStrip" class="hidden" aria-label="Dati di mercato, Termometro e Trend Radar"></section>
     </section>
 
     <section id="view-articoli" class="view hidden space-y-6">
@@ -228,6 +190,12 @@
           <h2 id="editorialHeading" class="text-xl sm:text-2xl font-black mt-1">Articoli della redazione</h2>
           <p class="text-sm text-gray-600 mt-2 max-w-3xl">Approfondimenti originali, guide pratiche e analisi di finanza personale scritti dalla nostra redazione.</p>
         </div>
+        <a href="/articoli/redazione/inflazione-tassa-invisibile/" class="block rounded-xl border border-gray-200 p-4 sm:p-5 hover:border-[#e8412c] transition-colors">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider brand-text">Inflazione · Risparmio</span>
+          <h3 class="font-extrabold text-lg sm:text-xl leading-snug mt-1">Inflazione: la tassa invisibile che ti sta impoverendo (e come fermarla)</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mt-2 max-w-3xl">Carrello della spesa, caffè e potere d'acquisto: cosa succede ai soldi fermi sul conto e quali passi pratici valutare.</p>
+          <span class="inline-flex mt-3 text-sm font-extrabold brand-text">Leggi l’articolo →</span>
+        </a>
         <a href="/articoli/redazione/isee-fai-da-soli-2027/" class="block rounded-xl border border-gray-200 p-4 sm:p-5 hover:border-[#e8412c] transition-colors">
           <span class="text-[11px] font-extrabold uppercase tracking-wider brand-text">ISEE · DSU · Guida pratica</span>
           <h3 class="font-extrabold text-lg sm:text-xl leading-snug mt-1">Come Fare l'ISEE da Soli nel 2027: Guida Completa</h3>
@@ -343,7 +311,6 @@
     window.TRENDSCAN_CONFIG = { DATA_BASE: "https://raw.githubusercontent.com/Trendscan70/trendscan/data/" };
   </script>
   <script defer src="app.js"></script>
-  <script defer src="onboarding.js"></script>
   <script defer src="pwa-install.js"></script>
 </body>
 </html>

@@ -132,6 +132,18 @@ const TOOLS = [
     desc: 'Una stima didattica del divario pensionistico in base a età e reddito, con un esempio di contribuzione al fondo pensione e deducibilità fiscale.',
     sub: 'Ipotesi semplificate per orientarsi: non è una simulazione INPS o una consulenza previdenziale.',
     tx: 'Stima il divario pensionistico e l’effetto ipotetico dei contributi', guides: ['risparmio-50-30-20', 'pac'] },
+  { slug: 'costo-reale-debito', icon: '💳', featured: true, label: 'Costo reale del debito', short: 'Costo reale del debito',
+    h1: 'Costo reale del debito: interessi o PAC?',
+    seoTitle: 'Calcolatore costo reale del debito e confronto PAC',
+    desc: 'Inserisci rata, TAEG e durata del prestito: stima il capitale finanziato e gli interessi totali e confrontali con un PAC ipotetico della stessa rata.',
+    sub: 'Quanto paghi di interessi? E quale montante ipotetico avrebbe la stessa rata investita in un PAC?',
+    tx: 'Confronta interessi del prestito e rata investita in un PAC', guides: ['risparmio-50-30-20', 'pac'] },
+  { slug: 'quoziente-sopravvivenza', icon: '🛟', featured: true, label: 'Quoziente di Sopravvivenza Finanziaria', short: 'Quoziente di sopravvivenza',
+    h1: 'Quoziente di Sopravvivenza Finanziaria: quanti mesi copre la tua liquidità?',
+    seoTitle: 'Calcolatore fondo emergenza e mesi di autonomia finanziaria',
+    desc: 'Inserisci le spese fisse mensili e la liquidità disponibile per stimare quanti mesi potresti coprire senza stipendio.',
+    sub: 'Liquidità divisa per spese fisse: una stima rapida dei mesi di autonomia finanziaria.',
+    tx: 'Stima i mesi di spese coperti dalla liquidità disponibile', guides: ['risparmio-50-30-20'] },
   { slug: 'budget-fondo-emergenza', icon: '🛟', label: 'Budget 50/30/20 e fondo di emergenza', short: 'Budget e fondo di emergenza',
     h1: 'Budget 50/30/20 e fondo di emergenza: il tuo piano personalizzato',
     seoTitle: 'Budget 50/30/20 e fondo di emergenza: calcolo personale',
@@ -408,19 +420,20 @@ ${tools}${tailFor(toolScripts + '\n  <script src="/glossary.js" defer></script>'
 
 function renderToolsHub(P) {
   const title = 'Strumenti gratuiti per risparmiare e investire';
-  const desc = 'Calcolatori gratuiti: PAC con tasse e inflazione, affitto o acquisto, spese ricorrenti, gap pensionistico, obiettivo di risparmio, BTP e budget 50/30/20.';
+  const desc = 'Calcolatori gratuiti e template pronti: costo del debito, fondo di emergenza, budget 50/30/20, PAC, investimenti e risparmio.';
   const ld = [
     { '@context': 'https://schema.org', '@type': 'CollectionPage', name: title, description: desc, inLanguage: 'it-IT', url: `${SITE}/strumenti/`, dateModified: UPDATED,
       publisher: { '@id': `${SITE}/#org` }, image: `${SITE}/og-image.png`,
       mainEntity: { '@type': 'ItemList', itemListElement: TOOLS.map((t, i) => ({ '@type': 'ListItem', position: i + 1, url: toolUrl(t), name: t.h1 })) } },
     crumbs([['Home', `${SITE}/`], ['Strumenti', `${SITE}/strumenti/`]])
   ];
-  const cards = TOOLS.map(t => `<a href="${toolHref(t)}" class="flex flex-col gap-2 p-5 rounded-2xl bg-gray-900/80 border border-gray-800 hover:border-indigo-400 transition">
-          <span class="text-3xl" aria-hidden="true">${t.icon}</span>
+  const card = (t, featured = false) => `<a href="${toolHref(t)}" class="flex flex-col gap-2 p-5 rounded-2xl bg-gray-900/80 border ${featured ? 'border-indigo-500 ring-1 ring-indigo-500/50' : 'border-gray-800'} hover:border-indigo-400 transition">${featured ? '<span class="self-start px-2 py-1 rounded-full bg-indigo-500/20 text-indigo-200 text-[10px] font-extrabold uppercase tracking-wide">Novità · strumento gratuito</span>' : ''}<span class="text-3xl" aria-hidden="true">${t.icon}</span>
           <h2 class="text-lg font-extrabold text-white leading-snug">${esc(t.h1)}</h2>
           <p class="text-sm text-gray-300 leading-relaxed">${esc(t.sub)}</p>
           <span class="mt-auto text-xs font-bold text-indigo-300">Apri lo strumento →</span>
-        </a>`).join('\n        ');
+        </a>`;
+  const featuredCards = TOOLS.filter(t => t.featured).map(t => card(t, true)).join('\n        ');
+  const cards = TOOLS.filter(t => !t.featured).map(t => card(t)).join('\n        ');
   return `${head({ title, desc, canonical: `${SITE}/strumenti/`, ld, ogType: 'website' })}
 <body class="bg-[#f4f5f7] text-gray-900 antialiased">
   <script src="/consent.js"></script>
@@ -432,13 +445,27 @@ ${hdr(P, 'strumenti')}
       <div class="academy-banner rounded-3xl p-6 sm:p-8 relative overflow-hidden">
         <div class="max-w-3xl">
           <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold border border-purple-500/40 uppercase tracking-widest">🧰 Strumenti gratuiti</span>
-          <h1 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">${title}</h1>
-          <p class="text-sm text-gray-200 mt-2 leading-relaxed">Calcolatori semplici, senza registrazione, che mostrano quello che i simulatori "lordi" non dicono: quanto pesano costi, tasse e inflazione, e quanto devi mettere da parte per raggiungere un obiettivo. I numeri restano nel tuo browser.</p>
+          <h1 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">La Cassetta degli Attrezzi: strumenti finanziari pratici</h1>
+          <p class="text-sm text-gray-200 mt-2 leading-relaxed">Calcolatori gratuiti e template pronti da usare per fare ordine nel budget, valutare un debito e capire quanto dura il fondo di emergenza. I calcoli avvengono nel browser.</p>
           ${updatedLine}
         </div>
       </div>
 
-      <section aria-label="Elenco degli strumenti" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <section aria-labelledby="nuoviStrumenti" class="space-y-4">
+        <h2 id="nuoviStrumenti" class="text-xl font-extrabold text-white">🧰 Appena aggiunti: parti dai tuoi numeri</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        ${featuredCards}
+        <a href="/guide/bilancio-familiare-excel/" class="flex flex-col gap-2 p-5 rounded-2xl bg-emerald-950/70 border border-emerald-500/60 hover:border-emerald-300 transition">
+          <span class="self-start px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-200 text-[10px] font-extrabold uppercase tracking-wide">Template gratuito</span>
+          <span class="text-3xl" aria-hidden="true">📊</span>
+          <h2 class="text-lg font-extrabold text-white leading-snug">Budget 50/30/20 ed Excel per il bilancio</h2>
+          <p class="text-sm text-gray-300 leading-relaxed">Scarica il foglio già impostato, compatibile con Excel e Google Fogli.</p>
+          <span class="mt-auto text-xs font-bold text-emerald-200">Scarica il template →</span>
+        </a>
+        </div>
+      </section>
+
+      <section aria-label="Tutti gli strumenti" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         ${cards}
         <a href="/guide/simulatore-pac/" class="flex flex-col gap-2 p-5 rounded-2xl bg-gray-900/80 border border-gray-800 hover:border-indigo-400 transition">
           <span class="text-3xl" aria-hidden="true">🧮</span>

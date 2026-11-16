@@ -17,6 +17,7 @@
  * Variabili: DATA_DIR (default public/data), MARKETS_CONFIG (percorso config)
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { computeSentiment } from './markets-sentiment.mjs';
 
 const CONFIG_URL = process.env.MARKETS_CONFIG ? new URL('file://' + process.env.MARKETS_CONFIG) : new URL('../config/markets.json', import.meta.url);
 const CFG = JSON.parse(await readFile(CONFIG_URL, 'utf8'));
@@ -98,65 +99,6 @@ async function providerEcbXml(src, prevFx) {
 const PROVIDERS = { 'ecb-xml': providerEcbXml };
 
 // ---------------------------------------------------------------------------
-// Termometro TrendScan: tono delle notizie raccolte
-// ---------------------------------------------------------------------------
-const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const lexRe = list => new RegExp('\\b(?:' + list.join('|') + ')\\b', 'g');
-
-// Un calo di spread, inflazione, bollette... e' una buona notizia (e un loro aumento una cattiva): lo si gestisce
-// prima del conteggio semplice, togliendo dal testo le frasi riconosciute cosi' che non contino due volte.
-function inverseRules(inv) {
-  if (!inv) return null;
-  const subj = inv.subjects.join('|'), up = inv.up.join('|'), down = inv.down.join('|'), gap = '[^.;!?]{0,60}?';
-  const pair = m => new RegExp(`\\b(?:${m})\\b${gap}\\b(?:${subj})\\b|\\b(?:${subj})\\b${gap}\\b(?:${m})\\b`, 'g');
-  return { good: pair(down), bad: pair(up) };
-}
-
-function computeSentiment(articles, S, prev) {
-  const neg = lexRe(S.lexicon.negative), pos = lexRe(S.lexicon.positive), inv = inverseRules(S.inverse);
-  const count = (re, t) => (t.match(re) || []).length;
-  // restituisce {p, g}: segnali positivi e negativi trovati nel testo normalizzato
-  const signals = text => {
-    let p = 0, g = 0;
-    if (inv) {
-      text = text.replace(inv.good, () => { p++; return ' '; });
-      text = text.replace(inv.bad, () => { g++; return ' '; });
-    }
-    return { p: p + count(pos, text), g: g + count(neg, text) };
-  };
-  let wSum = 0, tSum = 0, n = 0;
-  const counts = { pos: 0, neg: 0, neutral: 0 };
-  for (const a of articles) {
-    const ageH = (NOW - Date.parse(a.publishedAt)) / 3600e3;
-    if (!(ageH >= -1 && ageH <= S.windowHours)) continue;
-    const t = signals(norm(a.title)), m = signals(norm(a.summary));
-    const p = t.p * S.titleWeight + m.p, g = t.g * S.titleWeight + m.g;
-    const tone = p > g ? 1 : g > p ? -1 : 0;
-    const w = Math.pow(0.5, Math.max(0, ageH) / S.halfLifeHours);
-    wSum += w; tSum += w * tone; n++;
-    counts[tone > 0 ? 'pos' : tone < 0 ? 'neg' : 'neutral']++;
-  }
-  const history = Array.isArray(prev?.history) ? prev.history.filter(h => h && h.d && Number.isFinite(h.s)) : [];
-  const out = { ready: false, score: null, label: null, n, counts, windowHours: S.windowHours, asOf: new Date(NOW).toISOString(), change: null, avg7: null, history };
-  if (n < S.minArticles || !wSum) return out;
-
-  const net = tSum / wSum; // da -1 (tutte negative) a +1 (tutte positive)
-  const score = Math.round(Math.min(100, Math.max(0, 50 + 100 * net * S.gain / 1)));
-  out.ready = true; out.score = score; out.labels = S.labels;
-  out.label = (S.labels.find(l => score <= l.max) || S.labels.at(-1)).name;
-
-  const today = new Date(NOW).toISOString().slice(0, 10);
-  const hist = history.filter(h => h.d !== today);
-  const yesterday = hist.at(-1);
-  out.change = yesterday ? score - yesterday.s : null;
-  const last7 = hist.slice(-7).map(h => h.s);
-  out.avg7 = last7.length >= 3 ? Math.round(last7.reduce((a, b) => a + b, 0) / last7.length) : null;
-  hist.push({ d: today, s: score, n });
-  out.history = hist.slice(-S.historyDays);
-  return out;
-}
-
-// ---------------------------------------------------------------------------
 async function main() {
   const prev = await readJson(`${DATA_DIR}/markets.json`);
   const out = { meta: { generatedAt: new Date(NOW).toISOString(), version: 1 }, fx: prev?.fx ?? null, sentiment: prev?.sentiment ?? null };
@@ -181,7 +123,7 @@ async function main() {
   try {
     const art = await readJson(`${DATA_DIR}/articles.json`);
     if (!art?.articles) throw new Error('articles.json non trovato');
-    out.sentiment = computeSentiment(art.articles, CFG.sentiment, prev?.sentiment);
+    out.sentiment = computeSentiment(art.articles, CFG.sentiment, prev?.sentiment, NOW);
     const s = out.sentiment;
     log.push(s.ready ? `✓ termometro: ${s.score}/100 (${s.label}) su ${s.n} notizie [+${s.counts.pos} / -${s.counts.neg} / =${s.counts.neutral}]` : `- termometro: dati insufficienti (${s.n} notizie nelle ultime ${s.windowHours} h, minimo ${CFG.sentiment.minArticles})`);
   } catch (e) {

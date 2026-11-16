@@ -205,6 +205,30 @@
     };
   }
 
+  // ---------------------------------------------------------------- costo del debito e confronto didattico con un PAC
+  function debtCost(o) {
+    var payment = Math.max(0, num(o.payment)), months = Math.max(1, Math.round(num(o.months)));
+    var annualRate = Math.max(0, num(o.taeg)), monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
+    var principal = monthlyRate === 0
+      ? payment * months
+      : payment * (1 - Math.pow(1 + monthlyRate, -months)) / monthlyRate;
+    var totalPayments = payment * months, monthlyInvestmentRate = Math.pow(1 + num(o.investReturn), 1 / 12) - 1;
+    var pacValue = 0;
+    for (var m = 0; m < months; m++) pacValue = (pacValue + payment) * (1 + monthlyInvestmentRate);
+    return {
+      principal: principal, totalPayments: totalPayments,
+      interest: Math.max(0, totalPayments - principal),
+      pacContributions: totalPayments, pacValue: pacValue,
+      pacGain: pacValue - totalPayments, months: months
+    };
+  }
+
+  // ---------------------------------------------------------------- mesi di autonomia finanziaria
+  function survivalMonths(o) {
+    var expenses = Math.max(0, num(o.monthlyExpenses)), liquidity = Math.max(0, num(o.liquidity));
+    return { months: expenses > 0 ? liquidity / expenses : null, monthlyExpenses: expenses, liquidity: liquidity };
+  }
+
   // ---------------------------------------------------------------- affitto o acquisto della casa
   function houseVsRent(o) {
     var price = Math.max(0, num(o.price)), rent = Math.max(0, num(o.rent));
@@ -283,6 +307,7 @@
     BOLLO: BOLLO, TAX_STD: TAX_STD, TAX_GOV: TAX_GOV, BOLLO_FIXED: BOLLO_FIXED, PROFILES: PROFILES,
     pacPath: pacPath, fvPlain: fvPlain, pacRealistic: pacRealistic, solveMonthly: solveMonthly,
     terImpact: terImpact, irr: irr, compareBonds: compareBonds, budgetPlan: budgetPlan,
+    debtCost: debtCost, survivalMonths: survivalMonths,
     houseVsRent: houseVsRent, recurringSpend: recurringSpend, pensionGap: pensionGap
   };
 });

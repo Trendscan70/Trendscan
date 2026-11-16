@@ -250,6 +250,38 @@
     lastShare = 'Ho calcolato il mio fondo di emergenza e il budget 50/30/20 con lo strumento gratuito di TrendScan.';
   };
 
+  // ================================================================ 6. Costo reale del debito
+  TOOLS['costo-reale-debito'] = function (S) {
+    var r = C.debtCost({ payment: S.payment, months: S.years * 12, taeg: S.taeg / 100, investReturn: S.investReturn / 100 });
+    out('principal', eur(r.principal));
+    out('totalPayments', eur(r.totalPayments));
+    out('interest', eur(r.interest));
+    out('pacValue', eur(r.pacValue));
+    out('pacGain', eur(r.pacGain));
+    outHtml('message', 'Con una rata di <b>' + eur(S.payment) + ' al mese per ' + S.years + ' anni e un TAEG del ' + pctN(S.taeg, 1) +
+      '</b>, il capitale finanziato stimato è <b>' + eur(r.principal) + '</b> e gli interessi complessivi circa <b>' + eur(r.interest) +
+      '</b>. Versando la stessa rata in un PAC ipotetico al ' + pctN(S.investReturn, 1) + ', avresti versato ' + eur(r.pacContributions) +
+      ' e il montante teorico sarebbe ' + eur(r.pacValue) + ' (crescita ipotetica: ' + eur(r.pacGain) + ').');
+    lastShare = 'Costo del debito stimato: ' + eur(r.interest) + ' di interessi; la rata investita in un PAC ipotetico al ' + pctN(S.investReturn, 1) + ' potrebbe valere ' + eur(r.pacValue) + '.';
+  };
+
+  // ================================================================ 7. Quoziente di sopravvivenza finanziaria
+  TOOLS['quoziente-sopravvivenza'] = function (S) {
+    var r = C.survivalMonths({ monthlyExpenses: S.expenses, liquidity: S.liquidity });
+    if (r.months == null) {
+      outHtml('message', 'Inserisci spese mensili superiori a zero per calcolare i mesi di autonomia.');
+      out('months', '–');
+      out('monthsSub', '');
+      return;
+    }
+    out('months', r.months.toLocaleString(numberLocale(), { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + (r.months === 1 ? ' mese' : ' mesi'));
+    out('monthsSub', eur(r.liquidity) + ' ÷ ' + eur(r.monthlyExpenses) + ' di spese mensili');
+    outHtml('message', 'Con ' + eur(r.liquidity) + ' di liquidità e spese fisse pari a ' + eur(r.monthlyExpenses) +
+      ' al mese, la tua riserva coprirebbe <b>' + r.months.toLocaleString(numberLocale(), { minimumFractionDigits: 0, maximumFractionDigits: 1 }) +
+      ' mesi</b>, se le spese restassero costanti e non arrivassero altre entrate.');
+    lastShare = 'La mia liquidità coprirebbe circa ' + r.months.toLocaleString(numberLocale(), { maximumFractionDigits: 1 }) + ' mesi di spese fisse secondo il Quoziente di Sopravvivenza Finanziaria.';
+  };
+
   // ================================================================ 6. Affitto o acquisto
   TOOLS['affitto-vs-comprare'] = function (S) {
     var r = C.houseVsRent({

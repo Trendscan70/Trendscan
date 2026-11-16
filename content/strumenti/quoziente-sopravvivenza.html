@@ -1,0 +1,35 @@
+<div class="tl" data-tool="quoziente-sopravvivenza" data-noparams>
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>Il tuo fondo di emergenza</h2>
+      <div class="tl-field" data-key="expenses" data-label="Spese fisse mensili" data-unit="€" data-min="0" data-max="20000" data-step="50" data-value="1500" data-hint="Includi le uscite che dovresti continuare a sostenere senza stipendio: casa, bollette, cibo, trasporti e rate."></div>
+      <div class="tl-field" data-key="liquidity" data-label="Liquidità disponibile" data-unit="€" data-min="0" data-max="500000" data-step="100" data-value="9000" data-hint="Considera solo somme liquide e accessibili, non investimenti che potrebbero perdere valore o avere vincoli."></div>
+      <p class="tl-hint">🔒 I dati inseriti restano nel browser e non vengono aggiunti al link.</p>
+    </div>
+
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi hot"><span>Quoziente di sopravvivenza</span><b data-out="months">–</b><small data-out="monthsSub">mesi coperti dalla liquidità</small></div>
+      </div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">La stima divide la liquidità inserita per le spese fisse mensili: non considera entrate successive, spese straordinarie, inflazione o variazioni dei consumi. Non è una garanzia sulla durata effettiva del fondo.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Come si calcola il quoziente</h2>
+  <p>La formula è immediata: <strong>liquidità disponibile ÷ spese fisse mensili</strong>. Con 9.000 € disponibili e 1.500 € di spese, per esempio, la copertura teorica è di 6 mesi. Il risultato può avere una frazione di mese, perché il calcolo usa il rapporto esatto tra i due importi.</p>
+  <p>Per rendere la stima più utile, includi le spese davvero difficili da tagliare: abitazione, utenze, alimentari essenziali, trasporti e rate. La liquidità dovrebbe essere accessibile; un investimento volatile o vincolato non equivale necessariamente a denaro subito disponibile.</p>
+  <div class="tl-box"><strong>Una misura orientativa, non un obiettivo uguale per tutti.</strong> Le guide finanziarie citano spesso riserve di alcuni mesi di spese, ma il livello adeguato dipende da stabilità del reddito, persone a carico, coperture e altre risorse.</div>
+  <p>Per un quadro più ampio puoi usare il <a href="/strumenti/budget-fondo-emergenza/">budget 50/30/20 e fondo di emergenza</a> oppure scaricare il <a href="/guide/bilancio-familiare-excel/">foglio Excel per il bilancio familiare</a>.</p>
+</div>
+<section class="tl-prose" aria-labelledby="faqSopravvivenza">
+  <h2 id="faqSopravvivenza">Domande frequenti sul fondo di emergenza</h2>
+  <details><summary>Quali spese devo inserire?</summary><p>Parti dalle uscite essenziali che continueresti a sostenere senza reddito: casa, bollette, spesa alimentare, trasporti, assicurazioni e rate. Puoi adattare la definizione alla tua situazione.</p></details>
+  <details><summary>Devo includere investimenti e credito disponibile?</summary><p>Il calcolo chiede la liquidità che puoi usare senza dover vendere investimenti o ricorrere a nuovo debito. Valuta personalmente eventuali vincoli, tempi di disinvestimento e rischi.</p></details>
+  <details><summary>Quanti mesi sono sufficienti?</summary><p>Non esiste un numero adatto a tutti. Stabilità del lavoro, persone a carico e irregolarità delle entrate possono cambiare la riserva prudente; il risultato è un punto di partenza, non un consiglio personalizzato.</p></details>
+</section>

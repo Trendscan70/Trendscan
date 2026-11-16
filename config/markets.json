@@ -26,10 +26,11 @@
     }
   ],
   "sentiment": {
+    "version": 2,
     "windowHours": 48,
     "halfLifeHours": 24,
     "minArticles": 15,
-    "gain": 1.25,
+    "gain": 0.5,
     "titleWeight": 2,
     "labels": [
       { "max": 40, "name": "Tono negativo" },

@@ -1,0 +1,9 @@
+Template budget 50/30/20;;;;;
+Inserisci il reddito netto mensile nella cella B2;;;;;
+Reddito netto mensile;1800;;;;
+Categoria;Quota indicativa;Budget mensile;Spesa effettiva;Differenza;Note
+Necessità;50%;=B3*B5;;;Casa, bollette, spesa, trasporti, rate
+Desideri;30%;=B3*B6;;;Uscite, hobby, viaggi
+Risparmio e obiettivi;20%;=B3*B7;;;Fondo emergenza e obiettivi
+Totale;=SUM(B5:B7);=SUM(C5:C7);=SUM(D5:D7);=C8-D8;
+Nota;;;;;Percentuali orientative: adattale alle tue entrate e spese reali.

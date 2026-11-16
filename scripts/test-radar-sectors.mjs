@@ -27,4 +27,30 @@ assert.ok(byId('real-estate').articles.some(article => article.id === 'homes'), 
 assert.ok(byId('energy').articles.some(article => article.id === 'oil'), 'classificazione energetica');
 assert.ok(rows.every(sector => sector.articles.every(article => article.id !== 'old' && article.id !== 'invalid')), 'esclusione articoli vecchi o con URL non valido');
 assert.ok(byId('technology').articles[0].source && byId('technology').articles[0].url, 'ogni risultato conserva testata e fonte originale');
-console.log('✓ test settori Trend Radar: classificazione, filtri Finviz, periodo e citazioni');
+
+const makeWindow = (prefix, publishedAt, technologyCount, financialCount) => Array.from({ length: 12 }, (_, index) => {
+  const title = index < technologyCount ? 'Nvidia presenta nuovi chip'
+    : index < technologyCount + financialCount ? 'Le banche aggiornano i prestiti'
+      : `Notizia neutra ${prefix} ${index}`;
+  return {
+    id: `${prefix}-${index}`,
+    title,
+    summary: 'Aggiornamento economico',
+    url: `https://example.com/${prefix}/${index}`,
+    source: `Testata ${index}`,
+    sourceId: `source-${index}`,
+    publishedAt: new Date(Date.parse(publishedAt) + index * 60000).toISOString()
+  };
+});
+const momentumArticles = [
+  ...makeWindow('recent', '2026-10-25T10:00:00Z', 3, 1),
+  ...makeWindow('previous', '2026-10-16T10:00:00Z', 1, 3)
+];
+const momentumRows = buildSectorRows(momentumArticles, config.sectors, now);
+const technologyMomentum = momentumRows.find(sector => sector.id === 'technology').momentum7d;
+assert.equal(technologyMomentum.ready, true, 'confronto settimanale disponibile con campione sufficiente');
+assert.equal(technologyMomentum.recentCount, 3, 'conteggia le notizie del settore nella settimana recente');
+assert.equal(technologyMomentum.previousCount, 1, 'conteggia le notizie del settore nella settimana precedente');
+assert.equal(technologyMomentum.changePp, 16.7, 'misura la variazione della quota sul totale delle notizie');
+assert.equal(buildSectorRows(momentumArticles.slice(0, 9), config.sectors, now)[0].momentum7d.ready, false, 'nasconde i confronti con campioni insufficienti');
+console.log('✓ test settori Trend Radar: classificazione, filtri, citazioni e momentum settimanale');

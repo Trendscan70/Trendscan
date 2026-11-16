@@ -1,0 +1,43 @@
+<div class="tl" data-tool="costo-reale-debito" data-noparams>
+  <div class="tl-grid">
+    <div class="tl-inputs">
+      <h2>I numeri del prestito</h2>
+      <div class="tl-field" data-key="payment" data-label="Rata mensile" data-unit="€" data-min="0" data-max="5000" data-step="10" data-value="300"></div>
+      <div class="tl-field" data-key="taeg" data-label="TAEG" data-unit="%" data-min="0" data-max="40" data-step="0.1" data-value="8"></div>
+      <div class="tl-field" data-key="years" data-label="Durata residua" data-unit="anni" data-min="1" data-max="10" data-step="1" data-value="5"></div>
+      <hr class="tl-sep">
+      <div class="tl-sub">Confronto ipotetico con un PAC</div>
+      <div class="tl-field" data-key="investReturn" data-label="Rendimento annuo ipotetico del PAC" data-unit="%" data-min="0" data-max="10" data-step="0.5" data-value="5" data-hint="Ipotesi di rendimento costante, non una previsione né un rendimento garantito."></div>
+      <p class="tl-hint">🔒 I dati inseriti restano nel browser e non vengono aggiunti al link.</p>
+    </div>
+
+    <div class="tl-results" aria-live="polite">
+      <div class="tl-msg" data-out-html="message"></div>
+      <div class="tl-kpis">
+        <div class="tl-kpi"><span>Capitale finanziato stimato</span><b data-out="principal">–</b><small>valore attuale delle rate al TAEG indicato</small></div>
+        <div class="tl-kpi bad"><span>Interessi complessivi stimati</span><b data-out="interest">–</b><small>rate totali meno capitale finanziato</small></div>
+        <div class="tl-kpi"><span>Totale delle rate</span><b data-out="totalPayments">–</b><small>rata mensile × mesi residui</small></div>
+        <div class="tl-kpi hot"><span>PAC: montante ipotetico</span><b data-out="pacValue">–</b><small>versando la stessa rata per lo stesso periodo</small></div>
+        <div class="tl-kpi"><span>Crescita ipotetica del PAC</span><b data-out="pacGain">–</b><small>al lordo di costi, tasse e inflazione</small></div>
+      </div>
+      <div class="tl-actions">
+        <button type="button" class="tl-btn alt" data-act="reset">↺ Ripristina</button>
+      </div>
+    </div>
+  </div>
+  <p class="tl-disc">Stima educativa: il TAEG e la rata sono usati per ricostruire un finanziamento con rate costanti, senza modellare separatamente spese iniziali, assicurazioni, opzioni o variazioni contrattuali. Il montante PAC è puramente ipotetico, non garantito e non tiene conto di costi, imposte e inflazione. Il confronto non è un invito a investire invece di rimborsare un debito.</p>
+</div>
+
+<div class="tl-prose">
+  <h2>Come leggere il costo del debito</h2>
+  <p>Inserisci la rata mensile, il <strong>TAEG</strong> e gli anni che mancano alla fine del finanziamento. Il calcolo stima il capitale finanziato come valore attuale delle rate, poi sottrae questo importo dalla somma delle rate per ottenere gli interessi e gli oneri impliciti nel modello.</p>
+  <p>Nel confronto parallelo, la stessa rata viene versata ogni mese in un PAC ipotetico fino alla stessa scadenza. La crescita mostrata dipende interamente dal rendimento che scegli: i mercati non crescono in linea retta e un investimento può perdere valore, anche per periodi lunghi.</p>
+  <div class="tl-box"><strong>Il TAEG del contratto fa fede.</strong> Verifica il piano di ammortamento e il prospetto informativo del finanziatore: commissioni, assicurazioni e altre condizioni possono cambiare il costo effettivo. Questo simulatore non sostituisce quei documenti.</div>
+  <p>Prima di investire, è utile avere una riserva per gli imprevisti. Puoi stimare il fondo con il <a href="/strumenti/quoziente-sopravvivenza/">Quoziente di Sopravvivenza Finanziaria</a> e organizzare entrate e uscite con il <a href="/strumenti/budget-fondo-emergenza/">calcolatore 50/30/20</a>.</p>
+</div>
+<section class="tl-prose" aria-labelledby="faqCostoDebito">
+  <h2 id="faqCostoDebito">Domande frequenti sul costo del debito</h2>
+  <details><summary>Il TAEG coincide sempre con il tasso usato nel contratto?</summary><p>Il TAEG è un indicatore del costo complessivo del credito secondo le condizioni comunicate, ma non descrive da solo ogni dettaglio del piano. Per importi e scadenze effettivi controlla contratto e piano di ammortamento.</p></details>
+  <details><summary>Il PAC è un'alternativa certa alla rata?</summary><p>No. Il suo montante è un esempio teorico basato su un rendimento costante scelto dall'utente. Il rendimento non è garantito e il capitale investito può diminuire.</p></details>
+  <details><summary>Il calcolo include le spese accessorie?</summary><p>Le spese non ricorrenti e le condizioni specifiche del contratto non vengono modellate separatamente. Usa il TAEG e i documenti del finanziamento per valutare il costo reale della tua offerta.</p></details>
+</section>

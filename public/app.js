@@ -3,12 +3,12 @@
 // Nessun contenuto e' scritto a mano: senza i file il sito mostra uno stato vuoto, mai articoli inventati.
 
 const CATEGORIES = [
-  { name: 'Risparmio e Budget', q: 'Come metto da parte più soldi?',  icon: '💶', cls: 'g-risparmio',   img: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=900&auto=format&fit=crop' },
-  { name: 'ETF e Investimenti', q: 'Come inizio a investire?',  icon: '📈', cls: 'g-investimenti', img: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Pensione e TFR', q: 'Che pensione avrò?',      icon: '👴', cls: 'g-pensione',    img: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Casa e Mutui', q: 'Affitto, mutuo o bonus casa?',        icon: '🏠', cls: 'g-casa',        img: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Tasse e Fisco', q: 'Cosa devo sapere sulle tasse?',       icon: '🧾', cls: 'g-tasse',       img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900&auto=format&fit=crop' },
-  { name: 'Banche e Conti', q: 'Quale conto scelgo?',      icon: '🏦', cls: 'g-banche',      img: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=900&auto=format&fit=crop' }
+  { name: 'Risparmio e Budget', icon: '💶', cls: 'g-risparmio' },
+  { name: 'ETF e Investimenti', icon: '📈', cls: 'g-investimenti' },
+  { name: 'Pensione e TFR', icon: '👴', cls: 'g-pensione' },
+  { name: 'Casa e Mutui', icon: '🏠', cls: 'g-casa' },
+  { name: 'Tasse e Fisco', icon: '🧾', cls: 'g-tasse' },
+  { name: 'Banche e Conti', icon: '🏦', cls: 'g-banche' }
 ];
 const HERO_IMG = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1400&auto=format&fit=crop';
 
@@ -114,13 +114,12 @@ async function bootstrap() {
   renderSourceFilter();
   renderAll();
   setupEvents();
-  setupHomeSim();
   setupGlossaryTip();
   route();
 }
 
 function renderAll() {
-  renderHero(); renderMarketStrip(); renderTopicTiles(); renderHomeLatest(); renderHomeTopics(); renderHomeVideos(); renderGuideTeasers(); renderGlossary(); applyGlossary();
+  renderHero(); renderMarketStrip(); renderHomeLatest(); renderHomeVideos(); renderGlossary(); applyGlossary();
   renderArticles(); renderMarketsView(); renderVideoPage();
 }
 
@@ -207,17 +206,6 @@ function renderHero() {
   state.heroIds = new Set([main.id, ...side.map(s => s.id)]);
 }
 
-function renderTopicTiles() {
-  $('topicTiles').innerHTML = CATEGORIES.map(c => {
-    const n = state.articles.filter(a => a.category === c.name).length;
-    return `
-    <button class="tile ${c.cls} text-left" data-cat="${esc(c.name)}">
-      <span class="thumb-emoji" style="font-size:3rem">${c.icon}</span>${imgTag(c.img, '')}<div class="shade"></div>
-      <div class="absolute left-3 bottom-3 right-3 z-10"><div class="text-[11px] opacity-80">${esc(c.name)}${n ? ' · ' + n + ' articoli' : ''}</div>
-      <div class="font-extrabold leading-tight">${esc(c.q || c.name)}</div></div>
-    </button>`; }).join('');
-}
-
 function renderHomeLatest() {
   const el = $('homeLatest');
   if (!state.articles.length) { el.innerHTML = emptyBox('Gli articoli arrivano dai feed dei giornali', SETUP_HINT + failureHint(state.articleMeta)); return; }
@@ -225,25 +213,6 @@ function renderHomeLatest() {
   const latest = state.articles.filter(a => !skip.has(a.id)).slice(0, 6);
   state.latestIds = new Set(latest.map(a => a.id));
   el.innerHTML = latest.map(articleCard).join('');
-}
-
-// Titoli per argomento: solo notizie non gia' viste in alto, cosi' la home non si ripete.
-function renderHomeTopics() {
-  const wrap = $('homeTopicsWrap'), el = $('homeByTopic');
-  if (!wrap || !el) return;
-  const seen = new Set([...(state.heroIds || []), ...(state.latestIds || [])]);
-  const boxes = CATEGORIES.map(c => ({ c, list: state.articles.filter(a => a.category === c.name && !seen.has(a.id)).slice(0, 4) }))
-    .filter(b => b.list.length >= 2).slice(0, 6);
-  wrap.classList.toggle('hidden', !boxes.length);
-  el.innerHTML = boxes.map(({ c, list }) => `
-    <div class="topic-box">
-      <div class="topic-head ${c.cls}"><span>${c.icon} ${esc(c.name)}</span><button type="button" data-cat="${esc(c.name)}" class="topic-all">Tutti →</button></div>
-      <div class="topic-list">${list.map(a => `
-        <a href="${articleHref(a)}" class="topic-link">
-          <span class="topic-title">${esc(a.title)}</span>
-          <span class="topic-meta">Fonte: ${esc(a.source)} · ${timeAgo(a.publishedAt)}</span>
-        </a>`).join('')}</div>
-    </div>`).join('');
 }
 
 function videoCardDark(v) {
@@ -270,22 +239,6 @@ function renderHomeVideos() {
     <a href="#video" class="rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition">
       ${avatar(c, 'w-12 h-12 text-lg')}<div class="mt-3 font-extrabold">${esc(c.name)}</div><div class="text-xs text-gray-400 mt-1 line-clamp-2">${esc(c.blurb || '')}</div></a>`).join('') ||
     '<p class="col-span-full text-sm text-gray-400">Nessun canale disponibile.</p>';
-}
-
-const PATH_STEPS = [
-  { href: '/guide/risparmio-50-30-20/', t: 'Metti in ordine il budget', d: 'La regola 50/30/20 e il fondo di emergenza: da qui si parte.', icon: '💶', cls: 'g-risparmio' },
-  { href: '/guide/etf/', t: 'Cos\'è un ETF',            d: 'Un paniere di titoli in un solo acquisto: vantaggi, rischi e costi.', icon: '📦', cls: 'g-investimenti' },
-  { href: '/guide/pac/', t: 'Come funziona un PAC',      d: 'Investire una cifra fissa ogni mese, senza dover indovinare il momento giusto.', icon: '🔁', cls: 'g-pensione' },
-  { href: '/guide/simulatore-pac/', t: 'Fai i tuoi conti',          d: 'Il simulatore: quanto può crescere un risparmio mensile nel tempo.', icon: '🧮', cls: 'g-casa' },
-  { href: '/guide/broker-pac/', t: 'Dove aprire un PAC',        d: 'Confronto informativo dei broker con PAC a costi bassi.', icon: '🏦', cls: 'g-banche' }
-];
-function renderGuideTeasers() {
-  $('guideTeasers').innerHTML = PATH_STEPS.map((i, n) => `
-    <a class="path-card text-left" href="${i.href}">
-      <span class="path-top"><span class="path-num">${n + 1}</span><span class="path-icon ${i.cls}" aria-hidden="true">${i.icon}</span></span>
-      <h3 class="font-extrabold text-base leading-snug card-title">${esc(i.t)}</h3>
-      <p class="text-sm text-gray-600 mt-1">${esc(i.d)}</p>
-    </a>`).join('');
 }
 
 // ------------------------------------------------------------------ glossario e tooltip
@@ -352,21 +305,7 @@ function setupGlossaryTip() {
   window.addEventListener('hashchange', hide);
 }
 
-// ------------------------------------------------------------------ mini-simulatore in home
-function setupHomeSim() {
-  const m = $('hsMonthly'), y = $('hsYears'); if (!m || !y) return;
-  const fmt = n => Math.round(n).toLocaleString('it-IT') + ' €';
-  const fv = (pmt, years, rate) => { let b = 0; for (let i = 0; i < years * 12; i++) b = (b + pmt) * (1 + rate / 12); return b; };
-  const upd = () => {
-    const pmt = +m.value, yrs = +y.value;
-    $('hsMonthlyVal').textContent = pmt.toLocaleString('it-IT') + ' €';
-    $('hsYearsVal').textContent = yrs === 1 ? '1 anno' : yrs + ' anni';
-    $('hsPaid').textContent = fmt(pmt * yrs * 12);
-    $('hsLow').textContent = fmt(fv(pmt, yrs, 0.03));
-    $('hsHigh').textContent = fmt(fv(pmt, yrs, 0.07));
-  };
-  m.addEventListener('input', upd); y.addEventListener('input', upd); upd();
-}
+
 
 // ------------------------------------------------------------------ categorie, filtri, articoli
 function renderCategoryBar() {
@@ -401,7 +340,7 @@ function renderArticles() {
   $('moreArticles').classList.toggle('hidden', list.length <= state.shown);
 }
 
-// ------------------------------------------------------------------ mercati: cambi BCE + Termometro TrendScan
+// ------------------------------------------------------------------ mercati: cambi BCE e Termometro TrendScan
 // I tassi sono mostrati cifra per cifra come li pubblica la BCE (cambia solo il separatore decimale, all'italiana):
 // la politica di riutilizzo BCE chiede fonte citata e statistiche non modificate. Variazioni e grafici sono
 // elaborazioni TrendScan e sono dichiarati tali.
@@ -411,7 +350,6 @@ const pctCls = n => n == null || n === 0 ? '' : n > 0 ? 'mk-up' : 'mk-down';
 const pctArrow = n => n == null || n === 0 ? '' : n > 0 ? '▲ ' : '▼ ';
 const dateIt = d => { const x = new Date(d + 'T12:00:00'); return isNaN(x) ? d : x.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }); };
 const DEFAULT_ZONES = [{ max: 40, name: 'Tono negativo' }, { max: 60, name: 'Tono neutro' }, { max: 100, name: 'Tono positivo' }];
-
 function spark(values, w = 96, h = 28, cls = 'mk-spark') {
   const v = (values || []).map(Number).filter(Number.isFinite);
   if (v.length < 2) return '';
@@ -420,15 +358,23 @@ function spark(values, w = 96, h = 28, cls = 'mk-spark') {
   return `<svg class="${cls}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
 }
 
-function gauge(s) {
-  const zones = s.labels && s.labels.length ? s.labels : DEFAULT_ZONES;
-  let prevMax = 0;
-  const bars = zones.map((z, i) => { const w = Math.max(0, z.max - prevMax); prevMax = z.max; return `<span class="mk-z${i + 1}" style="width:${w}%"></span>`; }).join('');
-  return `<div class="mk-gauge" role="img" aria-label="Termometro TrendScan: ${s.score} su 100, ${esc(s.label)}">
-    <div class="mk-gauge-bar">${bars}<i class="mk-marker" style="left:${Math.min(100, Math.max(0, s.score))}%"></i></div>
-    <div class="mk-gauge-scale"><span>0</span><span>50</span><span>100</span></div></div>`;
+function gauge(sentiment) {
+  const zones = sentiment.labels && sentiment.labels.length ? sentiment.labels : DEFAULT_ZONES;
+  let previousMax = 0;
+  const bars = zones.map((zone, index) => {
+    const width = Math.max(0, zone.max - previousMax);
+    previousMax = zone.max;
+    return `<span class="mk-z${index + 1}" style="width:${width}%"></span>`;
+  }).join('');
+  return `<div class="mk-gauge" role="img" aria-label="Termometro TrendScan: ${sentiment.score} su 100, ${esc(sentiment.label)}">
+    <div class="mk-gauge-bar">${bars}<i class="mk-marker" style="left:${Math.min(100, Math.max(0, sentiment.score))}%"></i></div>
+    <div class="mk-gauge-scale"><span>0 · negativo</span><span>50 · neutro</span><span>100 · positivo</span></div></div>`;
 }
-const toneCls = s => { const z = s.labels && s.labels.length ? s.labels : DEFAULT_ZONES; const i = z.findIndex(l => s.score <= l.max); return 'mk-t' + (i < 0 ? z.length : i + 1); };
+const toneCls = sentiment => {
+  const zones = sentiment.labels && sentiment.labels.length ? sentiment.labels : DEFAULT_ZONES;
+  const index = zones.findIndex(zone => sentiment.score <= zone.max);
+  return 'mk-t' + (index < 0 ? zones.length : index + 1);
+};
 
 function fxCredit(fx) {
   const src = fx.source || {};
@@ -439,7 +385,8 @@ function fxCredit(fx) {
 function renderMarketStrip() {
   const el = $('marketStrip'); if (!el) return;
   const m = state.markets, fx = m && m.fx, s = m && m.sentiment;
-  const hasFx = !!(fx && fx.pairs && fx.pairs.length), hasS = !!(s && s.ready);
+  const hasFx = !!(fx && fx.pairs && fx.pairs.length);
+  const hasS = !!(s && s.ready);
   const hasRadar = rdReady();
   el.classList.toggle('hidden', !(hasFx || hasS || hasRadar));
   if (!(hasFx || hasS || hasRadar)) { el.innerHTML = ''; return; }
@@ -448,7 +395,7 @@ function renderMarketStrip() {
       <div class="mk-label">Termometro TrendScan</div>
       <div class="mk-thermo-row"><span class="mk-score ${toneCls(s)}">${s.score}</span><span class="mk-of">/100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div>
       ${gauge(s)}
-      <div class="mk-sub">Tono di ${s.n} notizie delle ultime ${s.windowHours} ore</div>
+      <div class="mk-sub">Tono di ${s.n} notizie nelle ultime ${s.windowHours} ore · non misura i mercati</div>
     </a>` : '';
   const tiles = hasFx ? fx.pairs.map(p => `
     <a href="#mercati" class="mk-tile" title="1 euro = ${esc(fmtRate(p.rate))} ${esc(p.currency)}">
@@ -460,9 +407,9 @@ function renderMarketStrip() {
   el.innerHTML = `
     <div class="section-title"><h2>Per approfondire: i mercati</h2><span class="section-bar"></span>
       <a href="#mercati" class="text-sm font-bold brand-text whitespace-nowrap">Tutti i dati →</a></div>
-    <p class="text-xs text-gray-500 -mt-2 mb-4 max-w-3xl">Per cominciare non ti servono: sono i numeri che sentirai nei telegiornali (quanto vale l'euro rispetto ad altre monete, di cosa si parla di più). Se sei all'inizio parti dal percorso qui sopra.</p>
-    ${hasFx || hasS ? `<div class="grid grid-cols-2 lg:grid-cols-6 gap-3">${thermo}${tiles}</div>
-    <p class="mk-credit">${hasFx ? fxCredit(fx) : ''}${hasS ? ' Termometro: elaborazione TrendScan sul tono dei titoli, non è un indice di mercato.' : ''} Variazioni e grafici: elaborazione TrendScan.</p>` : ''}
+    <p class="text-xs text-gray-500 -mt-2 mb-4 max-w-3xl">Consulta il tono delle notizie, i tassi di riferimento della BCE e i settori economici più citati. Se sei all'inizio, parti dal percorso qui sopra.</p>
+    ${hasFx || hasS ? `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">${thermo}${tiles}</div>
+    <p class="mk-credit">${hasFx ? fxCredit(fx) + ' Variazioni e grafici: elaborazione TrendScan.' : ''}${hasS ? ' Il Termometro è un’analisi automatica del tono degli articoli, non un indice di mercato.' : ''}</p>` : ''}
     ${hasRadar ? radarStripHtml() : ''}`;
 }
 
@@ -470,31 +417,23 @@ function renderMarketsView() {
   const el = $('marketsView'); if (!el) return;
   const m = state.markets, fx = m && m.fx, s = m && m.sentiment;
   const hasFx = !!(fx && fx.pairs && fx.pairs.length);
-  const hasMk = !!(m && (hasFx || (s && s.ready))); // dati di mercato (cambi o termometro) presenti?
   const upd = m && m.meta && m.meta.generatedAt ? new Date(m.meta.generatedAt).toLocaleString('it-IT', { dateStyle: 'long', timeStyle: 'short' }) : '';
   const bar = readerBar(false);
-  if (!(m && (hasFx || (s && s.ready))) && !rdReady()) {
+  if (!hasFx && !s && !rdReady()) {
     el.innerHTML = bar + emptyBox('Dati di mercato non ancora disponibili', 'Si aggiornano automaticamente ogni ora: riprova tra poco. <a href="#home" class="brand-text font-bold underline">Torna alla home di TrendScan</a>.');
     return;
   }
-  let thermo;
-  if (s && s.ready) {
-    const hist = (s.history || []).map(h => h.s);
-    const chg = s.change == null ? '' : `<li>Rispetto a ieri: <b class="${pctCls(s.change)}">${s.change > 0 ? '+' : s.change < 0 ? '−' : ''}${Math.abs(s.change)} punti</b></li>`;
-    const avg = s.avg7 == null ? '' : `<li>Media degli ultimi giorni: <b>${s.avg7}</b></li>`;
-    thermo = `
-      <div class="mk-big">
-        <div class="mk-thermo-row"><span class="mk-score mk-score-xl ${toneCls(s)}">${s.score}</span><span class="mk-of">/100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div>
-        ${gauge(s)}
-        <ul class="mk-facts">
-          <li>Notizie analizzate (ultime ${s.windowHours} ore): <b>${s.n}</b> — <span class="mk-up">${s.counts.pos} positive</span> · ${s.counts.neutral} neutre · <span class="mk-down">${s.counts.neg} negative</span></li>
-          ${chg}${avg}
-        </ul>
-        ${hist.length >= 2 ? `<div class="mk-histwrap"><div class="mk-label">Andamento del Termometro</div>${spark(hist, 300, 60, 'mk-hist')}<div class="mk-sub">${hist.length} giorni di storico</div></div>` : `<p class="mk-sub mt-2">Lo storico si costruisce giorno dopo giorno: il grafico comparirà con almeno due giorni di dati.</p>`}
-      </div>`;
-  } else {
-    thermo = `<p class="text-sm text-gray-600">Dati insufficienti per calcolare il Termometro: servono almeno alcune notizie recenti. Si aggiorna ogni ora.</p>`;
-  }
+  const thermometer = s && s.ready ? `
+    <div class="mk-big">
+      <div class="mk-thermo-row"><span class="mk-score mk-score-xl ${toneCls(s)}">${s.score}</span><span class="mk-of">/100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div>
+      ${gauge(s)}
+      <ul class="mk-facts">
+        <li>Notizie analizzate (ultime ${s.windowHours} ore): <b>${s.n}</b> — <span class="mk-up">${s.counts.pos} positive</span> · ${s.counts.neutral} neutre · <span class="mk-down">${s.counts.neg} negative</span></li>
+        ${s.change == null ? '' : `<li>Variazione rispetto all’ultima rilevazione giornaliera: <b class="${pctCls(s.change)}">${s.change > 0 ? '+' : ''}${s.change} punti</b></li>`}
+        ${s.avg7 == null ? '' : `<li>Media delle ultime rilevazioni: <b>${s.avg7}/100</b></li>`}
+      </ul>
+      ${s.history.length >= 2 ? `<div class="mk-histwrap"><div class="mk-label">Storico del Termometro</div>${spark(s.history.map(item => item.s), 300, 60, 'mk-hist')}<div class="mk-sub">${s.history.length} giorni</div></div>` : `<p class="mk-sub mt-2">Lo storico si costruisce giorno dopo giorno.</p>`}
+    </div>` : `<p class="mk-note">Dati insufficienti: ${s && Number.isFinite(s.n) ? s.n : 0} notizie nelle ultime ${s && s.windowHours || 48} ore; per calcolare il punteggio ne servono almeno 15. Si aggiorna ogni ora.</p>`;
   const rows = hasFx ? fx.pairs.map(p => `
     <tr>
       <th scope="row"><span class="font-black">${esc(p.label)}</span><span class="mk-sub block">${esc(p.name || p.currency)}</span></th>
@@ -505,17 +444,17 @@ function renderMarketsView() {
     </tr>`).join('') : '';
   el.innerHTML = `
     ${bar}
-    <header class="mk-head"><h1>Mercati</h1><p>Il Trend Radar, i cambi di riferimento della BCE e il Termometro TrendScan. Dati a scopo informativo${upd ? `, aggiornati il ${esc(upd)}` : ''}.</p></header>
+    <header class="mk-head"><h1>Mercati</h1><p>Il Trend Radar, il Termometro TrendScan e i cambi di riferimento della BCE. Dati a scopo informativo${upd ? `, aggiornati il ${esc(upd)}` : ''}.</p></header>
 
     ${rdReady() ? radarSectionHtml() : ''}
 
-    ${hasMk ? `<section class="mk-card" aria-labelledby="mkThermoTitle">
-      <h2 id="mkThermoTitle" class="mk-h2">Termometro TrendScan <span class="mk-badge">elaborazione TrendScan</span></h2>
-      <p class="mk-lead">Misura il <b>tono delle notizie</b> di finanza che raccogliamo dai giornali, su una scala da 0 (molto negative) a 100 (molto positive). Non misura i mercati e non è un consiglio: è un termometro dell’umore dei titoli.</p>
-      ${shareRowHtml('termometro', 'termometro.png', 'trendscan-termometro.png', 'Termometro TrendScan', 'Il tono delle notizie di finanza, da 0 a 100, aggiornato ogni ora.')}
-      ${thermo}
-      <p class="mk-note">Come si calcola: conteggio di parole chiave su titoli e anteprime, con più peso alle notizie recenti. È un metodo semplice e ha limiti (ironia, contesto, titoli ambigui). <a href="/metodo/#termometro" class="underline font-bold brand-text">Leggi il metodo</a>.</p>
-    </section>` : ''}
+    <section class="mk-card" aria-labelledby="mkThermoTitle">
+      <h2 id="mkThermoTitle" class="mk-h2">Termometro TrendScan <span class="mk-badge">tono delle notizie</span></h2>
+      <p class="mk-lead">Riassume il tono delle notizie di finanza raccolte nelle ultime 48 ore. <b>Non misura l’andamento dei mercati</b> e non è un’indicazione operativa.</p>
+      ${shareRowHtml('termometro', 'termometro.png', 'trendscan-termometro.png', 'Termometro TrendScan', 'Il tono delle notizie di finanza, da 0 a 100.')}
+      ${thermometer}
+      <p class="mk-note">Come si calcola: parole chiave positive e negative in titoli e anteprime, titolo con peso doppio e dimezzamento del peso ogni 24 ore. Punteggio 0 = tono negativo, 50 = neutro, 100 = positivo. Servono almeno 15 articoli; <a href="/metodo/#termometro" class="underline font-bold brand-text">leggi il metodo e i limiti</a>.</p>
+    </section>
 
     ${hasFx ? `
     <section class="mk-card" aria-labelledby="mkFxTitle">
@@ -537,8 +476,7 @@ function renderMarketsView() {
 // editoriale non misura né anticipa i prezzi di mercato.
 const RD = {
   interest: { icon: '🔎', name: 'Interesse', cls: 'rd-m-interest' },
-  news: { icon: '📰', name: 'Notizie', cls: 'rd-m-news' },
-  price: { icon: '💹', name: 'Prezzi', cls: 'rd-m-price' }
+  news: { icon: '📰', name: 'Notizie', cls: 'rd-m-news' }
 };
 const mBadge = k => `<span class="rd-badge ${RD[k].cls}">${RD[k].icon} ${RD[k].name}</span>`;
 const fmtInt = n => Number(n).toLocaleString('it-IT');
@@ -579,10 +517,32 @@ function rdSectorDonut(rows) {
   return `<svg class="rd-sector-donut" viewBox="0 0 120 120" role="img" aria-label="Ripartizione delle menzioni per settore">${arcs}</svg>`;
 }
 
+function rdSectorMomentumHtml() {
+  const comparable = (state.radar && state.radar.sectors || []).filter(sector => sector.momentum7d && sector.momentum7d.ready);
+  if (!comparable.length) return `<div class="rd-sector-momentum rd-empty">Confronto settimanale in costruzione: servono almeno 10 notizie in entrambe le settimane.</div>`;
+  const rising = comparable.filter(sector => sector.momentum7d.recentCount >= 3 && sector.momentum7d.changePp > 0)
+    .sort((a, b) => b.momentum7d.changePp - a.momentum7d.changePp || b.momentum7d.recentCount - a.momentum7d.recentCount)
+    .slice(0, 3);
+  if (!rising.length) return `<div class="rd-sector-momentum rd-empty">Nessun settore supera al momento la soglia minima di menzioni e mostra una quota in aumento rispetto alla settimana precedente.</div>`;
+  const cards = rising.map(sector => {
+    const trend = sector.momentum7d, delta = trend.changePp.toFixed(1).replace('.', ',');
+    return `<article class="rd-sector-momentum-card">
+      <span class="rd-sector-icon" style="--sector-color:${esc(sector.color)}">${esc(sector.icon)}</span>
+      <div><h5>${esc(sector.label)}</h5><p>${trend.recentCount} articoli su ${trend.recentArticles} nell’ultima settimana · ${trend.previousCount} su ${trend.previousArticles} nella precedente</p></div>
+      <b>+${delta}<small> p.p.</small></b>
+    </article>`;
+  }).join('');
+  return `<div class="rd-sector-momentum">
+    <div class="rd-sector-momentum-intro"><span class="rd-sector-kicker">ATTENZIONE IN AUMENTO · 7 GIORNI</span><p>Variazione della quota di notizie per settore rispetto alla settimana precedente.</p></div>
+    <div class="rd-sector-momentum-list">${cards}</div>
+  </div>`;
+}
+
 function rdSectorsHtml() {
   const rows = rdSectorRows(), total = rows.reduce((n, sector) => n + sector.count, 0);
   const filters = [2, 7, 30].map(days => `<button type="button" data-rd-period="${days}" class="${state.radarSectorDays === days ? 'on' : ''}" aria-pressed="${state.radarSectorDays === days}">${days === 2 ? '48 ore' : `${days} giorni`}</button>`).join('');
-  if (!total) return `<div class="rd-sector-dashboard"><div class="rd-sector-controls" role="group" aria-label="Periodo delle notizie">${filters}</div><p class="rd-empty">Nessuna notizia disponibile per questo periodo. Riprova più tardi.</p></div>`;
+  const momentum = rdSectorMomentumHtml();
+  if (!total) return `<div class="rd-sector-dashboard">${momentum}<div class="rd-sector-controls" role="group" aria-label="Periodo delle notizie">${filters}</div><p class="rd-empty">Nessuna notizia disponibile per questo periodo. Riprova più tardi.</p></div>`;
   const max = rows[0].count;
   const cards = rows.map((sector, index) => {
     const share = Math.round(sector.count / total * 100);
@@ -599,6 +559,7 @@ function rdSectorsHtml() {
   }).join('');
   const legend = rows.slice(0, 6).map(sector => `<li><span style="--sector-color:${esc(sector.color)}"></span>${esc(sector.label)} <b>${sector.count}</b></li>`).join('');
   return `<div class="rd-sector-dashboard">
+    ${momentum}
     <div class="rd-sector-toolbar"><div class="rd-sector-controls" role="group" aria-label="Periodo delle notizie">${filters}</div><span class="rd-sector-total"><b>${fmtInt(total)}</b> menzioni di settore</span></div>
     <div class="rd-sector-visuals">
       <div class="rd-sector-chart-card"><div><span class="rd-sector-kicker">PANORAMICA</span><h4>Voci più presenti nelle notizie</h4><p>Distribuzione degli articoli classificati nel periodo.</p></div><div class="rd-sector-donut-wrap">${rdSectorDonut(rows)}<span><b>${fmtInt(total)}</b><small>menzioni</small></span></div><ul class="rd-sector-legend">${legend}</ul></div>
@@ -632,17 +593,11 @@ function newsCell(t) {
   const chg = n.isNew ? `<b class="rd-chg mk-up">▲ nuovo</b>` : n.changePct != null ? `<b class="rd-chg ${pctCls(n.changePct)}">${pctArrow(n.changePct)}${fmtPct0(n.changePct)}</b>` : `<span class="rd-sub rd-block">dati troppo scarsi</span>`;
   return `<td class="rd-cell" data-label="Notizie"><span class="rd-num">${fmtInt(n.recent)}</span> <span class="rd-sub">menzioni (${String(n.recentSharePct ?? 0).replace('.', ',')}% delle notizie)</span>${chg}</td>`;
 }
-function priceCell(t) {
-  const fx = state.markets && state.markets.fx, p = t.price && fx && fx.pairs ? fx.pairs.find(x => x.id === t.price) : null;
-  if (!p || p.change30dPct == null) return `<td class="rd-cell rd-na" data-label="Prezzo"><span class="rd-dash">—</span><span class="rd-sub">${t.price ? 'dato non disponibile' : 'nessun prezzo collegato'}</span></td>`;
-  return `<td class="rd-cell" data-label="Prezzo"><b class="rd-chg ${pctCls(p.change30dPct)}">${pctArrow(p.change30dPct)}${fmtPct(p.change30dPct)}</b> <span class="rd-sub">${esc(p.label)} in 30 giorni (BCE)</span></td>`;
-}
-
-function rdRows(rows, key, top, withPrice) {
+function rdRows(rows, key, top) {
   const ranked = rdGrowing(rows, key), shownIds = new Set(ranked.slice(0, top).map(t => t.id));
   const others = rows.filter(t => !shownIds.has(t.id)).sort((a, b) => (rdSortValue(b, key) ?? -9999) - (rdSortValue(a, key) ?? -9999));
-  const head = `<thead><tr><th scope="col" class="rd-rank">#</th><th scope="col">Argomento</th><th scope="col">${mBadge('interest')}<span class="rd-th-sub">letture di Wikipedia</span></th><th scope="col">${mBadge('news')}<span class="rd-th-sub">menzioni nei titoli</span></th>${withPrice ? `<th scope="col">${mBadge('price')}<span class="rd-th-sub">variazione 30 giorni</span></th>` : ''}</tr></thead>`;
-  const line = (t, i) => `<tr><td class="rd-rank" data-label="">${i == null ? '' : i + 1}</td><th scope="row">${esc(t.label)}</th>${interestCell(t)}${newsCell(t)}${withPrice ? priceCell(t) : ''}</tr>`;
+  const head = `<thead><tr><th scope="col" class="rd-rank">#</th><th scope="col">Argomento</th><th scope="col">${mBadge('interest')}<span class="rd-th-sub">letture di Wikipedia</span></th><th scope="col">${mBadge('news')}<span class="rd-th-sub">menzioni nei titoli</span></th></tr></thead>`;
+  const line = (t, i) => `<tr><td class="rd-rank" data-label="">${i == null ? '' : i + 1}</td><th scope="row">${esc(t.label)}</th>${interestCell(t)}${newsCell(t)}</tr>`;
   const table = list => `<div class="rd-tablewrap"><table class="rd-table">${head}<tbody>${list}</tbody></table></div>`;
   return (ranked.length ? table(ranked.slice(0, top).map((t, i) => line(t, i)).join('')) : `<p class="rd-empty">Nessun argomento risulta in crescita in questo momento secondo questa misura.</p>`)
     + (others.length ? `<details class="rd-more"><summary>Altri ${others.length} argomenti (stabili, in calo o senza confronto disponibile)</summary>${table(others.map(t => line(t, null)).join(''))}</details>` : '');
@@ -689,7 +644,7 @@ function radarStripHtml() {
 }
 
 // ---- Pagina Mercati: classifiche complete
-// Riga "Condividi / Scarica immagine" per Termometro e Trend Radar: l'immagine (aggiornata ogni ora) e la pagina con i meta social stanno in /og/ e /radar/, /termometro/
+// Riga "Condividi / Scarica immagine" per il Trend Radar.
 function shareRowHtml(slug, img, file, title, text) {
   return `<div class="share-row"><button type="button" class="share-btn" data-share data-share-url="${location.origin}/${slug}/" data-share-title="${esc(title)}" data-share-text="${esc(text)}">📤 Condividi</button><a class="share-btn" href="/og/${img}" download="${file}">🖼️ Scarica l’immagine</a><span class="share-toast" role="status" data-toast></span></div>`;
 }
@@ -704,11 +659,6 @@ function radarSectionHtml() {
       <div class="rd-story-body">${a ? `<a href="#a/${encodeURIComponent(c.id)}" class="rd-story-title">${esc(c.title)}</a>` : `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener noreferrer" class="rd-story-title">${esc(c.title)}</a>`}
         <div class="rd-sub">Fonte: <a href="${esc(sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(c.source || a && a.source || 'testata originale')}</a> · ${(c.outlets || []).map(o => `<span class="rd-chip">${esc(o)}</span>`).join('')} · ${esc(timeAgo(c.publishedAt))}</div></div></li>`;
   }).join('');
-  const fx = state.markets && state.markets.fx;
-  const prices = fx && fx.pairs && fx.pairs.length ? [...fx.pairs].filter(p => p.change30dPct != null).sort((a, b) => Math.abs(b.change30dPct) - Math.abs(a.change30dPct)).map(p => `
-      <li class="rd-price"><span><b>${esc(p.label)}</b> <span class="rd-sub">${esc(p.name || '')}</span></span>
-        <b class="rd-chg ${pctCls(p.change30dPct)}">${pctArrow(p.change30dPct)}${fmtPct(p.change30dPct)}</b></li>`).join('') : '';
-
   return `
     <section id="trendRadar" class="mk-card rd-section" aria-labelledby="rdTitle">
       <h2 id="rdTitle" class="mk-h2">Trend Radar <span class="mk-badge">settori economici nelle notizie</span></h2>
@@ -716,7 +666,7 @@ function radarSectionHtml() {
       ${shareRowHtml('radar', 'radar.png', 'trendscan-trend-radar.png', 'Trend Radar: i settori più citati dalle testate', 'I settori economici più presenti nelle notizie delle testate che seguiamo. Fonti citate, aggiornamento orario.')}
       <div class="rd-board" aria-labelledby="rdB1">
         <h3 id="rdB1" class="rd-h3">Settori economici più citati</h3>
-        <p class="mk-lead">Conteggio degli articoli raccolti, ordinati per settore. Seleziona il periodo e apri le fonti originali o lo screener Finviz corrispondente.</p>
+        <p class="mk-lead">I settori più citati sono ordinati per numero di articoli. In alto trovi anche quelli la cui quota sul totale delle notizie è cresciuta rispetto ai 7 giorni precedenti: è attenzione editoriale, non volume di ricerche o interesse degli investitori.</p>
         <div class="rd-sector-mount">${rdSectorsHtml()}</div>
       </div>
 
@@ -725,13 +675,6 @@ function radarSectionHtml() {
         <p class="mk-lead">Le storie raccontate da più testate diverse nelle ultime 48 ore. ${mBadge('news')} È attenzione dei giornali, non dei lettori: <b>molte testate non significano più importante</b>.</p>
         ${cov ? `<ol class="rd-stories">${cov}</ol>` : `<p class="rd-empty">Al momento nessuna storia risulta coperta da più testate. Compare qui appena ce ne sono.</p>`}
       </div>
-
-      ${prices ? `<div class="rd-board" aria-labelledby="rdB5">
-        <h3 id="rdB5" class="rd-h3">Prezzi: cosa si è mosso ${mBadge('price')}</h3>
-        <p class="mk-lead">Variazione a 30 giorni dei cambi dell’euro. È l’unica misura di prezzo del Radar, per ora.</p>
-        <ul class="rd-prices">${prices}</ul>
-        <p class="mk-credit">${fxCredit(fx)} Variazioni: elaborazione TrendScan.</p>
-      </div>` : ''}
 
       <details class="rd-method">
         <summary>Come si calcola e quali sono i limiti</summary>
@@ -931,7 +874,7 @@ function showView(name, restoreY) {
   setPageMeta(name);
 }
 const PAGE_META = {
-  mercati: ['Mercati: Trend Radar, cambi BCE e Termometro | TrendScan', 'Il Trend Radar (interesse, notizie e prezzi, tre misure separate), i tassi di cambio di riferimento della BCE e il Termometro TrendScan sul tono delle notizie di finanza.'],
+  mercati: ['Mercati: Trend Radar, Termometro e cambi BCE | TrendScan', 'Trend Radar dei settori più citati, Termometro sul tono delle notizie e tassi di cambio BCE. Dati informativi.'],
   home: ['TrendScan – Finanza personale spiegata semplice: guide, video e notizie', 'Impara a gestire i tuoi soldi senza paroloni: guide semplici su risparmio, ETF e PAC, simulatore gratuito, video educativi e notizie dai giornali italiani.'],
   articoli: ['Articoli di finanza personale: risparmio, ETF, pensione, mutui | TrendScan', 'Le notizie di finanza personale dai principali giornali italiani, divise per argomento: risparmio, ETF, pensione, casa, tasse e conti.'],
   video: ['Video educativi di finanza personale e investimenti | TrendScan', 'La playlist dei migliori canali YouTube italiani di finanza: risparmio, ETF, PAC e gestione del denaro, da guardare uno dopo l\'altro.'],

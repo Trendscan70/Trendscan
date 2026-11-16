@@ -137,14 +137,31 @@ const near = (a, b, tol, msg) => { n++; assert.ok(Math.abs(a - b) <= tol, `${msg
   near(r.renterPortfolio, 156000, 1e-6, 'investimento anticipo e differenza mensile');
   near(r.mortgageBalance, 0, 1e-6, 'mutuo estinto a scadenza');
 }
-// ---- 15. Spesa ricorrente: conversione giornaliera e composizione mensile
+// ---- 15. Costo del debito: valore attuale della rata e PAC con la stessa rata
+{
+  const zero = T.debtCost({ payment: 100, months: 12, taeg: 0, investReturn: 0 });
+  near(zero.principal, 1200, 1e-9, 'debito a tasso zero');
+  near(zero.interest, 0, 1e-9, 'interessi a tasso zero');
+  near(zero.pacValue, 1200, 1e-9, 'PAC senza rendimento');
+  const r = T.debtCost({ payment: 200, months: 24, taeg: 0.12, investReturn: 0.05 });
+  near(r.principal, 200 * (1 - Math.pow(1 + Math.pow(1.12, 1 / 12) - 1, -24)) / (Math.pow(1.12, 1 / 12) - 1), 1e-9, 'capitale finanziato con TAEG effettivo');
+  near(r.interest, r.totalPayments - r.principal, 1e-9, 'interessi totali');
+  assert.ok(r.pacValue > r.pacContributions && r.interest > 0); n++;
+}
+// ---- 16. Quoziente di sopravvivenza: mesi di spese coperte dalla liquidità
+{
+  near(T.survivalMonths({ monthlyExpenses: 1500, liquidity: 9000 }).months, 6, 1e-9, 'mesi di autonomia');
+  near(T.survivalMonths({ monthlyExpenses: 1500, liquidity: 1000 }).months, 2 / 3, 1e-9, 'autonomia frazionaria');
+  assert.equal(T.survivalMonths({ monthlyExpenses: 0, liquidity: 9000 }).months, null); n++;
+}
+// ---- 17. Spesa ricorrente: conversione giornaliera e composizione mensile
 {
   const r = T.recurringSpend({ amount: 5, frequency: 'daily', rate: 0, years: 20 });
   near(r.monthly, 5 * 365 / 12, 1e-9, 'spesa giornaliera convertita in media mensile');
   near(r.paid, 36500, 1e-8, 'totale versato in 20 anni');
   near(r.value, r.paid, 1e-8, 'a rendimento zero il valore coincide con i versamenti');
 }
-// ---- 16. Gap pensionistico: stime, accumulo e deducibilità
+// ---- 18. Gap pensionistico: stime, accumulo e deducibilità
 {
   const r = T.pensionGap({ age: 47, income: 30000 });
   near(r.years, 20, 0, 'anni fino alla pensione ipotizzata');
