@@ -18,6 +18,12 @@
   [headers.values]
     Cache-Control = "public, max-age=300"
 
+# I file CSV sono download, non pagine da mostrare nei risultati di ricerca.
+[[headers]]
+  for = "/downloads/*.csv"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
 [[headers]]
   for = "/*.png"
   [headers.values]

@@ -39,6 +39,7 @@
     "perChannel": 6,
     "maxTotal": 120,
     "channels": [
+      { "id": "trendscan-ufficiale", "name": "TrendScan", "channelId": "UCJdHY2j7-zW-QoI7dUGbntA", "handles": ["Trendscan26"], "verifiedHandle": true, "match": ["trendscan"], "blurb": "Il canale YouTube ufficiale TrendScan: video e approfondimenti di finanza personale." },
       { "id": "pietro-michelangeli", "name": "Pietro Michelangeli", "handles": ["PietroMichelangeli"], "verifiedHandle": true, "match": ["michelangeli"], "blurb": "Finanza personale ed economia con un occhio al lungo termine." },
       { "id": "paolo-coletti", "name": "Paolo Coletti", "handles": ["PaoloColetti"], "verifiedHandle": true, "match": ["coletti"], "blurb": "Il prof che fa educazione finanziaria: corso gratuito «Educati e Finanziati»." },
       { "id": "mr-rip", "name": "Mr.Rip", "handles": ["mr_rip", "MrRip"], "verifiedHandle": true, "match": ["rip"], "blurb": "Finanza personale e FIRE, con un punto di vista controcorrente." },

@@ -756,6 +756,20 @@ function buildQueue() {
 }
 
 function renderVideoPage() {
+  const officialVideos = state.videos.filter(v => v.channelId === 'trendscan-ufficiale').slice(0, 3);
+  $('officialChannelVideos').innerHTML = officialVideos.length
+    ? officialVideos.map(v => `
+      <button class="group text-left" data-video="${esc(v.id)}">
+        <div class="relative aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <img src="https://i.ytimg.com/vi/${esc(v.id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.remove()">
+          <span class="absolute bottom-2 right-2 w-10 h-10 rounded-full brand-bg flex items-center justify-center shadow-lg" aria-hidden="true">
+            <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </div>
+        <span class="block mt-2 text-sm font-bold leading-snug line-clamp-2 group-hover:text-[#e8412c]">${esc(v.title)}</span>
+      </button>`).join('')
+    : '<p class="text-sm text-gray-500 sm:col-span-3">Le anteprime dei video sono in aggiornamento. Intanto puoi visitare il <a href="https://www.youtube.com/@Trendscan26" target="_blank" rel="noopener noreferrer" class="font-bold underline brand-text">canale ufficiale TrendScan su YouTube ↗</a>.</p>';
+
   const withVideos = new Set(state.videos.map(v => v.channelId));
   $('channelChips').innerHTML = `<button class="chip text-xs font-bold ${state.channelFilter === 'ALL' ? 'active' : ''}" data-channel="ALL">Tutti i canali</button>` +
     state.channels.filter(c => withVideos.has(c.id)).map(c => `<button class="chip text-xs font-bold ${state.channelFilter === c.id ? 'active' : ''}" data-channel="${esc(c.id)}">${esc(c.name)}</button>`).join('');

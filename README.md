@@ -147,7 +147,7 @@ Il sito è predisposto ma **non mostra annunci** finché non attivi `public/ads.
 
 ## SEO
 - **Indirizzo del sito**: `https://trendscan.it` è scritto in `public/index.html` (canonical, Open Graph, JSON-LD), `public/robots.txt` e `public/sitemap.xml`. Se passi a un dominio proprio, sostituiscilo in questi tre file.
-- **Search Console**: aggiungi il sito su https://search.google.com/search-console (proprietà «Prefisso URL»), verifica la proprietà, invia `sitemap.xml` e usa «Controllo URL → Richiedi indicizzazione». Fai lo stesso su Bing Webmaster Tools.
+- **Search Console**: aggiungi il sito su https://search.google.com/search-console (proprietà «Prefisso URL»), verifica la proprietà, invia `sitemap.xml` e usa «Controllo URL → Richiedi indicizzazione» per le pagine HTML. I CSV scaricabili sono intenzionalmente esclusi dall’indice (`X-Robots-Tag: noindex`); «Pagina scansionata, ma attualmente non indicizzata» non è di per sé un errore tecnico e Google decide autonomamente quali pagine indicizzare. Fai lo stesso su Bing Webmaster Tools.
 - **Plugin Netlify «Sitemap»**: rigenera `sitemap.xml` a ogni pubblicazione e può sovrascrivere questa versione; conviene disinstallarlo (Netlify → Integrations).
 - Ogni nuova pagina pubblica con un URL autonomo va aggiunta alla sitemap; `npm run build:guides` aggiorna automaticamente guide e strumenti.
 
