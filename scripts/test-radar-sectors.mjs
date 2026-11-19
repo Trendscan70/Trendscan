@@ -18,8 +18,8 @@ const articles = [
 const rows = buildSectorRows(articles, config.sectors, now);
 const byId = id => rows.find(sector => sector.id === id);
 
-assert.equal(rows.length, 11, 'tutti i settori Finviz sono definiti');
-assert.equal(new Set(rows.map(sector => sector.finvizFilter)).size, rows.length, 'i filtri Finviz sono univoci');
+assert.equal(rows.length, 11, 'tutti i settori configurati sono presenti');
+assert.equal(new Set(rows.map(sector => sector.id)).size, rows.length, 'gli identificativi dei settori sono univoci');
 assert.ok(byId('technology').articles.some(article => article.id === 'ai'), 'classificazione tecnologica');
 assert.ok(byId('financial').articles.some(article => article.id === 'rates'), 'classificazione finanziaria e tassi');
 assert.ok(byId('financial').articles.some(article => article.id === 'homes'), 'un articolo può appartenere a più settori');

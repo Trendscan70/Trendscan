@@ -1,0 +1,115 @@
+{
+  "updatedAt": "2026-11-19",
+  "maxPerSector": 20,
+  "fiscalYear": 2025,
+  "sectors": [
+    {
+      "id": "technology",
+      "label": "Tecnologia",
+      "criteria": "Flussi di cassa operativi e liberi, cassa netta o leva moderata, copertura degli interessi e continuità degli utili.",
+      "companies": [
+        { "name": "STMicroelectronics", "country": "Italia", "region": "italia", "ticker": "STM · Euronext Milano/Parigi", "focus": "Semiconduttori e componenti elettronici", "annualReportUrl": "https://investors.st.com/financials/annual-reports-and-proxy" },
+        { "name": "ASML", "country": "Paesi Bassi", "region": "europa", "ticker": "ASML · Euronext Amsterdam", "focus": "Macchinari per la produzione di semiconduttori", "annualReportUrl": "https://www.asml.com/en/investors/annual-report" },
+        { "name": "Microsoft", "country": "Stati Uniti", "region": "usa", "ticker": "MSFT · Nasdaq", "focus": "Software, cloud e servizi digitali", "annualReportUrl": "https://www.microsoft.com/en-us/Investor/annual-reports.aspx" }
+      ]
+    },
+    {
+      "id": "financial",
+      "label": "Finanza",
+      "criteria": "Banche: CET1, crediti deteriorati, redditività e copertura dei rischi; assicurazioni: Solvency II e combined ratio. Non si applica il debito/EBITDA delle imprese non finanziarie.",
+      "companies": [
+        { "name": "Intesa Sanpaolo", "country": "Italia", "region": "italia", "ticker": "ISP · Euronext Milano", "focus": "Banca commerciale e servizi finanziari", "annualReportUrl": "https://group.intesasanpaolo.com/en/investor-relations/financial-reports" },
+        { "name": "Allianz", "country": "Germania", "region": "europa", "ticker": "ALV · Xetra", "focus": "Assicurazioni e gestione patrimoniale", "annualReportUrl": "https://www.allianz.com/en/investor_relations/results-reports.html" },
+        { "name": "JPMorgan Chase", "country": "Stati Uniti", "region": "usa", "ticker": "JPM · NYSE", "focus": "Banca e servizi finanziari", "annualReportUrl": "https://www.jpmorganchase.com/ir/annual-report" }
+      ]
+    },
+    {
+      "id": "real-estate",
+      "label": "Immobiliare",
+      "criteria": "Loan-to-value, copertura degli interessi, qualità e durata dei canoni, liquidità e scadenze del debito; le soglie sono specifiche per i fondi immobiliari.",
+      "companies": [
+        { "name": "SEGRO", "country": "Regno Unito", "region": "europa", "ticker": "SGRO · London Stock Exchange", "focus": "Immobili logistici e industriali", "annualReportUrl": "https://www.segro.com/investors" },
+        { "name": "Prologis", "country": "Stati Uniti", "region": "usa", "ticker": "PLD · NYSE", "focus": "Immobili logistici", "annualReportUrl": "https://ir.prologis.com/" }
+      ]
+    },
+    {
+      "id": "energy",
+      "label": "Energia",
+      "criteria": "Debito netto rapportato alla generazione di cassa, investimenti coperti dai flussi operativi e tenuta del bilancio in diversi scenari di prezzo delle materie prime.",
+      "companies": [
+        { "name": "Eni", "country": "Italia", "region": "italia", "ticker": "ENI · Euronext Milano", "focus": "Energia, gas e attività upstream", "annualReportUrl": "https://www.eni.com/en-IT/investors/our-reports.html" },
+        { "name": "Iberdrola", "country": "Spagna", "region": "europa", "ticker": "IBE · Bolsa de Madrid", "focus": "Energia elettrica e rinnovabili", "annualReportUrl": "https://www.iberdrola.com/shareholders-investors/operating-financial-information/annual-reports" },
+        { "name": "Exxon Mobil", "country": "Stati Uniti", "region": "usa", "ticker": "XOM · NYSE", "focus": "Petrolio, gas e prodotti energetici", "annualReportUrl": "https://corporate.exxonmobil.com/investors/financial-reports-and-filings/annual-report" }
+      ]
+    },
+    {
+      "id": "consumer-cyclical",
+      "label": "Consumi ciclici",
+      "criteria": "Flussi di cassa e margini lungo il ciclo, indebitamento sostenibile, liquidità e gestione del capitale circolante.",
+      "companies": [
+        { "name": "Ferrari", "country": "Italia", "region": "italia", "ticker": "RACE · Euronext Milano", "focus": "Automobili sportive di lusso", "annualReportUrl": "https://www.ferrari.com/en-EN/corporate/annual-reports" },
+        { "name": "Inditex", "country": "Spagna", "region": "europa", "ticker": "ITX · Bolsa de Madrid", "focus": "Abbigliamento e vendita al dettaglio", "annualReportUrl": "https://www.inditex.com/itxcomweb/es/en/investors/finance" },
+        { "name": "Costco Wholesale", "country": "Stati Uniti", "region": "usa", "ticker": "COST · Nasdaq", "focus": "Commercio al dettaglio e club all'ingrosso", "annualReportUrl": "https://investor.costco.com/financials/annual-reports-and-proxy/default.aspx" }
+      ]
+    },
+    {
+      "id": "consumer-defensive",
+      "label": "Consumi essenziali",
+      "criteria": "Generazione di cassa ricorrente, copertura degli interessi, indebitamento e stabilità dei margini anche quando i consumi rallentano.",
+      "companies": [
+        { "name": "Unilever", "country": "Regno Unito", "region": "europa", "ticker": "ULVR · London Stock Exchange", "focus": "Alimentari, cura della persona e prodotti per la casa", "annualReportUrl": "https://www.unilever.com/investors/annual-report-and-accounts/" },
+        { "name": "Procter & Gamble", "country": "Stati Uniti", "region": "usa", "ticker": "PG · NYSE", "focus": "Prodotti per la casa e la cura personale", "annualReportUrl": "https://us.pg.com/annualreport2025/" }
+      ]
+    },
+    {
+      "id": "healthcare",
+      "label": "Salute",
+      "criteria": "Flussi di cassa, leva finanziaria, copertura degli interessi e diversificazione di prodotti e ricavi; per la ricerca biomedica si considerano anche i rischi di sviluppo.",
+      "companies": [
+        { "name": "Recordati", "country": "Italia", "region": "italia", "ticker": "REC · Euronext Milano", "focus": "Farmaci per malattie rare e specialty care", "annualReportUrl": "https://recordati.com/investors-presentations-and-reports-old/" },
+        { "name": "Roche", "country": "Svizzera", "region": "europa", "ticker": "ROG · SIX Swiss Exchange", "focus": "Farmaceutica e diagnostica", "annualReportUrl": "https://www.roche.com/investors/annualreport" },
+        { "name": "Johnson & Johnson", "country": "Stati Uniti", "region": "usa", "ticker": "JNJ · NYSE", "focus": "Farmaceutica e tecnologie mediche", "annualReportUrl": "https://www.investor.jnj.com/financials/annual-reports/default.aspx" }
+      ]
+    },
+    {
+      "id": "industrials",
+      "label": "Industria",
+      "criteria": "Cassa operativa, debito netto/EBITDA, copertura degli interessi e resilienza dei margini rispetto al ciclo industriale.",
+      "companies": [
+        { "name": "Prysmian", "country": "Italia", "region": "italia", "ticker": "PRY · Euronext Milano", "focus": "Cavi per energia e telecomunicazioni", "annualReportUrl": "https://www.prysmian.com/en/investors/financial-reports" },
+        { "name": "Siemens", "country": "Germania", "region": "europa", "ticker": "SIE · Xetra", "focus": "Automazione, infrastrutture e industria", "annualReportUrl": "https://www.siemens.com/global/en/company/investor-relations/financial-publications.html" },
+        { "name": "Caterpillar", "country": "Stati Uniti", "region": "usa", "ticker": "CAT · NYSE", "focus": "Macchinari e attrezzature industriali", "annualReportUrl": "https://investors.caterpillar.com/financials/annual-reports-and-proxy/default.aspx" }
+      ]
+    },
+    {
+      "id": "basic-materials",
+      "label": "Materie prime",
+      "criteria": "Posizione finanziaria, cassa disponibile dopo gli investimenti e tenuta dei flussi di cassa attraverso i cicli dei prezzi delle materie prime.",
+      "companies": [
+        { "name": "Tenaris", "country": "Italia", "region": "italia", "ticker": "TEN · Euronext Milano", "focus": "Tubi e servizi per l'industria energetica", "annualReportUrl": "https://ir.tenaris.com/financials/annual-reports" },
+        { "name": "Air Liquide", "country": "Francia", "region": "europa", "ticker": "AI · Euronext Parigi", "focus": "Gas industriali e medicali", "annualReportUrl": "https://www.airliquide.com/investors/regulated-information/annual-reports" },
+        { "name": "Ecolab", "country": "Stati Uniti", "region": "usa", "ticker": "ECL · NYSE", "focus": "Prodotti e servizi per acqua, igiene e processi industriali", "annualReportUrl": "https://investor.ecolab.com/financial-information/annual-reports-and-proxy/default.aspx" }
+      ]
+    },
+    {
+      "id": "communication-services",
+      "label": "Comunicazioni e media",
+      "criteria": "Generazione di cassa, debito netto/EBITDA, copertura degli interessi e capacità di finanziare reti e contenuti senza eccessivo ricorso al debito.",
+      "companies": [
+        { "name": "INWIT", "country": "Italia", "region": "italia", "ticker": "INW · Euronext Milano", "focus": "Torri e infrastrutture per telecomunicazioni", "annualReportUrl": "https://www.inwit.it/it/investor-relations/" },
+        { "name": "RELX", "country": "Regno Unito", "region": "europa", "ticker": "REL · London Stock Exchange", "focus": "Informazione, dati e strumenti analitici", "annualReportUrl": "https://www.relx.com/investors/annual-reports" },
+        { "name": "Alphabet", "country": "Stati Uniti", "region": "usa", "ticker": "GOOGL · Nasdaq", "focus": "Ricerca online, pubblicità e piattaforme digitali", "annualReportUrl": "https://abc.xyz/investor/other/annual-reports/" }
+      ]
+    },
+    {
+      "id": "utilities",
+      "label": "Servizi pubblici",
+      "criteria": "Debito rapportato ai flussi regolati (FFO/debito o metrica equivalente), copertura degli interessi, scadenze del debito e stabilità della base tariffaria.",
+      "companies": [
+        { "name": "Terna", "country": "Italia", "region": "italia", "ticker": "TRN · Euronext Milano", "focus": "Rete di trasmissione elettrica", "annualReportUrl": "https://www.terna.it/en/investors/financial-results" },
+        { "name": "Iberdrola", "country": "Spagna", "region": "europa", "ticker": "IBE · Bolsa de Madrid", "focus": "Reti elettriche e generazione rinnovabile", "annualReportUrl": "https://www.iberdrola.com/shareholders-investors/operating-financial-information/annual-reports" },
+        { "name": "NextEra Energy", "country": "Stati Uniti", "region": "usa", "ticker": "NEE · NYSE", "focus": "Utility elettrica e infrastrutture energetiche", "annualReportUrl": "https://www.investor.nexteraenergy.com/financial-reports/annual-reports-and-proxy/default.aspx" }
+      ]
+    }
+  ]
+}

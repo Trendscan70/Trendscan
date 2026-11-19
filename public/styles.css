@@ -542,10 +542,91 @@ a.rd-story-title:hover { color: var(--brand); }
 .rd-sector-source-list > span { margin-right: .1rem; font-weight: 800; }
 .rd-sector-source-list a { padding: .08rem .38rem; border: 1px solid #e5e7eb; border-radius: 999px; color: #6b7280; font-weight: 700; }
 .rd-sector-source-list a:hover { border-color: var(--brand); color: var(--brand); }
-.rd-sector-finviz { display: inline-flex; gap: .25rem; margin: .45rem 0 0 2.1rem; color: #b42318; font-size: .67rem; font-weight: 800; }
-.rd-sector-finviz:hover { text-decoration: underline; }
+.rd-sector-companies { display: inline-flex; gap: .25rem; margin: .45rem 0 0 2.1rem; color: #4338ca; font-size: .67rem; font-weight: 800; }
+.rd-sector-companies:hover { text-decoration: underline; }
 .rd-sector-footnote, .rd-sector-source { margin-top: .7rem; color: #6b7280; font-size: .72rem; line-height: 1.5; }
 .rd-sector-source a { color: var(--brand); font-weight: 800; }
+.rd-impact { margin: .45rem 0 0 2.1rem; color: #4b5563; font-size: .7rem; }
+.rd-impact summary { width: fit-content; cursor: pointer; color: #4338ca; font-weight: 800; }
+.rd-impact p { max-width: 46rem; margin-top: .3rem; line-height: 1.5; }
+.rd-everyday { margin-top: 1.4rem; padding: 1rem; border: 1px solid #dbeafe; border-radius: 1rem; background: linear-gradient(145deg, #eff6ff 0%, #fff 70%); }
+.rd-everyday .rd-h3 { margin-top: .15rem; }
+.rd-everyday-intro, .rd-everyday-note { margin-top: .45rem; color: #4b5563; font-size: .78rem; line-height: 1.55; }
+.rd-everyday-intro b { color: #1f2937; }
+.rd-everyday-grid { display: grid; gap: .65rem; margin-top: .8rem; }
+@media (min-width: 760px) { .rd-everyday-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.rd-price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: .65rem; margin-top: .8rem; }
+.rd-price-card { min-width: 0; padding: .85rem; border: 1px solid #dbeafe; border-radius: .85rem; background: rgba(255,255,255,.92); }
+.rd-price-title { display: flex; align-items: flex-start; gap: .45rem; }
+.rd-price-title > span { font-size: 1.15rem; }
+.rd-price-title h4 { color: #111827; font-size: .82rem; font-weight: 900; line-height: 1.35; }
+.rd-price-reading { display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; margin-top: .65rem; }
+.rd-price-reading > strong { color: #111827; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.rd-price-delta { display: inline-flex; padding: .12rem .45rem; border-radius: 999px; font-size: .67rem; font-weight: 900; }
+.rd-price-up { background: #fee2e2; color: #991b1b; }
+.rd-price-down { background: #dcfce7; color: #166534; }
+.rd-price-same, .rd-price-na { background: #f3f4f6; color: #4b5563; }
+.rd-price-year, .rd-price-explanation { margin-top: .35rem; color: #4b5563; font-size: .7rem; line-height: 1.45; }
+.rd-price-year b { color: #1f2937; font-weight: 900; }
+.rd-price-period { display: block; margin-top: .4rem; color: #6b7280; font-size: .65rem; }
+.rd-price-empty { grid-column: 1 / -1; padding: .8rem; border: 1px dashed #9ca3af; border-radius: .75rem; color: #4b5563; font-size: .78rem; }
+.rd-attention-details { margin-top: .8rem; padding: .75rem .9rem; border: 1px solid #dbeafe; border-radius: .85rem; background: rgba(255,255,255,.55); }
+.rd-attention-details > summary { cursor: pointer; color: #1f2937; font-size: .8rem; font-weight: 900; }
+.rd-attention-details > summary span { color: #6b7280; font-size: .68rem; font-weight: 600; }
+.rd-everyday-card { display: flex; flex-direction: column; align-items: flex-start; gap: .35rem; padding: .85rem; border: 1px solid #dbeafe; border-radius: .85rem; background: rgba(255,255,255,.9); }
+.rd-everyday-title { display: flex; align-items: center; gap: .45rem; }
+.rd-everyday-title > span { font-size: 1.15rem; }
+.rd-everyday-title h4 { color: #111827; font-size: .9rem; font-weight: 900; }
+.rd-everyday-count { font-size: .82rem; font-weight: 900; color: #1f2937; }
+.rd-everyday-count small { display: block; color: #6b7280; font-size: .65rem; font-weight: 600; }
+.rd-everyday-change { padding: .12rem .45rem; border-radius: 999px; font-size: .67rem; font-weight: 900; }
+.rd-everyday-up { background: #ede9fe; color: #5b21b6; }
+.rd-everyday-down { background: #e0e7ff; color: #3730a3; }
+.rd-everyday-same, .rd-everyday-na { background: #f3f4f6; color: #4b5563; }
+.rd-everyday-card > p { margin-top: .1rem; color: #4b5563; font-size: .72rem; line-height: 1.5; }
+.rd-scam-alert { margin-top: 1rem; padding: 1rem 1.1rem; border: 1px solid #fecaca; border-radius: 1rem; background: #fff7f7; }
+.rd-scam-label { display: inline-block; padding: .15rem .5rem; border-radius: 999px; background: #fee2e2; color: #991b1b; font-size: .68rem; font-weight: 900; text-transform: uppercase; }
+.rd-scam-alert h3 { margin-top: .4rem; color: #7f1d1d; font-size: .95rem; font-weight: 900; }
+.rd-scam-alert p { margin-top: .3rem; color: #4b5563; font-size: .78rem; line-height: 1.55; }
+.rd-scam-alert small { display: block; margin-top: .35rem; color: #6b7280; font-size: .67rem; }
+.rd-official-alerts { margin-top: .7rem; padding-top: .65rem; border-top: 1px solid #fecaca; color: #374151; font-size: .76rem; }
+.rd-official-alert-list { display: grid; gap: .35rem; margin-top: .4rem; }
+.rd-official-alert-list li { display: flex; flex-wrap: wrap; gap: .4rem; align-items: baseline; }
+.rd-official-alert-list time { color: #6b7280; font-size: .67rem; font-variant-numeric: tabular-nums; }
+.rd-official-alert-list a, .rd-official-alerts small a { color: #991b1b; font-weight: 800; text-decoration: underline; text-underline-offset: 2px; }
+.rd-official-alert-empty { font-size: .72rem !important; }
+.rd-advice { margin-top: .8rem; padding: .8rem 1rem; border: 1px solid #d1d5db; border-radius: .85rem; background: #f9fafb; color: #374151; font-size: .82rem; line-height: 1.5; }
+.rd-advice b { font-weight: 900; }
+.rd-advice p { margin-top: .2rem; }
+.rd-advice-caution { border-color: #fecaca; background: #fff7f7; }
+.rd-advice-positive { border-color: #fde68a; background: #fffbeb; }
+html.dark .rd-impact { color: #b8c0cf; }
+html.dark .rd-impact summary { color: #a5b4fc; }
+html.dark .rd-everyday { border-color: #343c59; background: linear-gradient(145deg, #151b30 0%, #121826 80%); }
+html.dark .rd-everyday-intro, html.dark .rd-everyday-note, html.dark .rd-everyday-card > p, html.dark .rd-price-year, html.dark .rd-price-explanation { color: #b8c0cf; }
+html.dark .rd-everyday-intro b, html.dark .rd-everyday-title h4, html.dark .rd-everyday-count { color: #f3f4f6; }
+html.dark .rd-everyday-card { border-color: #343c59; background: rgba(18,24,38,.85); }
+html.dark .rd-price-card, html.dark .rd-attention-details { border-color: #343c59; background: rgba(18,24,38,.85); }
+html.dark .rd-price-title h4, html.dark .rd-price-reading > strong, html.dark .rd-price-year b, html.dark .rd-attention-details > summary { color: #f3f4f6; }
+html.dark .rd-price-period, html.dark .rd-attention-details > summary span { color: #8b94a7; }
+html.dark .rd-price-up { background: #4c1d1d; color: #fca5a5; }
+html.dark .rd-price-down { background: #123523; color: #86efac; }
+html.dark .rd-price-same, html.dark .rd-price-na { background: #1c2438; color: #c3c9d6; }
+html.dark .rd-price-empty { border-color: #4b5563; color: #b8c0cf; }
+html.dark .rd-everyday-count small { color: #8b94a7; }
+html.dark .rd-everyday-up { background: #312e81; color: #c7d2fe; }
+html.dark .rd-everyday-down { background: #1e3a8a; color: #bfdbfe; }
+html.dark .rd-everyday-same, html.dark .rd-everyday-na { background: #1c2438; color: #c3c9d6; }
+html.dark .rd-scam-alert { border-color: #5b2929; background: #241719; }
+html.dark .rd-scam-label { background: #4c1d1d; color: #fca5a5; }
+html.dark .rd-scam-alert h3 { color: #fecaca; }
+html.dark .rd-scam-alert p, html.dark .rd-scam-alert small { color: #b8c0cf; }
+html.dark .rd-official-alerts { border-color: #5b2929; color: #d1d5db; }
+html.dark .rd-official-alert-list time { color: #8b94a7; }
+html.dark .rd-official-alert-list a, html.dark .rd-official-alerts small a { color: #fca5a5; }
+html.dark .rd-advice { border-color: #343c59; background: #0f1420; color: #d1d5db; }
+html.dark .rd-advice-caution { border-color: #5b2929; background: #241719; }
+html.dark .rd-advice-positive { border-color: #5b4a1a; background: #2a2210; }
 html.dark .rd-sector-controls button { border-color: #2b3347; background: #121826; color: #d1d5db; }
 html.dark .rd-sector-controls button.on { border-color: #e5e7eb; background: #e5e7eb; color: #111827; }
 html.dark .rd-sector-momentum { border-color: #343c59; background: linear-gradient(135deg, #151b30 0%, #121826 100%); }
@@ -559,6 +640,7 @@ html.dark .rd-sector-chart-card, html.dark .rd-sector-ranking { border-color: #2
 html.dark .rd-sector-row { border-color: #1f2740; }
 html.dark .rd-sector-track { background: #1c2438; }
 html.dark .rd-sector-citations a { color: #d1d5db; }
+html.dark .rd-sector-companies { color: #a5b4fc; }
 html.dark .rd-sector-citations span, html.dark .rd-sector-ranking-head { color: #8b94a7; }
 html.dark .rd-sector-source-list { color: #8b94a7; }
 html.dark .rd-sector-source-list a { border-color: #2b3347; color: #b8c0cf; }
@@ -696,6 +778,56 @@ html.dark .hsim-sub, html.dark .hsim-res span, html.dark .hsim-note { color: #8b
 .gift { display: flex; flex-direction: column; justify-content: center; gap: .6rem; padding: 1.5rem; border-radius: 1.5rem; color: #fff; background: linear-gradient(135deg, #065f46, #10b981); border: 1px solid rgba(52, 211, 153, .6); transition: transform .2s; }
 .gift:hover { transform: translateY(-3px); }
 .gift-btn { align-self: flex-start; margin-top: .4rem; padding: .7rem 1.2rem; border-radius: .8rem; background: #fff; color: #065f46; font-weight: 800; font-size: .9rem; }
+
+/* Aziende per settore */
+.company-hero, .company-method, .company-sector { padding: 1.2rem; border: 1px solid #e5e7eb; border-radius: 1.2rem; background: #fff; }
+.company-hero { background: linear-gradient(135deg, #eef2ff, #fff 70%); }
+.company-kicker { color: #4f46e5; font-size: .65rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.company-hero h1 { margin-top: .45rem; color: #111827; font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 950; line-height: 1.12; }
+.company-hero p, .company-method p { margin-top: .65rem; color: #4b5563; font-size: .85rem; line-height: 1.6; }
+.company-method { margin-top: .9rem; }
+.company-method h2 { color: #111827; font-size: 1.05rem; font-weight: 900; }
+.company-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin-top: .9rem; }
+.company-controls label { font-size: .75rem; font-weight: 800; }
+.company-controls select { max-width: 100%; padding: .45rem .6rem; border: 1px solid #d1d5db; border-radius: .55rem; background: #fff; color: #111827; font-size: .78rem; }
+.company-controls select:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+.company-controls #companyCount { color: #6b7280; font-size: .7rem; }
+.company-directory { display: grid; gap: .9rem; margin-top: .9rem; }
+.company-sector { scroll-margin-top: 6rem; }
+.company-sector-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; }
+.company-sector-heading h2 { margin-top: .15rem; color: #111827; font-size: 1.2rem; font-weight: 950; }
+.company-sector-count { white-space: nowrap; color: #6b7280; font-size: .68rem; }
+.company-criteria { margin-top: .45rem; color: #4b5563; font-size: .72rem; line-height: 1.5; }
+.company-criteria b { color: #374151; }
+.company-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 235px), 1fr)); gap: .65rem; margin-top: .75rem; }
+.company-card { min-width: 0; padding: .8rem; border: 1px solid #e5e7eb; border-radius: .85rem; background: #f9fafb; }
+.company-card-top { display: flex; justify-content: space-between; align-items: center; gap: .4rem; }
+.company-region { padding: .15rem .45rem; border-radius: 999px; background: #e0e7ff; color: #3730a3; font-size: .62rem; font-weight: 900; }
+.company-region-italia { background: #dcfce7; color: #166534; }
+.company-country { color: #6b7280; font-size: .66rem; }
+.company-card h3 { margin-top: .45rem; color: #111827; font-size: .9rem; font-weight: 900; }
+.company-ticker { margin-top: .1rem !important; color: #6b7280 !important; font-size: .65rem !important; font-weight: 800; }
+.company-card p { margin-top: .35rem; color: #4b5563; font-size: .72rem; line-height: 1.45; }
+.company-card > a, .company-source-missing { display: inline-block; margin-top: .55rem; color: #4338ca; font-size: .68rem; font-weight: 800; text-decoration: underline; text-underline-offset: 2px; }
+.company-source-missing { color: #991b1b; }
+.company-loading, .company-empty, .company-error { padding: 1rem; border: 1px dashed #9ca3af; border-radius: .8rem; color: #4b5563; font-size: .8rem; }
+.company-error { border-color: #fecaca; background: #fff7f7; color: #991b1b; }
+.company-disclaimer { margin-top: .9rem; color: #6b7280; font-size: .72rem; line-height: 1.55; }
+.company-disclaimer a { color: #4338ca; font-weight: 800; text-decoration: underline; }
+html.dark .company-hero, html.dark .company-method, html.dark .company-sector { border-color: #2b3347; background: #121826; }
+html.dark .company-hero { background: linear-gradient(135deg, #191f3a, #121826 75%); }
+html.dark .company-hero h1, html.dark .company-method h2, html.dark .company-sector-heading h2, html.dark .company-card h3 { color: #f3f4f6; }
+html.dark .company-hero p, html.dark .company-method p, html.dark .company-criteria, html.dark .company-card p { color: #b8c0cf; }
+html.dark .company-criteria b { color: #e5e7eb; }
+html.dark .company-controls select, html.dark .company-card { border-color: #343c59; background: #0f1420; color: #e5e7eb; }
+html.dark .company-sector-count, html.dark .company-controls #companyCount, html.dark .company-country, html.dark .company-ticker { color: #8b94a7 !important; }
+html.dark .company-region { background: #1e1b4b; color: #c7d2fe; }
+html.dark .company-region-italia { background: #123523; color: #86efac; }
+html.dark .company-card > a, html.dark .company-disclaimer a { color: #a5b4fc; }
+html.dark .company-source-missing { color: #fca5a5; }
+html.dark .company-loading, html.dark .company-empty { border-color: #4b5563; color: #b8c0cf; }
+html.dark .company-error { border-color: #5b2929; background: #241719; color: #fca5a5; }
+html.dark .company-disclaimer { color: #8b94a7; }
 
 /* Radar: frase in italiano semplice */
 .rd-plain { margin-top: .6rem; font-size: .9rem; color: #374151; }

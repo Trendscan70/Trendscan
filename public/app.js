@@ -427,6 +427,7 @@ function renderMarketsView() {
     <div class="mk-big">
       <div class="mk-thermo-row"><span class="mk-score mk-score-xl ${toneCls(s)}">${s.score}</span><span class="mk-of">/100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div>
       ${gauge(s)}
+      ${thermometerAdvice(s)}
       <ul class="mk-facts">
         <li>Notizie analizzate (ultime ${s.windowHours} ore): <b>${s.n}</b> — <span class="mk-up">${s.counts.pos} positive</span> · ${s.counts.neutral} neutre · <span class="mk-down">${s.counts.neg} negative</span></li>
         ${s.change == null ? '' : `<li>Variazione rispetto all’ultima rilevazione giornaliera: <b class="${pctCls(s.change)}">${s.change > 0 ? '+' : ''}${s.change} punti</b></li>`}
@@ -467,7 +468,7 @@ function renderMarketsView() {
       <p class="mk-note"><b>${fxCredit(fx)}</b> I tassi sono riportati come pubblicati dalla BCE (solo il separatore decimale è adattato all’italiano). Sono pubblicati intorno alle 16:00 CET nei giorni di apertura TARGET: nei weekend e nei festivi restano quelli dell’ultimo giorno disponibile. Non sono adatti a operazioni di cambio.<br>* Elaborazione TrendScan sui tassi BCE.</p>
     </section>` : ''}
 
-    <p class="mk-disclaimer"><a href="/criptovalute/" class="underline font-bold brand-text">Nuovo a criptovalute? Leggi la guida per principianti →</a><br>Contenuti informativi, non consulenza finanziaria né raccomandazione di investimento. Altri mercati (indici, titoli di Stato, materie prime) saranno aggiunti quando avremo verificato le condizioni d’uso delle relative fonti.</p>
+    <p class="mk-disclaimer"><a href="/criptovalute/" class="underline font-bold brand-text">Nuovo a criptovalute? Leggi la guida per principianti →</a><br>Non farti distrarre dalle notizie quotidiane: il Radar aiuta a capire il contesto, ma una strategia di risparmio, budget e PAC dovrebbe restare noiosa e costante. Contenuti informativi, non consulenza finanziaria né raccomandazione di investimento. Altri mercati (indici, titoli di Stato, materie prime) saranno aggiunti quando avremo verificato le condizioni d’uso delle relative fonti.</p>
     <div class="reader-bottom"><a href="#home" class="reader-back reader-back-home">← Torna alla home di TrendScan</a></div>`;
 }
 
@@ -485,6 +486,185 @@ const rdReady = () => !!(state.radar && state.radar.meta && state.radar.meta.gen
 const rdNewsOk = () => !!(state.radar && state.radar.news && state.radar.news.ready);
 const rdArticle = id => state.articles.find(a => a.id === id);
 const rdBy = k => state.radar.topics.filter(t => t.kind === k);
+
+function thermometerAdvice(sentiment) {
+  if (!sentiment || !sentiment.ready) return '';
+  const zones = sentiment.labels && sentiment.labels.length ? sentiment.labels : DEFAULT_ZONES;
+  const negativeMax = zones[0].max;
+  const positiveMin = zones.length > 1 ? zones[zones.length - 2].max : 60;
+  if (sentiment.score <= negativeMax) {
+    return `<aside class="rd-advice rd-advice-caution"><b>Come leggere questo dato</b><p>I titoli hanno un tono negativo: non lasciare che il panico decida per te. Evita di vendere d’impulso o interrompere il PAC; attieniti al piano che hai scelto, valutando la tua situazione.</p></aside>`;
+  }
+  if (sentiment.score > positiveMin) {
+    return `<aside class="rd-advice rd-advice-positive"><b>Come leggere questo dato</b><p>I titoli hanno un tono positivo: attenzione all’euforia e alla FOMO. Non investire in strumenti che non capisci solo perché sembrano salire.</p></aside>`;
+  }
+  return `<aside class="rd-advice"><b>Come leggere questo dato</b><p>Il tono è neutro: non è un segnale per cambiare strategia. Le notizie non conoscono i tuoi obiettivi, tempi o capacità di rischio.</p></aside>`;
+}
+
+const RD_IMPACTS = {
+  technology: 'La copertura sulla tecnologia non è un invito a comprare singole azioni: un ETF globale può già includere aziende tech, secondo indice e composizione.',
+  financial: 'Notizie su banche, spread e tassi non dicono da sole cosa fare: controlla le condizioni di mutuo, finanziamento o conto deposito. Se i tassi salgono, una rata variabile può aumentare e i depositi possono offrire condizioni migliori, da verificare caso per caso.',
+  'real-estate': 'Se hai un mutuo variabile, verifica indice di riferimento e prossima revisione della rata. Una notizia sul settore non indica il valore della tua casa.',
+  energy: 'Le notizie sull’energia non sono la tua bolletta: incidono tariffa, consumi e condizioni del contratto. Controlla questi dati prima di cambiare offerta.',
+  utilities: 'Il numero di articoli non misura il costo della tua fornitura: verifica consumi, tariffa e scadenza del contratto.',
+  'consumer-cyclical': 'L’attenzione ai consumi non misura i tuoi rincari: confronta il budget familiare e i prezzi dei prodotti che acquisti davvero.',
+  'consumer-defensive': 'Le notizie sulla spesa non misurano il prezzo del tuo carrello: tieni traccia delle spese ricorrenti e confronta i prezzi.'
+};
+
+function rdImpactDetails(sectorId) {
+  const text = RD_IMPACTS[sectorId] || 'La copertura giornalistica segnala attenzione, non un’opportunità d’investimento. Prima di agire, chiediti quale effetto concreto ha sul tuo budget o sui tuoi obiettivi.';
+  return `<details class="rd-impact"><summary>💡 Cosa significa per te?</summary><p>${text}</p></details>`;
+}
+
+const RD_EVERYDAY = [
+  { id: 'mutui', icon: '🏠', label: 'Mutui', practical: 'Fisso: la rata segue il contratto. Variabile: può cambiare alle revisioni in base all’indice previsto. Confronta TAEG, costi e durata prima di valutare una surroga.' },
+  { id: 'bollette-energia', icon: '⚡', label: 'Luce e gas', practical: 'Il costo dipende da consumi, tariffa e contratto: il volume di notizie non sostituisce la lettura della bolletta.' },
+  { id: 'inflazione', icon: '🛒', label: 'Spesa quotidiana', practical: 'L’inflazione generale non coincide con i tuoi acquisti: osserva le spese ricorrenti del tuo budget.' }
+];
+
+function rdFormatPeriod(period) {
+  if (!/^\d{4}-\d{2}$/.test(period || '')) return 'periodo non disponibile';
+  const [year, month] = period.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, 15)).toLocaleDateString('it-IT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+}
+
+function rdSigned(value, digits = 1, suffix = '%') {
+  if (value == null || !Number.isFinite(Number(value))) return 'non disponibile';
+  const n = Number(value);
+  return `${n > 0 ? '+' : ''}${new Intl.NumberFormat('it-IT', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(n)}${suffix}`;
+}
+
+function rdPublishedRate(value) {
+  const text = String(value == null ? '' : value);
+  return /^\d+(?:\.\d+)?$/.test(text) ? `${text.replace('.', ',')}%` : 'non disponibile';
+}
+
+function rdPriceDelta(value, suffix = '%', digits = 1, changeAsValue = false) {
+  if (value == null || !Number.isFinite(Number(value))) return '<span class="rd-price-delta rd-price-na">Confronto mensile non disponibile</span>';
+  const n = Number(value);
+  const cls = n > 0 ? 'up' : n < 0 ? 'down' : 'same';
+  const arrow = n > 0 ? '↑' : n < 0 ? '↓' : '↔';
+  return `<span class="rd-price-delta rd-price-${cls}">${arrow} ${changeAsValue ? 'rispetto al mese precedente' : `${rdSigned(n, digits, suffix)} nel mese`}</span>`;
+}
+
+function rdPriceCard({ icon, label, value, valueLabel, change, changeSuffix = '%', digits = 1, yearChange, period, stale, explanation, changeAsValue = false }) {
+  return `<article class="rd-price-card">
+    <div class="rd-price-title"><span aria-hidden="true">${icon}</span><h4>${esc(label)}</h4></div>
+    <div class="rd-price-reading"><strong>${esc(value)}</strong><span class="rd-price-value-label">${esc(valueLabel)}</span>${rdPriceDelta(change, changeSuffix, digits, changeAsValue)}</div>
+    <p class="rd-price-year">Variazione annua: <b>${esc(rdSigned(yearChange, digits, changeSuffix))}</b></p>
+    <p class="rd-price-explanation">${esc(explanation)}</p>
+    <small class="rd-price-period">${esc(rdFormatPeriod(period))}${stale ? ' · dato da verificare' : ''}</small>
+  </article>`;
+}
+
+function rdOfficialPriceCards() {
+  const household = state.markets && state.markets.household;
+  const hicp = household && household.eurostat;
+  const indicators = new Map((hicp && hicp.indicators || []).map(item => [item.id, item]));
+  const cards = [
+    { id: 'food', icon: '🛒', label: 'Alimentari e bevande', explanation: 'Indice armonizzato dei prezzi al consumo; non rappresenta il costo del tuo carrello.' },
+    { id: 'home-energy', icon: '⚡', label: 'Elettricità, gas e combustibili', explanation: 'Indice dei prezzi; le bollette effettive dipendono anche da consumi e contratto.' },
+    { id: 'fuel', icon: '⛽', label: 'Carburanti per trasporto privato', explanation: 'Indice armonizzato dei prezzi; il prezzo alla pompa può variare per zona e distributore.' }
+  ].flatMap(definition => {
+    const item = indicators.get(definition.id);
+    return item ? [{
+      ...definition, value: rdSigned(item.changeMonthPct), valueLabel: 'variazione mensile',
+      change: item.changeMonthPct, changeAsValue: true,
+      yearChange: item.changeYearPct, period: item.period, stale: item.stale,
+      changeSuffix: '%', digits: 1
+    }] : [];
+  });
+  const rates = household && household.mortgage && household.mortgage.rates || [];
+  const rateDefinitions = {
+    variable: { icon: '🏠', label: 'Nuovi mutui: variabile o fisso fino a 1 anno', explanation: 'Tasso medio BCE sui nuovi prestiti; non è il tasso applicato alla rata del tuo mutuo.' },
+    'fixed-over-one-year': { icon: '🏡', label: 'Nuovi mutui: fissazione iniziale oltre 1 anno', explanation: 'Tasso medio BCE sui nuovi prestiti con periodo iniziale di fissazione oltre un anno; non è un’offerta disponibile.' }
+  };
+  for (const rate of rates) {
+    const definition = rateDefinitions[rate.id];
+    if (definition) cards.push({
+      ...definition, value: rdPublishedRate(rate.ratePct),
+      valueLabel: 'tasso medio sui nuovi mutui',
+      change: rate.changeMonthPp, yearChange: rate.changeYearPp, period: rate.period,
+      stale: rate.stale || household.mortgage.stale, changeSuffix: ' p.p.', digits: 2
+    });
+  }
+  if (!cards.length) return '<p class="rd-price-empty">Gli indicatori ufficiali non sono ancora disponibili. Riprova dopo il prossimo aggiornamento dei dati.</p>';
+  return cards.map(rdPriceCard).join('');
+}
+
+function rdOfficialPriceHtml() {
+  const household = state.markets && state.markets.household;
+  const eurostatSource = household && household.eurostat && household.eurostat.source;
+  const mortgageSource = household && household.mortgage && household.mortgage.source;
+  const eurostatAccessDate = household && household.checkedAt ? new Date(household.checkedAt).toLocaleDateString('it-IT') : '';
+  const sources = [
+    eurostatSource && `<a href="${esc(safeUrl(eurostatSource.url))}" target="_blank" rel="noopener noreferrer">Eurostat, dataset prc_hicp_minr</a>${eurostatAccessDate ? ` (consultato il ${esc(eurostatAccessDate)})` : ''}`,
+    mortgageSource && `<a href="${esc(safeUrl(mortgageSource.url))}" target="_blank" rel="noopener noreferrer">${esc(mortgageSource.attribution || mortgageSource.name)}</a>`
+  ].filter(Boolean).join(' · ');
+  return `<section class="rd-everyday" aria-labelledby="rdEverydayTitle">
+    <span class="rd-sector-kicker">DATI ECONOMICI UFFICIALI</span>
+    <h3 id="rdEverydayTitle" class="rd-h3">Prezzi quotidiani e tassi sui nuovi mutui</h3>
+    <p class="rd-everyday-intro">Le variazioni mensili confrontano l’ultimo dato disponibile con il mese precedente; non sono prezzi in tempo reale né previsioni. L’inflazione armonizzata non coincide con le spese della singola famiglia. Per i mutui, la BCE pubblica tassi medi sui nuovi prestiti: la categoria descrive il periodo iniziale di fissazione, non il contratto o la rata di un singolo mutuatario.</p>
+    <div class="rd-price-grid">${rdOfficialPriceCards()}</div>
+    <p class="rd-everyday-note">${sources || 'Fonti ufficiali: Eurostat HICP ed ECB Data Portal (serie MIR).'} Le variazioni sono calcoli TrendScan sui dati mensili pubblicati; Eurostat non è responsabile delle elaborazioni.</p>
+  </section>`;
+}
+
+function rdEverydayCard(item) {
+  const topic = (state.radar.topics || []).find(entry => entry.id === item.id);
+  const news = topic && topic.news;
+  const period = state.radar.news && state.radar.news.days || 7;
+  let movement = '<span class="rd-everyday-change rd-everyday-na">↔ confronto in costruzione</span>';
+  if (news && news.isNew) movement = '<span class="rd-everyday-change rd-everyday-up">↑ nuovo nelle notizie</span>';
+  else if (news && Number.isFinite(news.changePct)) {
+    const cls = news.changePct > 0 ? 'up' : news.changePct < 0 ? 'down' : 'same';
+    const arrow = news.changePct > 0 ? '↑' : news.changePct < 0 ? '↓' : '↔';
+    movement = `<span class="rd-everyday-change rd-everyday-${cls}">${arrow} ${fmtPct0(news.changePct)} quota notizie</span>`;
+  }
+  const count = news && Number.isFinite(news.recent) ? `${fmtInt(news.recent)} ${news.recent === 1 ? 'articolo' : 'articoli'}` : 'dati non disponibili';
+  return `<article class="rd-everyday-card">
+    <div class="rd-everyday-title"><span aria-hidden="true">${item.icon}</span><h4>${item.label}</h4></div>
+    <span class="rd-everyday-count">${count}<small>ultimi ${period} giorni</small></span>
+    ${movement}
+    <p>${item.practical}</p>
+  </article>`;
+}
+
+function rdEverydayHtml() {
+  return `${rdOfficialPriceHtml()}
+    <details class="rd-attention-details">
+      <summary>Quanto se ne parla nelle notizie? <span>Attenzione mediatica, non prezzi</span></summary>
+      <p class="rd-everyday-intro">Questi conteggi riguardano la copertura delle testate seguite da TrendScan e non sostituiscono gli indicatori ufficiali qui sopra.</p>
+      <div class="rd-everyday-grid">${RD_EVERYDAY.map(rdEverydayCard).join('')}</div>
+    </details>`;
+}
+
+function rdScamAlertsHtml() {
+  const data = state.markets && state.markets.scamAlerts;
+  const sourceUrl = data && data.source && safeUrl(data.source.url);
+  const publishedAt = data && data.fetchedAt ? new Date(data.fetchedAt).toLocaleDateString('it-IT') : '';
+  const status = data && data.stale
+    ? 'Feed non aggiornato: consulta la pagina ufficiale per gli avvisi più recenti.'
+    : publishedAt ? `Feed controllato il ${publishedAt}.` : 'Feed ufficiale non disponibile al momento.';
+  const items = data && Array.isArray(data.items) ? data.items : [];
+  const list = items.length
+    ? `<ul class="rd-official-alert-list">${items.map(item => {
+        const href = safeUrl(item.url || sourceUrl);
+        const date = item.date ? `<time datetime="${esc(item.date)}">${esc(item.date)}</time>` : '';
+        return `<li>${date}<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a></li>`;
+      }).join('')}</ul>`
+    : '<p class="rd-official-alert-empty">Non è stato possibile caricare gli avvisi. Verifica direttamente la fonte ufficiale.</p>';
+  return `<aside class="rd-scam-alert" aria-label="Avvisi ufficiali e sicurezza">
+    <span class="rd-scam-label">⚠️ Verifica prima di agire</span>
+    <h3>Avvisi ai risparmiatori e sicurezza</h3>
+    <p>Non comunicare PIN, password o codici OTP, né installare app su richiesta di messaggi inattesi. Per controllare una comunicazione, apri autonomamente il sito o l’app ufficiale della tua banca.</p>
+    <div class="rd-official-alerts">
+      <b>Ultimi avvisi CONSOB</b>
+      ${list}
+      <small>${esc(status)} ${sourceUrl ? `· <a href="${esc(sourceUrl)}" target="_blank" rel="noopener noreferrer">Apri la pagina ufficiale CONSOB</a>` : ''} Il feed copre gli avvisi pubblicati da CONSOB, non tutte le truffe o le pubblicità online.</small>
+    </div>
+  </aside>`;
+}
 
 function rdSectorRows(days = state.radarSectorDays) {
   const now = Date.now(), cutoff = now - days * 86400e3;
@@ -546,15 +726,15 @@ function rdSectorsHtml() {
   const max = rows[0].count;
   const cards = rows.map((sector, index) => {
     const share = Math.round(sector.count / total * 100);
-    const finviz = /^[a-z]+$/.test(sector.finvizFilter || '') ? `https://finviz.com/screener/stocks?v=111&f=sec_${sector.finvizFilter}` : '';
     const citations = sector.articles.slice(0, 2).map(article => `<li><a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(article.title)}</a><span>${esc(article.source || 'Testata')} · ${esc(timeAgo(article.publishedAt))}</span></li>`).join('');
     const sources = sector.sources.map(article => `<a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(String(article.source || 'Testata').split(' – ')[0])}</a>`).join('');
     return `<article class="rd-sector-row">
       <div class="rd-sector-rowhead"><span class="rd-sector-rank">${String(index + 1).padStart(2, '0')}</span><span class="rd-sector-icon" style="--sector-color:${esc(sector.color)}">${esc(sector.icon)}</span><div class="rd-sector-name"><h4>${esc(sector.label)}</h4><span>${sector.count} ${sector.count === 1 ? 'articolo' : 'articoli'} · ${sector.outlets} ${sector.outlets === 1 ? 'testata' : 'testate'}</span></div><b class="rd-sector-share">${share}%</b></div>
       <div class="rd-sector-track" aria-label="${share}% delle menzioni classificate"><span style="--sector-color:${esc(sector.color)};width:${Math.max(2, Math.round(sector.count / max * 100))}%"></span></div>
       <ul class="rd-sector-citations">${citations}</ul>
+      ${rdImpactDetails(sector.id)}
       <div class="rd-sector-source-list"><span>Fonti:</span>${sources}</div>
-      ${finviz ? `<a class="rd-sector-finviz" href="${finviz}" target="_blank" rel="noopener noreferrer">Vedi le azioni ${esc(sector.label.toLowerCase())} su Finviz <span aria-hidden="true">↗</span></a>` : ''}
+      <a class="rd-sector-companies" href="/aziende/#${encodeURIComponent(sector.id)}">Aziende da approfondire in questo settore <span aria-hidden="true">→</span></a>
     </article>`;
   }).join('');
   const legend = rows.slice(0, 6).map(sector => `<li><span style="--sector-color:${esc(sector.color)}"></span>${esc(sector.label)} <b>${sector.count}</b></li>`).join('');
@@ -565,8 +745,8 @@ function rdSectorsHtml() {
       <div class="rd-sector-chart-card"><div><span class="rd-sector-kicker">PANORAMICA</span><h4>Voci più presenti nelle notizie</h4><p>Distribuzione degli articoli classificati nel periodo.</p></div><div class="rd-sector-donut-wrap">${rdSectorDonut(rows)}<span><b>${fmtInt(total)}</b><small>menzioni</small></span></div><ul class="rd-sector-legend">${legend}</ul></div>
       <div class="rd-sector-ranking"><div class="rd-sector-ranking-head"><span class="rd-sector-kicker">CLASSIFICA EDITORIALE</span><span>articoli e testate</span></div>${cards}</div>
     </div>
-    <p class="rd-sector-footnote">Classificazione automatica delle notizie raccolte da TrendScan in base a parole chiave nei titoli e nelle anteprime: un articolo può comparire in più settori. Le fonti sono citate accanto a ogni titolo. I filtri Finviz aprono uno screener di azioni quotate negli Stati Uniti: non sono dati usati per classificare le notizie.</p>
-    <p class="rd-sector-source">Fonti e metodo: <a href="https://finviz.com/help/screener" target="_blank" rel="noopener noreferrer">guida ufficiale ai filtri Finviz</a> · <a href="/metodo/#radar" class="underline">metodo TrendScan</a></p>
+    <p class="rd-sector-footnote">Classificazione automatica delle notizie raccolte da TrendScan in base a parole chiave nei titoli e nelle anteprime: un articolo può comparire in più settori. Le fonti sono citate accanto a ogni titolo. Le aziende da approfondire sono selezionate separatamente con criteri di bilancio pubblici e non sono raccomandazioni d’acquisto.</p>
+    <p class="rd-sector-source">Fonti e metodo: <a href="/metodo/#radar" class="underline">metodo TrendScan</a> · <a href="/aziende/">criteri per la selezione delle aziende</a></p>
   </div>`;
 }
 
@@ -639,7 +819,7 @@ function radarStripHtml() {
         ${card('Settori economici più citati', mBadge('news'), c1)}
         ${card('Notizie che ricevono più attenzione', mBadge('news'), c4)}
       </div>
-      <p class="mk-credit">Settori ricavati dalle notizie delle testate che seguiamo; le fonti sono citate nelle classifiche. <a href="#mercati" data-goto-radar class="underline">Apri grafici, fonti e metodo</a>.</p>
+      <p class="mk-credit">Le classifiche descrivono l’attenzione dei giornali; nel radar completo trovi anche cosa può significare per mutui, bollette e spesa. Non sono segnali sui prezzi né inviti a investire. <a href="#mercati" data-goto-radar class="underline">Apri contesto pratico, fonti e metodo</a>.</p>
     </div>`;
 }
 
@@ -663,12 +843,14 @@ function radarSectionHtml() {
     <section id="trendRadar" class="mk-card rd-section" aria-labelledby="rdTitle">
       <h2 id="rdTitle" class="mk-h2">Trend Radar <span class="mk-badge">settori economici nelle notizie</span></h2>
       <p class="mk-lead">Quali settori compaiono più spesso nelle notizie economiche delle testate che seguiamo. È una misura della copertura editoriale, non dell’andamento dei mercati e non un consiglio d’investimento.</p>
-      ${shareRowHtml('radar', 'radar.png', 'trendscan-trend-radar.png', 'Trend Radar: i settori più citati dalle testate', 'I settori economici più presenti nelle notizie delle testate che seguiamo. Fonti citate, aggiornamento orario.')}
+      ${shareRowHtml('radar', 'radar.png', 'trendscan-trend-radar.png', 'Trend Radar: notizie e vita quotidiana', 'Attenzione mediatica, contesto per mutui, bollette e spesa; le frecce descrivono le notizie, non i prezzi.')}
       <div class="rd-board" aria-labelledby="rdB1">
         <h3 id="rdB1" class="rd-h3">Settori economici più citati</h3>
         <p class="mk-lead">I settori più citati sono ordinati per numero di articoli. In alto trovi anche quelli la cui quota sul totale delle notizie è cresciuta rispetto ai 7 giorni precedenti: è attenzione editoriale, non volume di ricerche o interesse degli investitori.</p>
         <div class="rd-sector-mount">${rdSectorsHtml()}</div>
       </div>
+
+      ${rdEverydayHtml()}
 
       <div class="rd-board" aria-labelledby="rdB2">
         <h3 id="rdB2" class="rd-h3">Notizie che ricevono più attenzione</h3>
@@ -681,12 +863,14 @@ function radarSectionHtml() {
         <ul>
           <li><b>Settori.</b> Gli articoli delle testate raccolte da TrendScan sono associati ai settori tramite parole chiave nei titoli e nelle anteprime. La stessa notizia può ricadere in più settori; i conteggi non sono quindi una quota del totale di articoli.</li>
           <li><b>Fonti.</b> Titoli e collegamenti portano alla pagina originale della testata, indicata accanto a ciascun articolo. Raccogliamo le fonti elencate nella <a href="/metodo/#radar" class="underline font-bold brand-text">pagina del metodo</a>.</li>
-          <li><b>Finviz.</b> Il filtro di settore apre lo screener ufficiale Finviz. La guida Finviz descrive i filtri di settore e industria; lo screener include azioni quotate su Nasdaq, NYSE e AMEX, quindi i risultati non rappresentano necessariamente società italiane o europee e non sono la fonte delle notizie.</li>
+          <li><b>Aziende per settore.</b> La pagina dedicata applica criteri di solidità basati sui bilanci pubblici, con metriche specifiche per banche, assicurazioni, immobiliari e utility. L’ordine geografico dà precedenza alle aziende italiane, poi europee e statunitensi; non è una classifica di rendimento né una raccomandazione d’acquisto.</li>
           <li><b>Copertura.</b> Titoli molto simili in testate diverse entro 36 ore contano come la stessa storia. Il metodo può unire per errore storie vicine o non riconoscere la stessa storia scritta in modo molto diverso.</li>
           <li><b>Limiti.</b> La classificazione automatica può non cogliere il contesto o associare male un titolo. Il Radar riflette solo le notizie raccolte e non misura né prevede l’andamento dei settori o dei titoli.</li>
         </ul>
         <p class="rd-sub"><a href="/metodo/#radar" class="underline font-bold brand-text">Leggi il metodo completo</a></p>
       </details>
+
+      ${rdScamAlertsHtml()}
     </section>`;
 }
 

@@ -129,7 +129,7 @@ function radarSvg(r) {
   ${rowsL}
   <text x="650" y="244" font-size="19" font-weight="800" fill="#ff9b8a" letter-spacing="1">NOTIZIE CHE RICEVONO PIÙ ATTENZIONE</text>
   ${rowsR}
-  ${footer(`Fonti citate per articolo · Finviz: screener azioni USA · ${r && r.meta ? fmtDate(r.meta.generatedAt) : 'aggiornamento orario'}`)}`);
+  ${footer(`Fonti citate per articolo · aziende per settore su TrendScan · ${r && r.meta ? fmtDate(r.meta.generatedAt) : 'aggiornamento orario'}`)}`);
 }
 
 // ---------------------------------------------------------------- rendering

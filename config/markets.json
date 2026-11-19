@@ -25,6 +25,49 @@
       }
     }
   ],
+  "household": {
+    "refreshHours": 24,
+    "eurostat": {
+      "enabled": true,
+      "dataset": "prc_hicp_minr",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr",
+      "pageUrl": "https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table?lang=en",
+      "geo": "IT",
+      "unit": "I25",
+      "coicopDimension": "coicop18",
+      "license": {
+        "verified": true,
+        "checked": "2026-11-19",
+        "policyUrl": "https://ec.europa.eu/eurostat/web/main/help/copyright-notice",
+        "attribution": "Fonte: Eurostat, HICP ECOICOP ver. 2.",
+        "conditions": "Eurostat autorizza il riutilizzo commerciale dei dati statistici salvo eccezioni specifiche; per questi dati italiani non risultano eccezioni indicate. Citare la fonte e dichiarare le modifiche: le variazioni percentuali sono elaborazioni TrendScan."
+      },
+      "categories": [
+        { "id": "food", "label": "Alimentari e bevande analcoliche", "code": "CP01", "icon": "🛒" },
+        { "id": "home-energy", "label": "Elettricità, gas e altri combustibili", "code": "CP045", "icon": "⚡" },
+        { "id": "fuel", "label": "Carburanti per trasporto privato", "code": "CP0722", "icon": "⛽" }
+      ]
+    },
+    "mortgage": {
+      "enabled": true,
+      "url": "https://data-api.ecb.europa.eu/service/data/MIR/M.IT.B.A2C.F+K.R.A.2250.EUR.N?format=csvdata&lastNObservations=13",
+      "pageUrl": "https://data.ecb.europa.eu/data/datasets/MIR",
+      "refreshHours": 24,
+      "license": {
+        "verified": true,
+        "checked": "2026-11-19",
+        "policyUrl": "https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html",
+        "attribution": "Fonte: ECB Data Portal, MFI interest rate statistics (MIR).",
+        "conditions": "Riutilizzo secondo la policy BCE, citando la fonte e senza modificare i tassi pubblicati. Le differenze mensili e annuali in punti percentuali sono elaborazioni TrendScan."
+      }
+    }
+  },
+  "consobAlerts": {
+    "enabled": true,
+    "url": "https://www.consob.it/web/area-pubblica/avvisi-ai-risparmiatori/ultime",
+    "maxItems": 5,
+    "refreshHours": 6
+  },
   "sentiment": {
     "version": 2,
     "windowHours": 48,

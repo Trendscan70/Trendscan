@@ -3,7 +3,7 @@
  * TrendScan Hub - mercati e Termometro TrendScan (nessuna chiave API, nessuna dipendenza)
  *
  *   node scripts/build-markets.mjs            aggiorna data/markets.json
- *   node scripts/build-markets.mjs --force    ignora l'intervallo minimo tra due richieste alla BCE
+ *   node scripts/build-markets.mjs --force    ignora gli intervalli di aggiornamento configurati
  *
  * CAMBI     tassi di riferimento della BCE, letti dai file XML ufficiali (fonte primaria, nessun intermediario).
  *           Condizioni di riutilizzo (ESCB): gratuito, anche commerciale, citando la fonte e SENZA modificare
@@ -18,6 +18,7 @@
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { computeSentiment } from './markets-sentiment.mjs';
+import { buildHicpIndicator, buildMortgageRates, parseConsobAlerts } from './markets-indicators.mjs';
 
 const CONFIG_URL = process.env.MARKETS_CONFIG ? new URL('file://' + process.env.MARKETS_CONFIG) : new URL('../config/markets.json', import.meta.url);
 const CFG = JSON.parse(await readFile(CONFIG_URL, 'utf8'));
@@ -31,7 +32,7 @@ async function fetchText(url, timeout = 20000) {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), timeout);
   try {
-    const res = await fetch(url, { signal: ctl.signal, redirect: 'follow', headers: { 'User-Agent': UA, Accept: 'application/xml,text/xml,*/*' } });
+    const res = await fetch(url, { signal: ctl.signal, redirect: 'follow', headers: { 'User-Agent': UA, Accept: 'application/xml,text/xml,application/json,text/csv,*/*' } });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     return await res.text();
   } finally { clearTimeout(t); }
@@ -99,9 +100,113 @@ async function providerEcbXml(src, prevFx) {
 const PROVIDERS = { 'ecb-xml': providerEcbXml };
 
 // ---------------------------------------------------------------------------
+async function buildHouseholdData(previous) {
+  const src = CFG.household, now = new Date(NOW);
+  if (!src) return { data: previous ? { ...previous, stale: true } : null, note: 'indicatori quotidiani non configurati' };
+  const age = previous?.checkedAt ? NOW - Date.parse(previous.checkedAt) : Infinity;
+  if (!FORCE && age < (src.refreshHours ?? 24) * 3600e3) {
+    return { data: previous, note: `riuso indicatori di ${Math.round(age / 60000)} minuti fa` };
+  }
+
+  const priorById = new Map((previous?.eurostat?.indicators || []).map(item => [item.id, item]));
+  const hicp = src.eurostat;
+  const eurostatEnabled = hicp?.enabled && hicp.license?.verified === true;
+  const indicators = [];
+  const errors = [];
+  if (eurostatEnabled) {
+    const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 14, 1)).toISOString().slice(0, 7);
+    for (const category of hicp.categories) {
+      try {
+        const url = new URL(hicp.url);
+        url.search = new URLSearchParams({
+          freq: 'M', geo: hicp.geo, [hicp.coicopDimension]: category.code,
+          unit: hicp.unit, sinceTimePeriod: start, lang: 'en'
+        }).toString();
+        const payload = JSON.parse(await fetchText(url));
+        indicators.push(buildHicpIndicator(payload, category, now));
+      } catch (e) {
+        errors.push(`${category.id}: ${e.message}`);
+        const old = priorById.get(category.id);
+        if (old) indicators.push({ ...old, stale: true });
+      }
+    }
+  } else errors.push('Eurostat: fonte disattivata o licenza non verificata');
+
+  const priorMortgage = previous?.mortgage;
+  let mortgage = priorMortgage ? { ...priorMortgage, stale: true } : null;
+  const m = src.mortgage;
+  if (!m?.enabled || m.license?.verified !== true) errors.push('mutui BCE: fonte disattivata o licenza non verificata');
+  else {
+    try {
+      const ageMortgage = priorMortgage?.fetchedAt ? NOW - Date.parse(priorMortgage.fetchedAt) : Infinity;
+      if (!FORCE && !priorMortgage?.stale && ageMortgage < (m.refreshHours ?? 24) * 3600e3) mortgage = priorMortgage;
+      else {
+        const csv = await fetchText(m.url);
+        mortgage = {
+          fetchedAt: now.toISOString(),
+          source: { name: 'ECB Data Portal · MFI interest rate statistics (MIR)', attribution: m.license.attribution, url: m.pageUrl },
+          rates: buildMortgageRates(csv, now)
+        };
+        mortgage.stale = mortgage.rates.every(rate => rate.stale);
+      }
+    } catch (e) {
+      errors.push(`mutui BCE: ${e.message}`);
+      if (priorMortgage) mortgage = { ...priorMortgage, stale: true };
+    }
+  }
+
+  const data = {
+    fetchedAt: now.toISOString(),
+    checkedAt: now.toISOString(),
+    eurostat: {
+      source: eurostatEnabled ? { name: 'Eurostat · HICP ECOICOP ver. 2', attribution: hicp.license.attribution, url: hicp.pageUrl } : null,
+      indicators,
+      stale: indicators.length < (hicp?.categories?.length || 0) || indicators.some(item => item.stale)
+    },
+    mortgage,
+    errors
+  };
+  data.stale = errors.length > 0 || data.eurostat.stale || !!mortgage?.stale;
+  const note = errors.length
+    ? `indicatori quotidiani parziali: ${errors.join('; ')}`
+    : data.stale
+      ? 'serie oltre la soglia di aggiornamento prevista'
+      : `Eurostat ${indicators.length} serie; mutui BCE ${mortgage?.rates?.length || 0} serie`;
+  return { data, note };
+}
+
+async function buildConsobData(previous) {
+  const src = CFG.consobAlerts, now = new Date(NOW);
+  if (!src?.enabled) {
+    const data = previous ? { ...previous, stale: true } : null;
+    return { data, note: 'avvisi Consob disattivati' };
+  }
+  const age = previous?.checkedAt ? NOW - Date.parse(previous.checkedAt) : Infinity;
+  if (!FORCE && age < (src.refreshHours ?? 6) * 3600e3) {
+    return { data: previous, note: `riuso avvisi Consob di ${Math.round(age / 60000)} minuti fa` };
+  }
+  try {
+    const html = await fetchText(src.url);
+    const data = {
+      fetchedAt: now.toISOString(),
+      checkedAt: now.toISOString(),
+      stale: false,
+      source: { name: 'CONSOB · Avvisi ai risparmiatori', url: src.url },
+      items: parseConsobAlerts(html, src.url, src.maxItems || 5)
+    };
+    return { data, note: `${data.items.length} avvisi ufficiali Consob` };
+  } catch (e) {
+    const data = previous
+      ? { ...previous, checkedAt: now.toISOString(), stale: true, error: e.message }
+      : { checkedAt: now.toISOString(), stale: true, source: { name: 'CONSOB · Avvisi ai risparmiatori', url: src.url }, items: [], error: e.message };
+    return { data, note: `errore avvisi Consob: ${e.message}` };
+  }
+}
+
+// ---------------------------------------------------------------------------
 async function main() {
   const prev = await readJson(`${DATA_DIR}/markets.json`);
-  const out = { meta: { generatedAt: new Date(NOW).toISOString(), version: 1 }, fx: prev?.fx ?? null, sentiment: prev?.sentiment ?? null };
+  const out = { meta: { generatedAt: new Date(NOW).toISOString(), version: 2 }, fx: prev?.fx ?? null, sentiment: prev?.sentiment ?? null, household: prev?.household ?? null, scamAlerts: prev?.scamAlerts ?? null };
   const log = [];
 
   // 1) Cambi
@@ -129,6 +234,21 @@ async function main() {
   } catch (e) {
     log.push(`✗ termometro: ${e.message}`);
   }
+
+  // 3) Indicatori mensili sui costi quotidiani
+  try {
+    const { data, note } = await buildHouseholdData(prev?.household);
+    out.household = data;
+    log.push(`${data && !data.stale ? '✓' : '✗'} costo quotidiano: ${note}`);
+  } catch (e) {
+    log.push(`✗ costo quotidiano: ${e.message}`);
+    if (prev?.household) out.household = { ...prev.household, stale: true };
+  }
+
+  // 4) Avvisi ufficiali ai risparmiatori
+  const { data: scamAlerts, note: scamNote } = await buildConsobData(prev?.scamAlerts);
+  out.scamAlerts = scamAlerts;
+  log.push(`${scamAlerts && !scamAlerts.stale ? '✓' : '✗'} avvisi Consob: ${scamNote}`);
 
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(`${DATA_DIR}/markets.json`, JSON.stringify(out));

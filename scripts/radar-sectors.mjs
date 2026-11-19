@@ -38,7 +38,6 @@ export function buildSectorRows(articles, sectors, now = Date.now()) {
       label: sector.label,
       icon: sector.icon,
       color: sector.color,
-      finvizFilter: sector.finvizFilter,
       momentum7d: {
         ready,
         recentCount,

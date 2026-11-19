@@ -495,10 +495,10 @@ ${tail}`;
 const SHARES = [
   { slug: 'radar', icon: '📡', short: 'Trend Radar', img: 'radar.png', file: 'trendscan-trend-radar.png',
     h1: 'Trend Radar: i settori economici più citati',
-    desc: 'I settori economici più citati nelle notizie delle testate seguite da TrendScan, con fonti originali e filtri Finviz. Aggiornato ogni ora.',
+    desc: 'I settori economici più citati nelle notizie, gli indicatori quotidiani e le aziende da approfondire con bilanci pubblici.',
     alt: 'Trend Radar di TrendScan: settori economici più citati nelle notizie delle testate seguite',
     body: `<p>Il Trend Radar ordina i <strong>settori economici più citati</strong> nelle notizie delle testate che seguiamo. Descrive la copertura editoriale, non l’andamento dei mercati e non è un consiglio.</p>
-      <p>Ogni notizia rimanda alla sua fonte originale. I filtri Finviz aprono uno screener di azioni quotate negli Stati Uniti: non vengono usati per classificare le notizie. È mantenuta la sezione <strong>Notizie che ricevono più attenzione</strong>.</p>`,
+      <p>Ogni notizia rimanda alla sua fonte originale. La pagina <a href="/aziende/">Aziende per settore</a> presenta una shortlist editoriale con bilanci pubblici e criteri specifici per comparto; non è una classifica né una raccomandazione d’acquisto. È mantenuta la sezione <strong>Notizie che ricevono più attenzione</strong>.</p>`,
     cta: 'Apri il Trend Radar interattivo' },
   { slug: 'termometro', icon: '🌡️', short: 'Termometro TrendScan', img: 'termometro.png', file: 'trendscan-termometro.png',
     h1: 'Termometro TrendScan: il tono delle notizie di finanza',
