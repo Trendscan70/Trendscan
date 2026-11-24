@@ -360,14 +360,24 @@ function spark(values, w = 96, h = 28, cls = 'mk-spark') {
 
 function gauge(sentiment) {
   const zones = sentiment.labels && sentiment.labels.length ? sentiment.labels : DEFAULT_ZONES;
+  const colors = ['#ef4444', '#f59e0b', '#10b981'];
+  const point = value => {
+    const angle = Math.PI - Math.PI * Math.min(100, Math.max(0, value)) / 100;
+    return { x: 100 + 80 * Math.cos(angle), y: 100 - 80 * Math.sin(angle) };
+  };
   let previousMax = 0;
-  const bars = zones.map((zone, index) => {
-    const width = Math.max(0, zone.max - previousMax);
+  const arcs = zones.map((zone, index) => {
+    const start = point(previousMax), end = point(zone.max);
     previousMax = zone.max;
-    return `<span class="mk-z${index + 1}" style="width:${width}%"></span>`;
+    return `<path d="M${start.x.toFixed(1)} ${start.y.toFixed(1)} A80 80 0 0 0 ${end.x.toFixed(1)} ${end.y.toFixed(1)}" fill="none" stroke="${colors[index] || '#64748b'}" stroke-width="14" stroke-linecap="round"/>`;
   }).join('');
+  const needle = point(sentiment.score);
   return `<div class="mk-gauge" role="img" aria-label="Termometro TrendScan: ${sentiment.score} su 100, ${esc(sentiment.label)}">
-    <div class="mk-gauge-bar">${bars}<i class="mk-marker" style="left:${Math.min(100, Math.max(0, sentiment.score))}%"></i></div>
+    <svg class="mk-gauge-dial" viewBox="0 0 200 116" aria-hidden="true">
+      ${arcs}
+      <line x1="100" y1="100" x2="${needle.x.toFixed(1)}" y2="${needle.y.toFixed(1)}" class="mk-gauge-needle"/>
+      <circle cx="100" cy="100" r="6" class="mk-gauge-pivot"/>
+    </svg>
     <div class="mk-gauge-scale"><span>0 · negativo</span><span>50 · neutro</span><span>100 · positivo</span></div></div>`;
 }
 const toneCls = sentiment => {
@@ -447,6 +457,8 @@ function renderMarketsView() {
     ${bar}
     <header class="mk-head"><h1>Mercati</h1><p>Il Trend Radar, il Termometro TrendScan e i cambi di riferimento della BCE. Dati a scopo informativo${upd ? `, aggiornati il ${esc(upd)}` : ''}.</p></header>
 
+    ${marketsSnapshotHtml()}
+    ${trendOfDayHtml()}
     ${rdReady() ? radarSectionHtml() : ''}
 
     <section class="mk-card" aria-labelledby="mkThermoTitle">
@@ -465,6 +477,7 @@ function renderMarketsView() {
         <thead><tr><th scope="col">Coppia</th><th scope="col" class="mk-num">Tasso BCE</th><th scope="col" class="mk-num" title="Variazione rispetto al giorno precedente">Var. 1g*</th><th scope="col" class="mk-num" title="Variazione rispetto a circa 30 giorni prima">Var. 30g*</th><th scope="col">Andamento*</th></tr></thead>
         <tbody>${rows}</tbody>
       </table></div>
+      ${fxUseCasesHtml(fx)}
       <p class="mk-note"><b>${fxCredit(fx)}</b> I tassi sono riportati come pubblicati dalla BCE (solo il separatore decimale è adattato all’italiano). Sono pubblicati intorno alle 16:00 CET nei giorni di apertura TARGET: nei weekend e nei festivi restano quelli dell’ultimo giorno disponibile. Non sono adatti a operazioni di cambio.<br>* Elaborazione TrendScan sui tassi BCE.</p>
     </section>` : ''}
 
@@ -492,28 +505,46 @@ function thermometerAdvice(sentiment) {
   const zones = sentiment.labels && sentiment.labels.length ? sentiment.labels : DEFAULT_ZONES;
   const negativeMax = zones[0].max;
   const positiveMin = zones.length > 1 ? zones[zones.length - 2].max : 60;
+  let reading = 'Il tono è neutro: non è un segnale per cambiare strategia. Le notizie non conoscono i tuoi obiettivi, tempi o capacità di rischio.';
   if (sentiment.score <= negativeMax) {
-    return `<aside class="rd-advice rd-advice-caution"><b>Come leggere questo dato</b><p>I titoli hanno un tono negativo: non lasciare che il panico decida per te. Evita di vendere d’impulso o interrompere il PAC; attieniti al piano che hai scelto, valutando la tua situazione.</p></aside>`;
+    reading = 'I titoli hanno un tono negativo: evita decisioni dettate dal panico e rileggi il piano che hai scelto.';
+  } else if (sentiment.score > positiveMin) {
+    reading = 'I titoli hanno un tono positivo: attenzione all’euforia. Non investire in strumenti che non capisci solo perché se ne parla.';
   }
-  if (sentiment.score > positiveMin) {
-    return `<aside class="rd-advice rd-advice-positive"><b>Come leggere questo dato</b><p>I titoli hanno un tono positivo: attenzione all’euforia e alla FOMO. Non investire in strumenti che non capisci solo perché sembrano salire.</p></aside>`;
-  }
-  return `<aside class="rd-advice"><b>Come leggere questo dato</b><p>Il tono è neutro: non è un segnale per cambiare strategia. Le notizie non conoscono i tuoi obiettivi, tempi o capacità di rischio.</p></aside>`;
+  return `<aside class="rd-advice rd-investing-today">
+    <b>Se hai 10.000 € da investire</b><p>${reading} Il Termometro non è una strategia personalizzata.</p>
+    <div class="rd-investing-columns"><div><b>Cosa NON significa</b><ul><li>❌ Compra subito</li><li>❌ Vendi tutto</li></ul></div>
+      <div><b>Cosa significa</b><ul><li>✅ Mantieni il piano di lungo termine</li><li>✅ Continua il PAC se è già parte del tuo piano</li><li>✅ Evita decisioni emotive</li></ul></div></div>
+  </aside>`;
 }
 
 const RD_IMPACTS = {
-  technology: 'La copertura sulla tecnologia non è un invito a comprare singole azioni: un ETF globale può già includere aziende tech, secondo indice e composizione.',
-  financial: 'Notizie su banche, spread e tassi non dicono da sole cosa fare: controlla le condizioni di mutuo, finanziamento o conto deposito. Se i tassi salgono, una rata variabile può aumentare e i depositi possono offrire condizioni migliori, da verificare caso per caso.',
-  'real-estate': 'Se hai un mutuo variabile, verifica indice di riferimento e prossima revisione della rata. Una notizia sul settore non indica il valore della tua casa.',
-  energy: 'Le notizie sull’energia non sono la tua bolletta: incidono tariffa, consumi e condizioni del contratto. Controlla questi dati prima di cambiare offerta.',
-  utilities: 'Il numero di articoli non misura il costo della tua fornitura: verifica consumi, tariffa e scadenza del contratto.',
-  'consumer-cyclical': 'L’attenzione ai consumi non misura i tuoi rincari: confronta il budget familiare e i prezzi dei prodotti che acquisti davvero.',
-  'consumer-defensive': 'Le notizie sulla spesa non misurano il prezzo del tuo carrello: tieni traccia delle spese ricorrenti e confronta i prezzi.'
+  technology: ['Se possiedi ETF tecnologici, controlla quanto pesa già il settore nel portafoglio.', 'Più notizie non significa rendimento atteso più alto.', 'Il settore può essere volatile: evita concentrazioni non coerenti con il tuo piano.'],
+  financial: ['Se hai un mutuo o un conto deposito, verifica le condizioni effettive del tuo contratto.', 'Le notizie sui tassi non anticipano automaticamente la rata o il rendimento che ricevi.', 'Non modificare l’asset allocation sulla base della sola copertura mediatica.'],
+  'real-estate': ['Se hai un mutuo variabile, controlla indice e prossima revisione della rata.', 'Le notizie immobiliari non indicano il valore della tua casa.', 'Valuta le spese abitative nel budget, senza dedurre il prezzo futuro degli immobili.'],
+  energy: ['Le notizie sull’energia non sono la tua bolletta: controlla consumi e tariffa.', 'Una variazione dell’indice non coincide necessariamente con quella del tuo contratto.', 'Non cambiare piano d’investimento solo perché il settore è molto citato.'],
+  utilities: ['Il numero di articoli non misura il costo della tua fornitura.', 'Verifica consumi, tariffa e scadenza del contratto.', 'La copertura mediatica non è un segnale sui prezzi dei titoli.'],
+  'consumer-cyclical': ['L’attenzione ai consumi non misura i tuoi rincari personali.', 'Confronta il budget familiare e i prezzi dei prodotti che acquisti.', 'Non confondere il volume delle notizie con le prospettive dei mercati.'],
+  'consumer-defensive': ['Le notizie sulla spesa non misurano il prezzo del tuo carrello.', 'Tieni traccia delle spese ricorrenti e confronta i prezzi.', 'Il settore più citato non è necessariamente quello più adatto al tuo portafoglio.']
+};
+
+const RD_REASONS = {
+  technology: 'AI, semiconduttori, software e grandi aziende tecnologiche.',
+  financial: 'Banche, tassi d’interesse, credito e mercati finanziari.',
+  'real-estate': 'Mutui, compravendite, affitti e costi delle abitazioni.',
+  energy: 'Petrolio, gas, rinnovabili e transizione energetica.',
+  'consumer-cyclical': 'Auto, viaggi, moda e consumi non essenziali.',
+  'consumer-defensive': 'Alimentari, supermercati e beni di prima necessità.',
+  healthcare: 'Sanità, farmaci, ricerca e servizi per la salute.',
+  industrials: 'Manifattura, trasporti, infrastrutture e difesa.',
+  'basic-materials': 'Materie prime, metalli, chimica e risorse naturali.',
+  'communication-services': 'Telecomunicazioni, media, piattaforme e pubblicità.',
+  utilities: 'Servizi pubblici, reti e forniture di energia e acqua.'
 };
 
 function rdImpactDetails(sectorId) {
-  const text = RD_IMPACTS[sectorId] || 'La copertura giornalistica segnala attenzione, non un’opportunità d’investimento. Prima di agire, chiediti quale effetto concreto ha sul tuo budget o sui tuoi obiettivi.';
-  return `<details class="rd-impact"><summary>💡 Cosa significa per te?</summary><p>${text}</p></details>`;
+  const points = RD_IMPACTS[sectorId] || ['Le notizie descrivono attenzione mediatica, non un’opportunità d’investimento.', 'Verifica se il tema ha un effetto concreto sul tuo budget o sui tuoi obiettivi.', 'Non cambiare il portafoglio sulla base di un singolo indicatore.'];
+  return `<details class="rd-impact"><summary>💡 Cosa significa per il tuo portafoglio?</summary><ul>${points.map(point => `<li>✅ ${esc(point)}</li>`).join('')}</ul></details>`;
 }
 
 const RD_EVERYDAY = [
@@ -668,7 +699,7 @@ function rdScamAlertsHtml() {
 
 function rdSectorRows(days = state.radarSectorDays) {
   const now = Date.now(), cutoff = now - days * 86400e3;
-  return (state.radar && state.radar.sectors || []).map(sector => {
+  const rows = (state.radar && state.radar.sectors || []).map(sector => {
     const articles = (sector.articles || []).filter(article => {
       const publishedAt = Date.parse(article.publishedAt);
       return Number.isFinite(publishedAt) && publishedAt >= cutoff && publishedAt <= now + 3600e3;
@@ -680,6 +711,72 @@ function rdSectorRows(days = state.radarSectorDays) {
     });
     return { ...sector, articles, sources: [...sourceByOutlet.values()], count: articles.length, outlets: sourceByOutlet.size };
   }).filter(sector => sector.count > 0).sort((a, b) => b.count - a.count || b.outlets - a.outlets);
+  const max = rows[0] ? rows[0].count : 0;
+  return rows.map(sector => ({
+    ...sector,
+    trendScore: max ? Math.round(sector.count / max * 100) : null,
+    attention: max && sector.count / max >= .65 ? 'high' : max && sector.count / max >= .3 ? 'medium' : 'low'
+  }));
+}
+
+function marketsSnapshotHtml() {
+  const m = state.markets, sentiment = m && m.sentiment;
+  const fx = m && m.fx, household = m && m.household;
+  const sectors = rdSectorRows(2), weeklySectors = rdSectorRows(7);
+  const top = sectors[0] || weeklySectors[0];
+  const energy = (household && household.eurostat && household.eurostat.indicators || []).find(item => item.id === 'home-energy');
+  const fixedRate = (household && household.mortgage && household.mortgage.rates || []).find(rate => rate.id === 'fixed-over-one-year');
+  const usd = (fx && fx.pairs || []).find(pair => pair.id === 'EURUSD');
+  const items = [
+    top ? `<div><dt>Settore più citato${sectors.length ? ' · 48 ore' : ' · 7 giorni'}</dt><dd>${esc(top.label)}</dd></div>` : '',
+    sentiment && sentiment.ready ? `<div><dt>Tono delle notizie</dt><dd>${esc(sentiment.label)} <span>(${sentiment.score}/100)</span></dd></div>` : '',
+    energy && energy.changeMonthPct != null ? `<div><dt>Energia domestica · ${esc(rdFormatPeriod(energy.period))}</dt><dd>${energy.changeMonthPct > 0 ? '+' : ''}${String(energy.changeMonthPct).replace('.', ',')}% <span>nel mese</span></dd></div>` : '',
+    fixedRate ? `<div><dt>Tasso medio nuovi mutui a tasso fisso</dt><dd>${fmtRate(fixedRate.ratePct)}% <span>· ${esc(rdFormatPeriod(fixedRate.period))}</span></dd></div>` : '',
+    usd ? `<div><dt>Euro / Dollaro · tasso BCE</dt><dd>${fmtRate(usd.rate)} <span>USD per 1 EUR</span></dd></div>` : ''
+  ].filter(Boolean);
+  if (!items.length) return '';
+  return `<section class="mk-card mk-snapshot" aria-labelledby="mkSnapshotTitle">
+    <h2 id="mkSnapshotTitle" class="mk-h2">📌 In 30 secondi</h2>
+    <dl class="mk-snapshot-grid">${items.join('')}</dl>
+    <p class="mk-note">Indicatori di contesto basati sulle fonti e sui periodi indicati; non descrivono il tuo caso personale.</p>
+  </section>`;
+}
+
+function trendOfDayHtml() {
+  const sectors = rdSectorRows(2);
+  const top = sectors[0];
+  if (!top) return '';
+  return `<aside class="mk-trend-day" aria-labelledby="mkTrendDayTitle">
+    <div><span class="mk-trend-day-kicker">AGGIORNATO CON LE NOTIZIE · ULTIME 48 ORE</span>
+      <h2 id="mkTrendDayTitle">🔥 Trend del giorno</h2>
+      <p>Il settore più citato è <b>${esc(top.label)}</b>, con ${top.count} ${top.count === 1 ? 'articolo' : 'articoli'} nel campione TrendScan.</p>
+    </div>
+    <a href="#trendRadar" data-goto-radar class="mk-trend-day-link">Scopri il settore <span aria-hidden="true">→</span></a>
+  </aside>`;
+}
+
+function fxUseCasesHtml(fx) {
+  const useCases = [
+    { id: 'EURUSD', label: 'Se viaggi negli USA', name: 'dollari USA' },
+    { id: 'EURGBP', label: 'Se acquisti online nel Regno Unito', name: 'sterline' },
+    { id: 'EURCHF', label: 'Se viaggi o investi in Svizzera', name: 'franchi svizzeri' }
+  ];
+  const cards = useCases.map(item => {
+    const pair = (fx.pairs || []).find(entry => entry.id === item.id);
+    return pair ? `<div><b>${item.label}</b><span>1 EUR = ${fmtRate(pair.rate)} ${item.name}</span></div>` : '';
+  }).filter(Boolean);
+  return cards.length ? `<div class="mk-fx-context" aria-label="Cambi dell'euro nella vita quotidiana">${cards.join('')}</div>` : '';
+}
+
+function rdWatchlistHtml() {
+  const rows = rdSectorRows(30).slice(0, 4);
+  if (!rows.length) return '';
+  const month = new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+  return `<section class="rd-watchlist" aria-labelledby="rdWatchlistTitle">
+    <div><span class="rd-sector-kicker">AGGIORNATA CON IL RADAR</span><h3 id="rdWatchlistTitle">Watchlist del mese · ${esc(month)}</h3>
+      <p>Settori con più articoli negli ultimi 30 giorni: è una lista di temi da seguire, non una previsione.</p></div>
+    <ul>${rows.map(sector => `<li><span aria-hidden="true">${esc(sector.icon)}</span><b>${esc(sector.label)}</b><span>${sector.count} ${sector.count === 1 ? 'articolo' : 'articoli'}</span></li>`).join('')}</ul>
+  </section>`;
 }
 
 function rdSectorDonut(rows) {
@@ -724,13 +821,19 @@ function rdSectorsHtml() {
   const momentum = rdSectorMomentumHtml();
   if (!total) return `<div class="rd-sector-dashboard">${momentum}<div class="rd-sector-controls" role="group" aria-label="Periodo delle notizie">${filters}</div><p class="rd-empty">Nessuna notizia disponibile per questo periodo. Riprova più tardi.</p></div>`;
   const max = rows[0].count;
+  const heatmap = rows.map(sector => {
+    const level = sector.attention;
+    const levelLabel = level === 'high' ? 'Molta attenzione' : level === 'medium' ? 'Attenzione media' : 'Poca attenzione';
+    return `<li class="rd-heat-${level}"><span aria-hidden="true">${level === 'high' ? '🟢' : level === 'medium' ? '🟡' : '🔴'}</span><b>${esc(sector.label)}</b><span>${levelLabel}</span><strong>${sector.trendScore}</strong></li>`;
+  }).join('');
   const cards = rows.map((sector, index) => {
     const share = Math.round(sector.count / total * 100);
     const citations = sector.articles.slice(0, 2).map(article => `<li><a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(article.title)}</a><span>${esc(article.source || 'Testata')} · ${esc(timeAgo(article.publishedAt))}</span></li>`).join('');
     const sources = sector.sources.map(article => `<a href="${esc(safeUrl(article.url))}" target="_blank" rel="noopener noreferrer">${esc(String(article.source || 'Testata').split(' – ')[0])}</a>`).join('');
     return `<article class="rd-sector-row">
-      <div class="rd-sector-rowhead"><span class="rd-sector-rank">${String(index + 1).padStart(2, '0')}</span><span class="rd-sector-icon" style="--sector-color:${esc(sector.color)}">${esc(sector.icon)}</span><div class="rd-sector-name"><h4>${esc(sector.label)}</h4><span>${sector.count} ${sector.count === 1 ? 'articolo' : 'articoli'} · ${sector.outlets} ${sector.outlets === 1 ? 'testata' : 'testate'}</span></div><b class="rd-sector-share">${share}%</b></div>
+      <div class="rd-sector-rowhead"><span class="rd-sector-rank">${String(index + 1).padStart(2, '0')}</span><span class="rd-sector-icon" style="--sector-color:${esc(sector.color)}">${esc(sector.icon)}</span><div class="rd-sector-name"><h4>${esc(sector.label)}</h4><span>${sector.count} ${sector.count === 1 ? 'articolo' : 'articoli'} · ${sector.outlets} ${sector.outlets === 1 ? 'testata' : 'testate'}</span></div><span class="rd-trend-score" aria-label="TrendScore ${sector.trendScore} su 100">TrendScore <b>${sector.trendScore}</b></span><b class="rd-sector-share">${share}%</b></div>
       <div class="rd-sector-track" aria-label="${share}% delle menzioni classificate"><span style="--sector-color:${esc(sector.color)};width:${Math.max(2, Math.round(sector.count / max * 100))}%"></span></div>
+      <p class="rd-sector-reason"><b>💡 Perché se ne parla:</b> ${esc(RD_REASONS[sector.id] || 'Notizie economiche associate a questo settore.')}</p>
       <ul class="rd-sector-citations">${citations}</ul>
       ${rdImpactDetails(sector.id)}
       <div class="rd-sector-source-list"><span>Fonti:</span>${sources}</div>
@@ -741,11 +844,12 @@ function rdSectorsHtml() {
   return `<div class="rd-sector-dashboard">
     ${momentum}
     <div class="rd-sector-toolbar"><div class="rd-sector-controls" role="group" aria-label="Periodo delle notizie">${filters}</div><span class="rd-sector-total"><b>${fmtInt(total)}</b> menzioni di settore</span></div>
+    <section class="rd-heatmap" aria-labelledby="rdHeatmapTitle"><div><h4 id="rdHeatmapTitle">Heatmap dell’attenzione</h4><p>Intensità relativa tra i settori nel periodo selezionato.</p></div><ul>${heatmap}</ul></section>
     <div class="rd-sector-visuals">
       <div class="rd-sector-chart-card"><div><span class="rd-sector-kicker">PANORAMICA</span><h4>Voci più presenti nelle notizie</h4><p>Distribuzione degli articoli classificati nel periodo.</p></div><div class="rd-sector-donut-wrap">${rdSectorDonut(rows)}<span><b>${fmtInt(total)}</b><small>menzioni</small></span></div><ul class="rd-sector-legend">${legend}</ul></div>
       <div class="rd-sector-ranking"><div class="rd-sector-ranking-head"><span class="rd-sector-kicker">CLASSIFICA EDITORIALE</span><span>articoli e testate</span></div>${cards}</div>
     </div>
-    <p class="rd-sector-footnote">Classificazione automatica delle notizie raccolte da TrendScan in base a parole chiave nei titoli e nelle anteprime: un articolo può comparire in più settori. Le fonti sono citate accanto a ogni titolo. Le aziende da approfondire sono selezionate separatamente con criteri di bilancio pubblici e non sono raccomandazioni d’acquisto.</p>
+    <p class="rd-sector-footnote"><b>TrendScore (beta):</b> indice di attenzione editoriale da 0 a 100, calcolato rapportando le menzioni del settore al settore più citato nello stesso periodo; cambia se cambi periodo e non è confrontabile tra periodi diversi. La heatmap usa la stessa intensità relativa (≥65% alta, ≥30% media, altrimenti bassa). Non misura ricerche, interesse degli investitori o andamento dei prezzi. Classificazione automatica su titoli e anteprime: un articolo può comparire in più settori. Le fonti sono citate accanto a ogni titolo. Le aziende da approfondire sono selezionate separatamente con criteri di bilancio pubblici e non sono raccomandazioni d’acquisto.</p>
     <p class="rd-sector-source">Fonti e metodo: <a href="/metodo/#radar" class="underline">metodo TrendScan</a> · <a href="/aziende/">criteri per la selezione delle aziende</a></p>
   </div>`;
 }
@@ -850,6 +954,7 @@ function radarSectionHtml() {
         <div class="rd-sector-mount">${rdSectorsHtml()}</div>
       </div>
 
+      ${rdWatchlistHtml()}
       ${rdEverydayHtml()}
 
       <div class="rd-board" aria-labelledby="rdB2">
