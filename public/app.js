@@ -181,7 +181,7 @@ function renderHero() {
   }
   const withImg = arts.find(a => a.image) || arts[0];
   const main = withImg;
-  const side = arts.filter(a => a !== main).slice(0, 3);
+  const side = arts.filter(a => a !== main).slice(0, 2);
   const c = catOf(main.category);
   g.innerHTML = `
     <a href="${articleHref(main)}" class="hero-main lg:col-span-2 ${c.cls}">
@@ -210,7 +210,7 @@ function renderHomeLatest() {
   const el = $('homeLatest');
   if (!state.articles.length) { el.innerHTML = emptyBox('Gli articoli arrivano dai feed dei giornali', SETUP_HINT + failureHint(state.articleMeta)); return; }
   const skip = state.heroIds || new Set();
-  const latest = state.articles.filter(a => !skip.has(a.id)).slice(0, 6);
+  const latest = state.articles.filter(a => !skip.has(a.id)).slice(0, 3);
   state.latestIds = new Set(latest.map(a => a.id));
   el.innerHTML = latest.map(articleCard).join('');
 }

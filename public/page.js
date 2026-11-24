@@ -53,7 +53,9 @@
   reset.addEventListener('click', function () { applyScale(1, true); });
   increase.addEventListener('click', function () { applyScale(scale + step, true); });
   applyScale(scale, false);
-  document.body.appendChild(controls);
+  var header = document.querySelector('header');
+  if (header) header.insertAdjacentElement('afterend', controls);
+  else document.body.appendChild(controls);
 
   document.addEventListener('click', function (e) {
     var button = e.target.closest('[data-copy-link]');

@@ -288,8 +288,8 @@ async function buildArticles() {
       coverPool.push({ tk: coverTokens(it.title), outlet: outletOf(s.name), t: it.date.getTime() });
       const summary = realSummary(it.title, it.summary);
       if (summary.length < minSummary) { skipped.troppoBrevi++; continue; }
-      // categoria dal titolo e dall'anteprima; le categorie del feed solo come ripiego per le fonti fidate
-      let cat = cats.find(c => c.re.test(`${it.title} ${summary}`));
+      // Il titolo prevale sul riepilogo, che può citare argomenti secondari.
+      let cat = cats.find(c => c.re.test(it.title)) || cats.find(c => c.re.test(summary));
       if (!cat && s.trusted) cat = cats.find(c => c.re.test(it.cats));
       if (!s.trusted && !cat) { skipped.fuoriTema++; continue; }
       collected.push({

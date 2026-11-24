@@ -81,19 +81,12 @@
           <a href="#home" data-nav="home" class="nav-link">Home</a>
           <a href="#articoli" data-nav="articoli" class="nav-link">Articoli</a>
           <a href="#mercati" data-nav="mercati" class="nav-link">Mercati</a>
-          <a href="/criptovalute/" class="nav-link">Criptovalute</a>
           <a href="#video" data-nav="video" class="nav-link">Video</a>
           <a href="/guide/" class="nav-link">Guide</a>
           <a href="/strumenti/" class="nav-link">Strumenti</a>
-          <a href="/chi-siamo/" class="nav-link">Chi siamo</a>
         </div>
       </div>
     </nav>
-    <div class="border-t border-gray-100 bg-white">
-      <div class="max-w-7xl mx-auto px-4 py-2 overflow-x-auto no-scrollbar">
-        <div id="categoryBar" class="flex gap-2 whitespace-nowrap text-xs font-bold"></div>
-      </div>
-    </div>
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-6">
@@ -101,16 +94,16 @@
       <section class="welcome" aria-labelledby="welcomeTitle">
         <span class="welcome-badge">Finanza personale per chi parte da zero</span>
         <h1 id="welcomeTitle">Capisci i tuoi soldi, un passo alla volta. <span>Senza paroloni.</span></h1>
-        <p class="welcome-sub" data-gl>Guide gratuite da leggere e scaricare, strumenti pratici, video educativi e le notizie dei giornali italiani, tutto in un posto.</p>
+        <p class="welcome-sub" data-gl>Guide e strumenti gratuiti per capire risparmio, budget e investimenti, un passo alla volta.</p>
         <div class="welcome-cta">
-          <button type="button" data-jump="inizia" class="welcome-btn welcome-btn-main">Scopri le guide gratuite ↓</button>
-          <button type="button" data-jump="strumenti" class="welcome-btn welcome-btn-alt">🧰 Scopri gli strumenti gratuiti</button>
-          <button type="button" data-install class="welcome-btn welcome-btn-install" aria-label="Installa l'app TrendScan sul tuo dispositivo">📲 Installa l'app gratis</button>
+          <button type="button" data-jump="inizia" class="welcome-btn welcome-btn-main">Inizia dalle guide →</button>
+          <button type="button" data-jump="strumenti" class="welcome-btn welcome-btn-alt">Oppure prova uno strumento ↓</button>
         </div>
         <ul class="welcome-trust">
           <li>✓ Gratis, senza registrazione</li>
           <li>✓ Solo informazione, nessun consiglio personalizzato</li>
           <li>✓ Fonti dichiarate e link pubblicitari sempre segnalati · <a href="/metodo/">Come lavoriamo</a></li>
+          <li><button type="button" data-install class="welcome-install-link" aria-label="Installa l'app TrendScan sul tuo dispositivo">📲 Installa l'app gratis</button></li>
         </ul>
       </section>
       <section id="inizia" class="guide-showcase" aria-labelledby="guideShowcaseTitle">
@@ -153,10 +146,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <a class="tool-card" href="/strumenti/pac-realistico/"><span class="ti" aria-hidden="true">📉</span><b>PAC realistico</b><span class="tx">Quanto ti resta dopo costi, bollo, tasse e inflazione.</span></a>
           <a class="tool-card" href="/strumenti/affitto-vs-comprare/"><span class="ti" aria-hidden="true">🏠</span><b>Affitto o comprare casa?</b><span class="tx">Costi iniziali, mutuo e manutenzione contro affitto e investimento.</span></a>
-          <a class="tool-card" href="/strumenti/costo-vizi/"><span class="ti" aria-hidden="true">☕</span><b>Il costo delle piccole spese</b><span class="tx">Quanto potrebbe valere una spesa ricorrente in 20 anni.</span></a>
           <a class="tool-card" href="/strumenti/gap-pensionistico/"><span class="ti" aria-hidden="true">🧓</span><b>Gap pensionistico</b><span class="tx">Una stima del divario e del possibile beneficio fiscale.</span></a>
-          <a class="tool-card" href="/strumenti/obiettivo-risparmio/"><span class="ti" aria-hidden="true">🎯</span><b>Obiettivo di risparmio</b><span class="tx">«Voglio 100.000 € tra 15 anni»: quanto devo mettere da parte?</span></a>
-          <a class="tool-card" href="/strumenti/rendimento-netto-btp/"><span class="ti" aria-hidden="true">🏛️</span><b>BTP, deposito, ETF</b><span class="tx">BTP Valore a confronto, dopo imposte e inflazione.</span></a>
         </div>
       </div>
       <div>
@@ -224,6 +214,10 @@
       </section>
       <div class="section-title pt-2"><h2 class="text-xl sm:text-2xl">Articoli dai giornali</h2><span class="section-bar"></span></div>
       <p class="text-sm text-gray-600 -mt-3 max-w-3xl">Raccogliamo automaticamente le notizie dei principali giornali e siti italiani su risparmio, investimenti, fisco, casa e pensione.</p>
+      <div class="category-filter">
+        <span class="category-filter-label">Filtra per argomento</span>
+        <div id="categoryBar" class="flex gap-2 overflow-x-auto no-scrollbar whitespace-nowrap text-xs font-bold" role="group" aria-label="Filtra gli articoli per argomento"></div>
+      </div>
       <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
         <select id="sourceFilter" class="px-4 py-2 rounded-full bg-white border border-gray-200 text-sm font-semibold"><option value="ALL">Tutte le testate</option></select>
         <span id="articleCount" class="text-xs text-gray-500"></span>

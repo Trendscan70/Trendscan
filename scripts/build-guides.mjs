@@ -574,9 +574,9 @@ ${hdr(P, 'guide')}
           <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold border border-purple-500/40 uppercase tracking-widest">🎓 TrendScan Financial Academy</span>
           <h1 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">${title}</h1>
           <p class="text-sm text-gray-200 mt-2 leading-relaxed">
-            Scopri come gestire il tuo denaro in modo intelligente, comprendere il funzionamento delle azioni societarie ed utilizzare l'interesse composto tramite un PAC (Piano di Accumulo del Capitale) per costruire la tua indipendenza finanziaria nel tempo.
+            Impara a organizzare il tuo denaro, capire azioni ed ETF e usare un PAC per pianificare i risparmi nel tempo, senza promesse di rendimento.
           </p>
-          <p class="text-sm text-gray-300 mt-2 leading-relaxed"><strong class="text-white">Da dove comincio?</strong> Se parti da zero, segui i capitoli nell'ordine: dal budget (2) agli ETF (3) e al PAC (4), poi prova i numeri nel simulatore (7). Ogni guida è una pagina a sé e si legge in pochi minuti.</p>
+          <p class="text-sm text-gray-300 mt-2 leading-relaxed"><strong class="text-white">Da dove comincio?</strong> Se parti da zero, inizia dal <a class="underline font-semibold text-white" href="/guide/risparmio-50-30-20/">budget e fondo di emergenza (capitolo 2)</a>; poi passa agli ETF (3), al PAC (4) e al simulatore (7). Il capitolo sulle azioni è un approfondimento: non serve seguire tutto l'ordine.</p>
           ${updatedLine}
         </div>
       </div>

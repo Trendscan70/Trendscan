@@ -4,7 +4,7 @@ html { scroll-behavior: smooth; font-size: 100%; }
 html.ts-homepage { font-size: 105%; }
 body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
 
-.ts-font-controls { position: fixed; right: 1rem; bottom: 1rem; z-index: 1000; display: flex; align-items: center; gap: .3rem; padding: .35rem .5rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; color: #111827; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+.ts-font-controls { position: relative; z-index: 1; display: flex; width: max-content; max-width: calc(100% - 2rem); align-items: center; gap: .3rem; margin: .5rem 1rem 0 auto; padding: .25rem .4rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; color: #111827; }
 .ts-font-controls-label { margin: 0 .25rem; font-size: .75rem; font-weight: 700; }
 .ts-font-controls button { min-width: 2.4rem; height: 2.4rem; padding: 0 .5rem; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; color: inherit; font: inherit; font-weight: 800; cursor: pointer; }
 .ts-font-controls button:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
@@ -104,6 +104,8 @@ input[type=range]::-moz-range-track { height: 6px; background: #1f2937; border-r
 
 /* le ancore delle guide non devono finire sotto l'header fisso */
 [id^="guide-"] { scroll-margin-top: 150px; }
+#inizia, #strumenti { scroll-margin-top: 6rem; }
+@media (max-width: 1023px) { #inizia, #strumenti { scroll-margin-top: 10rem; } }
 
 
 /* ==== Modalità scura (le Guide sono già scure) ==== */
@@ -214,6 +216,11 @@ html.dark .topic-link:hover { background: #1a2030; }
   .section-title { flex-wrap: wrap; gap: .35rem .9rem; }
   .section-title h1, .section-title h2 { white-space: normal; }
   .section-bar { display: none; }
+  .ts-font-controls-label { display: none; }
+  .ts-font-controls button { min-width: 2.1rem; height: 2.1rem; padding: 0 .35rem; }
+}
+@media (max-width: 1023px) {
+  header nav a[href="/chi-siamo"], header nav a[href="/chi-siamo/"] { display: none; }
 }
 
 
@@ -703,11 +710,15 @@ html.dark .rd-spark.mk-up { color: #34d399; } html.dark .rd-spark.mk-down { colo
 .welcome-btn:hover { transform: translateY(-2px); }
 .welcome-btn-main { background: var(--brand); color: #fff; }
 .welcome-btn-main:hover { background: var(--brand-dark); }
-.welcome-btn-alt { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.35); color: #fff; }
-.welcome-btn-alt:hover { background: rgba(255,255,255,.2); }
+.welcome-btn-alt { padding: .5rem .3rem; background: transparent; border: 0; color: #fed7aa; text-decoration: underline; text-underline-offset: .2rem; }
+.welcome-btn-alt:hover { color: #fff; }
 .welcome-trust { margin-top: 1.4rem; display: flex; flex-direction: column; gap: .3rem; font-size: .8rem; color: #cbd5e1; }
 @media (min-width: 900px) { .welcome-trust { flex-direction: row; flex-wrap: wrap; gap: .4rem 1.4rem; } }
 .welcome-trust a { text-decoration: underline; color: #fff; }
+.welcome-install-link { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .7rem; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; background: rgba(255,255,255,.1); color: #fff; font: inherit; font-size: .75rem; font-weight: 800; cursor: pointer; transition: background .15s, border-color .15s; }
+.welcome-install-link:hover { border-color: rgba(255,255,255,.65); background: rgba(255,255,255,.18); }
+.category-filter { display: grid; gap: .5rem; }
+.category-filter-label { color: #6b7280; font-size: .75rem; font-weight: 800; }
 
 /* Guide gratuite in home */
 .guide-showcase { display: grid; gap: 1.5rem; padding: 1.25rem; border: 1px solid #c7d2fe; border-radius: 1.5rem; background: linear-gradient(135deg, #eef2ff 0%, #fff 58%, #ecfdf5 100%); overflow: hidden; }
@@ -948,9 +959,7 @@ html.dark .tool-card { background: #121826; border-color: #2b3347; color: #e5e7e
 html.dark .tool-card span.tx { color: #aab2c0; }
 
 /* ============ Installa l'app ============ */
-.welcome-btn-install { background: #fff; color: #111827; border: 0; box-shadow: 0 8px 24px -8px rgba(255, 255, 255, .45); }
-.welcome-btn-install:hover { background: #fef2f2; }
-.welcome-btn-install[hidden] { display: none; }
+.welcome-install-link[hidden] { display: none; }
 #ts-install-dlg { border: 0; border-radius: 1.25rem; padding: 0; max-width: min(28rem, calc(100vw - 2rem)); width: 100%; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .6); background: #fff; color: #111827; }
 #ts-install-dlg::backdrop { background: rgba(0, 0, 0, .6); }
 #ts-install-dlg .in { padding: 1.4rem; display: flex; flex-direction: column; gap: .8rem; }
