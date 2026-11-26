@@ -126,6 +126,25 @@ async function bootstrap() {
 function renderAll() {
   renderHero(); renderMarketStrip(); renderHomeLatest(); renderHomeVideos(); renderGlossary(); applyGlossary();
   renderArticles(); renderMarketsView(); renderVideoPage();
+  setupSectionReveal();
+}
+
+let sectionRevealObserver;
+function setupSectionReveal() {
+  const blocks = document.querySelectorAll('#view-home .welcome, #view-home .guide-showcase, #view-home #strumenti, #view-home #heroGrid, #view-home #homeLatest, #view-home .home-video-panel, #view-articoli .section-title, #view-articoli [aria-labelledby], #view-articoli #categoryIntro, #view-articoli #articleGrid, #view-mercati .mk-head, #view-mercati .mk-card, #view-mercati .rd-section, #view-articolo .reader, #view-video > *, #academyRoot .academy-banner, #academyRoot section');
+  if (!('IntersectionObserver' in window)) { blocks.forEach(el => el.classList.add('section-reveal', 'is-visible')); return; }
+  if (!sectionRevealObserver) sectionRevealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      sectionRevealObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+  blocks.forEach(el => {
+    if (el.classList.contains('section-reveal') && el.classList.contains('is-visible')) return;
+    el.classList.add('section-reveal');
+    sectionRevealObserver.observe(el);
+  });
 }
 
 // ------------------------------------------------------------------ componenti
@@ -174,11 +193,11 @@ function renderHero() {
         <div class="relative z-10 h-full min-h-[380px] flex flex-col justify-end p-6 sm:p-9">
           <span class="self-start px-3 py-1 rounded-md brand-bg text-[11px] font-extrabold uppercase tracking-widest">Hub di finanza personale</span>
           <h2 class="text-3xl sm:text-5xl font-black leading-tight mt-3 max-w-2xl">Metti in ordine i tuoi soldi, una guida alla volta.</h2>
-          <p class="mt-3 text-gray-200 max-w-xl text-sm sm:text-base">Articoli dei giornali, video dei migliori youtuber italiani e un simulatore PAC per capire quanto può crescere il tuo risparmio.</p>
+          <p class="mt-3 text-gray-200 max-w-xl text-sm sm:text-base">Articoli, video del canale ufficiale TrendScan e strumenti pratici per capire quanto può crescere il tuo risparmio.</p>
         </div>
       </a>
       <div class="flex flex-col gap-4">
-        <a href="#video" class="hero-side"><div class="w-24 h-20 rounded-lg g-casa flex items-center justify-center text-3xl shrink-0">▶️</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Video Educativi</div><div class="side-title font-extrabold leading-snug">La playlist dei migliori canali italiani di finanza</div></div></a>
+        <a href="#video" class="hero-side"><div class="w-24 h-20 rounded-lg g-casa flex items-center justify-center text-3xl shrink-0">▶️</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Video TrendScan</div><div class="side-title font-extrabold leading-snug">Gli approfondimenti del canale ufficiale</div></div></a>
         <a href="/guide/" class="hero-side"><div class="w-24 h-20 rounded-lg g-investimenti flex items-center justify-center text-3xl shrink-0">🧮</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Strumenti</div><div class="side-title font-extrabold leading-snug">Simulatore PAC e interesse composto</div></div></a>
         <a href="#articoli" class="hero-side"><div class="w-24 h-20 rounded-lg g-pensione flex items-center justify-center text-3xl shrink-0">📰</div><div><div class="text-[10px] font-extrabold uppercase brand-text">Articoli</div><div class="side-title font-extrabold leading-snug">I consigli di finanza personale dei giornali</div></div></a>
       </div>`;
@@ -455,7 +474,9 @@ function renderMarketsView() {
     </tr>`).join('') : '';
   el.innerHTML = `
     ${bar}
-    <header class="mk-head"><h1>Mercati</h1><p>Il Trend Radar, il Termometro TrendScan e i cambi di riferimento della BCE. Dati a scopo informativo${upd ? `, aggiornati il ${esc(upd)}` : ''}.</p></header>
+    <header class="mk-head"><div><h1>Mercati</h1><p>Il Trend Radar, il Termometro TrendScan e i cambi di riferimento della BCE. Dati a scopo informativo${upd ? `, aggiornati il ${esc(upd)}` : ''}.</p></div>
+      <svg class="section-art market-art" viewBox="0 0 180 110" fill="none" aria-hidden="true"><rect x="15" y="12" width="150" height="86" rx="18" fill="#fff" stroke="#e5e7eb" stroke-width="2"/><path d="M34 78H145M34 58H145M34 38H145" stroke="#e5e7eb" stroke-dasharray="3 6"/><rect class="market-bar bar-a" x="44" y="60" width="16" height="22" rx="4" fill="#fdba74"/><rect class="market-bar bar-b" x="72" y="48" width="16" height="34" rx="4" fill="#fb8b72"/><rect class="market-bar bar-c" x="100" y="39" width="16" height="43" rx="4" fill="#f87171"/><path class="market-line" d="M37 66L68 54L91 59L119 34L145 39" stroke="#c23422" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle class="market-point" cx="145" cy="39" r="6" fill="#c23422" stroke="#fff" stroke-width="3"/></svg>
+    </header>
 
     ${marketsSnapshotHtml()}
     ${trendOfDayHtml()}
@@ -1171,6 +1192,7 @@ function showView(name, restoreY) {
   state.view = name;
   document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
   $('view-' + name).classList.remove('hidden');
+  setupSectionReveal();
   const navKey = name === 'articolo' ? 'articoli' : name;
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === navKey));
   requestAnimationFrame(() => window.scrollTo(restoreY != null ? { top: restoreY, behavior: 'instant' } : { top: 0 }));
@@ -1180,7 +1202,7 @@ const PAGE_META = {
   mercati: ['Mercati: Trend Radar, Termometro e cambi BCE | TrendScan', 'Trend Radar dei settori più citati, Termometro sul tono delle notizie e tassi di cambio BCE. Dati informativi.'],
   home: ['TrendScan – Finanza personale spiegata semplice: guide, video e notizie', 'Impara a gestire i tuoi soldi senza paroloni: guide semplici su risparmio, ETF e PAC, simulatore gratuito, video educativi e notizie dai giornali italiani.'],
   articoli: ['Articoli di finanza personale: risparmio, ETF, pensione, mutui | TrendScan', 'Le notizie di finanza personale dai principali giornali italiani, divise per argomento: risparmio, ETF, pensione, casa, tasse e conti.'],
-  video: ['Video educativi di finanza personale e investimenti | TrendScan', 'La playlist dei migliori canali YouTube italiani di finanza: risparmio, ETF, PAC e gestione del denaro, da guardare uno dopo l\'altro.'],
+  video: ['Video di finanza personale dal canale ufficiale | TrendScan', 'Video e approfondimenti di finanza personale dal canale YouTube ufficiale TrendScan.'],
 };
 function setPageMeta(name) {
   const m = PAGE_META[name] || PAGE_META.home;
