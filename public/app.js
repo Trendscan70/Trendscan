@@ -106,7 +106,12 @@ async function bootstrap() {
   if (mk && okData(mk)) state.markets = mk; // facoltativo: senza dati la fascia Mercati resta nascosta
   if (a && Array.isArray(a.articles)) { state.articles = cleanArticles(a.articles); state.articleMeta = a.meta || null; }
   state.articlesLoaded = !!a;
-  if (v) { state.channels = v.channels || []; state.videos = (v.videos || []).filter(x => validVid(x.id)); state.videoMeta = v.meta || null; }
+  if (v) {
+    // I dati remoti possono essere più vecchi della configurazione: ammetti solo il canale ufficiale.
+    state.channels = (v.channels || []).filter(c => c.id === 'trendscan-ufficiale');
+    state.videos = (v.videos || []).filter(x => validVid(x.id) && x.channelId === 'trendscan-ufficiale');
+    state.videoMeta = v.meta || null;
+  }
   state.videosLoaded = !!v;
 
   initTheme();
@@ -225,20 +230,15 @@ function videoCardDark(v) {
     </button>`;
 }
 
-// In home si mostrano solo video adatti a chi inizia: fuori quelli con promesse di guadagni facili o strumenti molto rischiosi.
-// Euristica sul titolo; la playlist completa (#video) resta invariata.
-const RISKY_VIDEO = /\b(leva|leverage|2x|3x|guadagn\w*|extra|ricc\w+|milion\w*|trading|scalping|short|opzion\w*|futures|cfd|segnali|forex|rendita passiva)\b/i;
 function renderHomeVideos() {
   const el = $('homeVideos');
-  if (state.videos.length) {
-    const calm = state.videos.filter(v => !RISKY_VIDEO.test(v.title || ''));
-    el.innerHTML = (calm.length >= 4 ? calm : state.videos).slice(0, 4).map(videoCardDark).join('');
+  const official = state.videos.filter(v => v.channelId === 'trendscan-ufficiale');
+  if (official.length) {
+    el.innerHTML = official.slice(0, 4).map(videoCardDark).join('');
     return;
   }
-  el.innerHTML = state.channels.slice(0, 4).map(c => `
-    <a href="#video" class="rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition">
-      ${avatar(c, 'w-12 h-12 text-lg')}<div class="mt-3 font-extrabold">${esc(c.name)}</div><div class="text-xs text-gray-400 mt-1 line-clamp-2">${esc(c.blurb || '')}</div></a>`).join('') ||
-    '<p class="col-span-full text-sm text-gray-400">Nessun canale disponibile.</p>';
+  el.innerHTML = `<a href="https://www.youtube.com/@Trendscan26" target="_blank" rel="noopener noreferrer" class="col-span-full rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition">
+    <div class="font-extrabold">Guarda i video sul canale ufficiale TrendScan</div><div class="text-sm text-gray-400 mt-1">Le nuove miniature appariranno qui appena il feed sarà aggiornato.</div></a>`;
 }
 
 // ------------------------------------------------------------------ glossario e tooltip
@@ -1041,7 +1041,7 @@ function channelLink(c) {
 }
 
 function buildQueue() {
-  state.queue = state.videos.filter(v => state.channelFilter === 'ALL' || v.channelId === state.channelFilter);
+  state.queue = state.videos.filter(v => v.channelId === 'trendscan-ufficiale' && (state.channelFilter === 'ALL' || v.channelId === state.channelFilter));
 }
 
 function renderVideoPage() {
@@ -1073,7 +1073,7 @@ function renderVideoPage() {
   }
 
   const cnt = {}; state.videos.forEach(v => cnt[v.channelId] = (cnt[v.channelId] || 0) + 1);
-  $('channelGrid').innerHTML = state.channels.map(c => `
+  $('channelGrid').innerHTML = state.channels.filter(c => c.id === 'trendscan-ufficiale').map(c => `
     <div class="bg-white border border-gray-200 rounded-2xl p-4 flex gap-3 hover:shadow-md transition">
       ${avatar(c)}
       <div class="min-w-0 flex-1">
