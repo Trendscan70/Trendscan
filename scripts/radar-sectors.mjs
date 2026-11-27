@@ -32,7 +32,8 @@ export function buildSectorRows(articles, sectors, now = Date.now()) {
     const previousCount = rows.filter(article => Date.parse(article.publishedAt) < recentFrom && Date.parse(article.publishedAt) >= previousFrom).length;
     const recentSharePct = sharePct(recentCount, recentTotal);
     const previousSharePct = sharePct(previousCount, previousTotal);
-    const ready = recentTotal >= 10 && previousTotal >= 10;
+    const ready = recentTotal >= 5 && previousTotal >= 5;
+    const reliable = recentTotal >= 10 && previousTotal >= 10;
     return {
       id: sector.id,
       label: sector.label,
@@ -40,6 +41,7 @@ export function buildSectorRows(articles, sectors, now = Date.now()) {
       color: sector.color,
       momentum7d: {
         ready,
+        reliable,
         recentCount,
         previousCount,
         recentArticles: recentTotal,

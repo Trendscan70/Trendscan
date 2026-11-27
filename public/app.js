@@ -131,7 +131,7 @@ function renderAll() {
 
 let sectionRevealObserver;
 function setupSectionReveal() {
-  const blocks = document.querySelectorAll('#view-home .welcome, #view-home .guide-showcase, #view-home #strumenti, #view-home #heroGrid, #view-home #homeLatest, #view-home .home-video-panel, #view-articoli .section-title, #view-articoli [aria-labelledby], #view-articoli #categoryIntro, #view-articoli #articleGrid, #view-mercati .mk-head, #view-mercati .mk-card, #view-mercati .rd-section, #view-articolo .reader, #view-video > *, #academyRoot .academy-banner, #academyRoot section');
+  const blocks = document.querySelectorAll('#view-home .welcome, #view-home .guide-showcase, #view-home #strumenti, #view-home #heroGrid, #view-home #homeLatest, #view-home .home-video-panel, #view-articoli .section-title, #view-articoli [aria-labelledby], #view-articoli #categoryIntro, #view-articoli #articleGrid, #view-articolo .reader, #view-video > *, #academyRoot .academy-banner, #academyRoot section');
   if (!('IntersectionObserver' in window)) { blocks.forEach(el => el.classList.add('section-reveal', 'is-visible')); return; }
   if (!sectionRevealObserver) sectionRevealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -380,21 +380,27 @@ function spark(values, w = 96, h = 28, cls = 'mk-spark') {
 function gauge(sentiment) {
   const zones = sentiment.labels && sentiment.labels.length ? sentiment.labels : DEFAULT_ZONES;
   const colors = ['#ef4444', '#f59e0b', '#10b981'];
-  const point = value => {
+  const point = (value, radius = 80) => {
     const angle = Math.PI - Math.PI * Math.min(100, Math.max(0, value)) / 100;
-    return { x: 100 + 80 * Math.cos(angle), y: 100 - 80 * Math.sin(angle) };
+    return { x: 100 + radius * Math.cos(angle), y: 100 - radius * Math.sin(angle) };
   };
+  const ticks = Array.from({ length: 11 }, (_, i) => {
+    const value = i * 10, a = point(value, 88), b = point(value, 97);
+    return `<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" class="mk-gauge-tick${value % 50 === 0 ? ' major' : ''}"/>`;
+  }).join('');
   let previousMax = 0;
   const arcs = zones.map((zone, index) => {
     const start = point(previousMax), end = point(zone.max);
     previousMax = zone.max;
-    return `<path d="M${start.x.toFixed(1)} ${start.y.toFixed(1)} A80 80 0 0 0 ${end.x.toFixed(1)} ${end.y.toFixed(1)}" fill="none" stroke="${colors[index] || '#64748b'}" stroke-width="14" stroke-linecap="round"/>`;
+    return `<path d="M${start.x.toFixed(1)} ${start.y.toFixed(1)} A80 80 0 0 0 ${end.x.toFixed(1)} ${end.y.toFixed(1)}" fill="none" stroke="${colors[index] || '#64748b'}" stroke-width="16" stroke-linecap="round"/>`;
   }).join('');
   const needle = point(sentiment.score);
   return `<div class="mk-gauge" role="img" aria-label="Termometro TrendScan: ${sentiment.score} su 100, ${esc(sentiment.label)}">
     <svg class="mk-gauge-dial" viewBox="0 0 200 116" aria-hidden="true">
+      ${ticks}
       ${arcs}
       <line x1="100" y1="100" x2="${needle.x.toFixed(1)}" y2="${needle.y.toFixed(1)}" class="mk-gauge-needle"/>
+      <circle cx="${needle.x.toFixed(1)}" cy="${needle.y.toFixed(1)}" r="4.5" class="mk-gauge-tip"/>
       <circle cx="100" cy="100" r="6" class="mk-gauge-pivot"/>
     </svg>
     <div class="mk-gauge-scale"><span>0 · negativo</span><span>50 · neutro</span><span>100 · positivo</span></div></div>`;
@@ -452,10 +458,22 @@ function renderMarketsView() {
     el.innerHTML = bar + emptyBox('Dati di mercato non ancora disponibili', 'Si aggiornano automaticamente ogni ora: riprova tra poco. <a href="#home" class="brand-text font-bold underline">Torna alla home di TrendScan</a>.');
     return;
   }
+  const sentimentTotal = s && s.n ? s.n : 1;
+  const toneBreakdown = s && s.counts ? `
+    <div class="mk-tone-breakdown" role="img" aria-label="Notizie analizzate: ${s.counts.pos} positive, ${s.counts.neutral} neutre, ${s.counts.neg} negative">
+      <div class="mk-tone-bar"><span class="positive" style="width:${Math.round(s.counts.pos / sentimentTotal * 100)}%"></span><span class="neutral" style="width:${Math.round(s.counts.neutral / sentimentTotal * 100)}%"></span><span class="negative" style="width:${Math.round(s.counts.neg / sentimentTotal * 100)}%"></span></div>
+      <div class="mk-tone-legend"><span class="positive"><b>${s.counts.pos}</b> positive</span><span class="neutral"><b>${s.counts.neutral}</b> neutre</span><span class="negative"><b>${s.counts.neg}</b> negative</span></div>
+    </div>` : '';
   const thermometer = s && s.ready ? `
     <div class="mk-big">
-      <div class="mk-thermo-row"><span class="mk-score mk-score-xl ${toneCls(s)}">${s.score}</span><span class="mk-of">/100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div>
-      ${gauge(s)}
+      <div class="mk-thermo-panel">
+        <div class="mk-thermo-topline"><span class="mk-thermo-icon" aria-hidden="true">🌡️</span><span>Umore delle notizie</span><span class="mk-thermo-period">ultime ${s.windowHours} ore</span></div>
+        <div class="mk-thermo-visual">
+          <div class="mk-thermo-reading"><span class="mk-thermo-score ${toneCls(s)}">${s.score}</span><div><span class="mk-thermo-of">/ 100</span><span class="mk-tone ${toneCls(s)}">${esc(s.label)}</span></div></div>
+          <div class="mk-thermo-dial">${gauge(s)}</div>
+        </div>
+        ${toneBreakdown}
+      </div>
       ${thermometerAdvice(s)}
       <ul class="mk-facts">
         <li>Notizie analizzate (ultime ${s.windowHours} ore): <b>${s.n}</b> — <span class="mk-up">${s.counts.pos} positive</span> · ${s.counts.neutral} neutre · <span class="mk-down">${s.counts.neg} negative</span></li>
@@ -816,8 +834,18 @@ function rdSectorDonut(rows) {
 }
 
 function rdSectorMomentumHtml() {
-  const comparable = (state.radar && state.radar.sectors || []).filter(sector => sector.momentum7d && sector.momentum7d.ready);
-  if (!comparable.length) return `<div class="rd-sector-momentum rd-empty">Confronto settimanale in costruzione: servono almeno 10 notizie in entrambe le settimane.</div>`;
+  const comparable = (state.radar && state.radar.sectors || []).map(sector => {
+    const trend = sector.momentum7d;
+    if (!trend || trend.ready || trend.recentArticles < 5 || trend.previousArticles < 5
+      || !Number.isFinite(trend.recentSharePct) || !Number.isFinite(trend.previousSharePct)) return sector;
+    return { ...sector, momentum7d: { ...trend, ready: true, reliable: false, changePp: Math.round((trend.recentSharePct - trend.previousSharePct) * 10) / 10 } };
+  }).filter(sector => sector.momentum7d && sector.momentum7d.ready);
+  if (!comparable.length) {
+    const sample = (state.radar && state.radar.sectors || []).find(sector => sector.momentum7d)?.momentum7d || {};
+    const recent = Number.isFinite(sample.recentArticles) ? sample.recentArticles : 0;
+    const previous = Number.isFinite(sample.previousArticles) ? sample.previousArticles : 0;
+    return `<div class="rd-sector-momentum rd-empty">Per confrontare le settimane servono almeno 5 articoli in ciascun periodo. Al momento: ${recent} nell’ultima settimana e ${previous} nei 7 giorni precedenti.</div>`;
+  }
   const rising = comparable.filter(sector => sector.momentum7d.recentCount >= 3 && sector.momentum7d.changePp > 0)
     .sort((a, b) => b.momentum7d.changePp - a.momentum7d.changePp || b.momentum7d.recentCount - a.momentum7d.recentCount)
     .slice(0, 3);
@@ -826,12 +854,12 @@ function rdSectorMomentumHtml() {
     const trend = sector.momentum7d, delta = trend.changePp.toFixed(1).replace('.', ',');
     return `<article class="rd-sector-momentum-card">
       <span class="rd-sector-icon" style="--sector-color:${esc(sector.color)}">${esc(sector.icon)}</span>
-      <div><h5>${esc(sector.label)}</h5><p>${trend.recentCount} articoli su ${trend.recentArticles} nell’ultima settimana · ${trend.previousCount} su ${trend.previousArticles} nella precedente</p></div>
+      <div><h5>${esc(sector.label)}</h5><p>${trend.recentCount} articoli su ${trend.recentArticles} nell’ultima settimana · ${trend.previousCount} su ${trend.previousArticles} nella precedente</p>${trend.reliable ? '' : '<span class="rd-sample-badge">Campione ridotto</span>'}</div>
       <b>+${delta}<small> p.p.</small></b>
     </article>`;
   }).join('');
   return `<div class="rd-sector-momentum">
-    <div class="rd-sector-momentum-intro"><span class="rd-sector-kicker">ATTENZIONE IN AUMENTO · 7 GIORNI</span><p>Variazione della quota di notizie per settore rispetto alla settimana precedente.</p></div>
+    <div class="rd-sector-momentum-intro"><span class="rd-sector-kicker">ATTENZIONE IN AUMENTO · 7 GIORNI</span><p>Variazione della quota di notizie per settore rispetto alla settimana precedente. I risultati con meno di 10 articoli complessivi per periodo sono segnalati come campione ridotto.</p></div>
     <div class="rd-sector-momentum-list">${cards}</div>
   </div>`;
 }
