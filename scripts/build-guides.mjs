@@ -17,6 +17,7 @@
 import { readFile, writeFile, mkdir, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { guideVisual } from './guide-visuals.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://trendscan.it';
@@ -321,11 +322,14 @@ ${hdr(P, 'guide')}
     <nav aria-label="Percorso" class="text-xs text-gray-500 mb-3"><a href="/" class="hover:underline">Home</a> › <a href="/guide/" class="hover:underline">Guide</a> › <span>${esc(g.short)}</span></nav>
     <div class="rounded-3xl bg-[#0b0f19] text-gray-100 p-3 sm:p-6 space-y-8" id="academyRoot">
       <div class="academy-banner rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-        <div class="max-w-3xl">
-          <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold border border-purple-500/40 uppercase tracking-widest">${kicker}</span>
-          <h1 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">${esc(g.h1)}</h1>
-          <p class="text-sm text-gray-200 mt-2 leading-relaxed">${esc(g.sub)}</p>
-          ${updatedLine}
+        <div class="guide-hero-layout">
+          <div class="max-w-3xl">
+            <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold border border-purple-500/40 uppercase tracking-widest">${kicker}</span>
+            <h1 class="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">${esc(g.h1)}</h1>
+            <p class="text-sm text-gray-200 mt-2 leading-relaxed">${esc(g.sub)}</p>
+            ${updatedLine}
+          </div>
+          ${guideVisual(g)}
         </div>
       </div>
 

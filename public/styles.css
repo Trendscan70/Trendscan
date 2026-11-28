@@ -957,6 +957,12 @@ html.dark .rd-investing-columns > div { border-color: #343c59; background: rgba(
 .mk-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem; border: 1px solid #e5e7eb; border-radius: 1.25rem; background: linear-gradient(115deg, #fff 0%, #fff7f5 65%, #fff 100%); }
 html.dark .mk-head { border-color: #2b3347; background: linear-gradient(115deg, #121826 0%, #20191e 65%, #121826 100%); }
 .academy-banner { isolation: isolate; }
+.guide-hero-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(13rem, .8fr); align-items: center; gap: clamp(1rem, 3vw, 2.5rem); }
+.guide-illustration { width: min(100%, 24rem); margin: 0; justify-self: end; animation: welcome-drift 6.5s ease-in-out infinite; filter: drop-shadow(0 18px 30px rgba(15,23,42,.25)); }
+.guide-illustration svg { display: block; width: 100%; height: auto; }
+.guide-visual-float { transform-box: fill-box; transform-origin: center; animation: coin-hover 4.2s ease-in-out infinite; }
+.guide-visual-pulse { transform-box: fill-box; transform-origin: center; animation: orbit-pulse 3s ease-in-out infinite; }
+.guide-visual-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: chart-line-draw 1.5s .2s ease-out forwards; }
 .academy-art { position: absolute; right: clamp(1rem, 4vw, 3rem); top: 50%; width: clamp(9rem, 20vw, 15rem); height: auto; transform: translateY(-50%); opacity: .96; animation: welcome-drift 6.5s ease-in-out infinite; pointer-events: none; }
 .academy-art-halo { transform-box: fill-box; transform-origin: center; animation: orbit-pulse 5s ease-in-out infinite; }
 .academy-art-orbit { transform-box: fill-box; transform-origin: center; animation: coin-hover 4.2s ease-in-out infinite; }
@@ -974,6 +980,7 @@ html.dark .mk-head { border-color: #2b3347; background: linear-gradient(115deg, 
 @media (min-width: 900px) { .welcome-art { grid-column: 2; grid-row: 1 / span 5; width: 100%; min-height: 280px; margin: 0; } }
 @media (max-width: 639px) { .section-title-illustrated { gap: .4rem; } .section-art { width: 4.5rem; } .mk-head { align-items: flex-start; padding: .9rem; } .market-art { width: 6.7rem; } }
 @media (max-width: 767px) { .academy-art { right: .5rem; width: 8.5rem; opacity: .26; } #academyRoot .academy-banner > .max-w-3xl { max-width: 100%; } }
+@media (max-width: 767px) { .guide-hero-layout { grid-template-columns: minmax(0, 1fr); } .guide-illustration { width: min(100%, 25rem); justify-self: center; } }
 @media (prefers-reduced-motion: reduce) {
   .welcome-art, .welcome-orbit-one, .welcome-orbit-two, .welcome-bar, .welcome-chart-area, .welcome-chart-line, .welcome-chart-point, .welcome-float-card, .welcome-coin, .welcome-sparkle { animation: none; }
   .welcome-bar, .welcome-chart-area { transform: none; opacity: 1; }
@@ -981,6 +988,8 @@ html.dark .mk-head { border-color: #2b3347; background: linear-gradient(115deg, 
   .section-reveal, .section-reveal.is-visible > * { opacity: 1; transform: none; animation: none; transition: none; }
   .home-video-panel .vcard img, .home-video-panel .vcard .play { transition: none; }
   .section-art, .academy-art { animation: none; }
+  .guide-illustration, .guide-visual-float, .guide-visual-pulse, .guide-visual-draw { animation: none; }
+  .guide-visual-draw { stroke-dasharray: none; stroke-dashoffset: 0; }
   .article-art .art-page, .market-art .market-line { stroke-dasharray: none; stroke-dashoffset: 0; animation: none; }
   .article-art .art-dot, .video-art .art-video-ring, .market-art .market-bar, .market-art .market-point, .academy-art-halo, .academy-art-orbit { animation: none; }
   #academyRoot section[aria-label="Elenco delle guide"] > a, #academyRoot section[aria-labelledby="nuoviStrumenti"] .grid > a { transition: none; }
