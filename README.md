@@ -79,10 +79,10 @@ Google Analytics 4 (ID `G-K072WZXW0N`) è collegato al **consenso**: non viene c
 - **Banner:** «Rifiuta» e «Accetta» hanno lo stesso aspetto; lo scorrimento non è consenso; la scelta vale 182 giorni (poi il banner si ripropone) ed è salvata in `localStorage` (`ts-consent`). Da «Preferenze cookie» (footer di ogni pagina, attributo `data-consent-open`) si può cambiare idea: se si revoca, Analytics si disattiva e i cookie `_ga` vengono cancellati.
 - **Impostazioni del tag:** segnali Google e personalizzazione pubblicitaria disattivati; `ad_storage`, `ad_user_data`, `ad_personalization` negati.
 - **Testi:** `public/privacy/index.html` e `public/cookie/index.html` descrivono Analytics, i cookie (`_ga`, `_ga_K072WZXW0N`), la base giuridica (consenso) e la conservazione (non oltre 14 mesi). Se cambi ID o impostazioni, aggiorna anche quelle pagine.
-- **Da fare in Google Analytics (Admin):** URL del flusso dati `https://www.trendscan.it`; conservazione dei dati evento a 14 mesi (come scritto nella privacy); accettare le condizioni sul trattamento dei dati dell'account; segnali Google disattivati.
+- **Da fare in Google Analytics (Admin):** URL del flusso dati `https://trendscan.it`; conservazione dei dati evento a 14 mesi (come scritto nella privacy); accettare le condizioni sul trattamento dei dati dell'account; segnali Google disattivati.
 - **Verifica:** il flusso dati risulterà «nessun dato ricevuto» finché qualcuno non accetta il banner. Prova con Tag Assistant o con DebugView dopo aver cliccato «Accetta». Le viste interne della home (`#articoli`, `#mercati`, `#video`) vanno controllate in DebugView.
 - **Limite noto:** la prova del consenso resta sul dispositivo dell'utente; se servisse un registro centralizzato dei consensi si può passare a un CMP certificato.
-- **Indirizzo principale:** tutto il sito (canonical, sitemap, `robots.txt`, anteprime social, dati strutturati) usa `https://www.trendscan.it`. La costante è `SITE` in `scripts/build-guides.mjs`.
+- **Indirizzo principale:** tutto il sito (canonical, sitemap, `robots.txt`, anteprime social, dati strutturati) usa `https://trendscan.it`. La costante è `SITE` in `scripts/build-guides.mjs`.
 
 ## Guide: una pagina per ogni argomento
 Ogni guida ha un indirizzo proprio (utile per la SEO e per condividerla): `/guide/` è l'indice e poi `/guide/azioni/`, `/guide/risparmio-50-30-20/`, `/guide/etf/`, `/guide/pac/`, `/guide/pic-vs-pac/`, `/guide/interesse-composto/`, `/guide/simulatore-pac/`, `/guide/broker-pac/`, `/guide/bilancio-familiare-excel/`.
@@ -151,7 +151,7 @@ Il sito è predisposto ma **non mostra annunci** finché non attivi `public/ads.
 
 
 ## SEO
-- **Indirizzo del sito**: `https://www.trendscan.it` è scritto in `public/index.html` (canonical, Open Graph, JSON-LD), `public/robots.txt` e `public/sitemap.xml`. Se passi a un dominio proprio, sostituiscilo in questi tre file.
+- **Indirizzo del sito**: `https://trendscan.it` è scritto in `public/index.html` (canonical, Open Graph, JSON-LD), `public/robots.txt` e `public/sitemap.xml`. Se passi a un dominio proprio, sostituiscilo in questi tre file.
 - **Search Console**: aggiungi il sito su https://search.google.com/search-console (proprietà «Prefisso URL»), verifica la proprietà, invia `sitemap.xml` e usa «Controllo URL → Richiedi indicizzazione» per le pagine HTML. I CSV scaricabili sono intenzionalmente esclusi dall’indice (`X-Robots-Tag: noindex`); «Pagina scansionata, ma attualmente non indicizzata» non è di per sé un errore tecnico e Google decide autonomamente quali pagine indicizzare. Fai lo stesso su Bing Webmaster Tools.
 - **Plugin Netlify «Sitemap»**: rigenera `sitemap.xml` a ogni pubblicazione e può sovrascrivere questa versione; conviene disinstallarlo (Netlify → Integrations).
 - Ogni nuova pagina pubblica con un URL autonomo va aggiunta alla sitemap; `npm run build:guides` aggiorna automaticamente guide e strumenti.

@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SITE = 'https://www.trendscan.it';
+const SITE = 'https://trendscan.it';
 const UPDATED = '2026-11-02';            // data di ultima revisione dei testi (ISO): compare in pagina, nei dati strutturati e nella sitemap
 const UPDATED_LABEL = 'novembre 2026';
 const CHART_JS = 'https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js';
