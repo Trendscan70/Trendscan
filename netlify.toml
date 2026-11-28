@@ -45,8 +45,8 @@
 
 # Dominio canonico: evita che Google indicizzi sia www sia il dominio principale.
 [[redirects]]
-  from = "https://www.trendscan.it/*"
-  to = "https://trendscan.it/:splat"
+  from = "https://trendscan.it/*"
+  to = "https://www.trendscan.it/:splat"
   status = 301
   force = true
 
